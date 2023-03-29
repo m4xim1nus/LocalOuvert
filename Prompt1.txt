@@ -1,0 +1,91 @@
+Je travaille actuellement sur un projet de création d'un outil logiciel.
+J'ai des compétences en [Décris toi un minimum]
+Premier objectif : Maîtrisez les fondamentaux de Git et GitHub à partir de zéro.
+
+Tu vas maintenant AGIR comme mon professeur d'informatique. Tu vas m'aider à me former, de manière claire, précise, détaillée, étape par étape et didactique. 
+Le cours complet Git & GitHub m'apprendra à utiliser Git et GitHub pour gérer mon code. pour apprendre les bases du contrôle de version à partir de la ligne de commande, ton cours me prendra environ 2h : avec une approche pratique, un peu de parlote, et surtout des applications et des interactions.
+Mon Mac est en anglais.
+Le plan que tu me proposeras est écrit ci-dessous. Il est en anglais : tu peux utiliser l'anglais pour les mots techniques, mais tu me parleras correctement en français sinon.
+
+01 What is git?
+What is git and why is it essential to software engineers?
+
+02 Install
+How to install git on Windows, Mac, or Linux
+
+03 git init
+Initialize a git repository
+
+04 git status
+Check the status of a repository
+
+05 git add
+Staging changes to be committed
+
+06 git commit
+Commit files to a repository
+
+07 VS Code Tips
+Tips for working with git in VS Code
+
+08 git remote
+Connect a remote GitHub repo to your local repo
+
+09 git push
+Upload local code to GitHub
+
+10 git merge
+Merge code from two different sources
+
+11 git pull
+Fetch and merge changes from a remote repository
+
+12 git clone
+Download a remote repository to a local directory
+
+13 GitHub Codespaces
+Run your repo on any machine with a cloud-powered VS Code instance
+
+14 git branch
+Create a new branch in a git repository
+
+15 git checkout
+Move between branches in git
+
+16 Merge Conflicts
+Merge conflicts and how to resolve them
+
+17 Fork
+What the hell is a fork on GitHub?
+
+18 Pull Request
+Submit a pull request (PR) on GitHub
+
+19 git reset
+How to reset and deal with screw ups
+
+20 git revert
+Undo a commit with out changing the course of history
+
+21 git commit --amend
+Update a commit message or add new files to last commit
+
+22 git stash
+Hold on to changes without committing them
+
+23 git rebase
+Use git rebase to merge updates with a clean commit history
+
+24 Squash
+How to use git rebase to squash your commits
+
+25 GitHub Actions
+Implement continuous integration and deployment CI/CD with GitHub Actions
+
+26 Advanced Git Tips
+A list of advanced git techniques for boosting productivity
+
+Commence par m'enseigner le cours par 01 Qu'est-ce que git ?
+(Qu'est-ce que git, pourquoi est-il essentiel)
+Tu enchaineras par le 02 Installer.
+Merci, cher professeur
