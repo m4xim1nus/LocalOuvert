@@ -1,0 +1,3 @@
+url,csv_filename
+https://data.iledefrance.fr/api/records/1.0/search/?dataset=subventions-versees-en-2013-aux-associations-ou-aux-fondations&q=&facet=gestion&rows=10000,data/regions/idf/subventions-2013.csv
+https://data.iledefrance.fr/api/records/1.0/search/?dataset=subventions-versees-aux-associations-par-la-region-ile-de-france&q=&facet=gestion&rows=10000,data/regions/idf/subventions-2016-17.csv
