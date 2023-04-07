@@ -1,0 +1,22 @@
+Le framaform qu'on a débuté avec le groupe local de Paris pour les collectivités d d'Ile de France : https://lite.framacalc.org/v460w6crnu-9x95
+
+Quelques infos sur les standards de publication : https://doc.data.gouv.fr/a-propos/que-publier-et-comment-le-publier/
+
+Listes des open data régionaux (avec jeux de données plus ou moins exclusif sp aer rapport à celles présentes sur data.gouv) : 
+- Corse : https://www.data.corsica/pages/portail/
+- PACA : https://www.dataregionsud.fr/
+- Occitanie : https://data.laregion.fr/pages/accueil/
+- Nouvelle-Aquitaine : https://territoires.nouvelle-aquitaine.fr/outils-et-ressources/open-data
+- Pays de la Loire : https://data.paysdelaloire.fr/pages/home/
+- Bretagne : https://data.bretagne.bzh/pages/home-page/
+- Normandie : https://opendata.normandie.fr/
+- Hauts-de-France : https://opendata.hautsdefrance.fr/
+- Centre-Val-de-Loire : https://data.centrevaldeloire.fr/pages/accueil/
+- Grand-Est : https://www.datagrandest.fr/portail/fr
+- Bourgogne Franche-Comté : https://www.bourgognefranchecomte.fr/open-data
+- AURA  : il n'y a pas l'air d'avoir de site unifié, donc potentiellement tout est sur data.gouv
+
+Lexique utile : 
+Marchés publics : commande publique ; appel d'offre ; procédure de mise en concurrence 
+Subventions : financements, dons (moins probable) 
+Délibérations : votes, scrutin, résolution 
