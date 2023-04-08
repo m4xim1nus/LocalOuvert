@@ -33,13 +33,31 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
 4. Préparation pour l'analyse des données récupérées (normalisation, extraction, pré-analyse)
 5. Analyse
 
-## Structure du projet à date
+## Structure du projet
 
-- `data/`: dossier pour stocker les données récupérées
-- `docs/`: dossier pour la documentation du projet
-- `scripts/`: dossier pour les scripts Python utilisés pour le scraping
+- `data/`: dossier pour stocker les données du projet, organisées en sous-dossiers
+    - `localities/`: informations sur les localités
+    - `scraped_data/`: données récupérées par le scrapping
+    - `processed_data/`: données traitées et prêtes pour l'analyse
+- `docs/`: dossier pour la documentation du projet, organisée en sous-dossiers
+    - `general/`: documentation non technique
+    - `scrapers/`: documentation sur les scrapers
+    - `localities/`: documentation sur la gestion des localités
+    - `data_processing/`: documentation sur le traitement des données
+    - `analysis/`: documentation sur l'analyse des données
+- `scripts/`: dossier pour les scripts Python du projet, organisés en sous-dossiers
+    - `scrapers/`: scripts pour le scrapping des données
+    - `localities/`: scripts pour la gestion des localités
+    - `data_processing/`: scripts pour le traitement des données
+    - `analysis/`: scripts pour l'analyse des données
+    - `utils/`: scripts utilitaires et helpers
+- `tests/`: dossier pour les tests unitaires du projet, organisés en sous-dossiers
+    - `scrapers/`: tests pour les scrapers
+    - `localities/`: tests pour la gestion des localités
+    - `data_processing/`: tests pour le traitement des données
+    - `analysis/`: tests pour l'analyse des données
+- `manage.py`: script principal pour exécuter les différentes commandes du projet
 - `requirements.txt`: fichier contenant les dépendances Python
-- `api_urls.csv`: fichier contenant les URLs des APIs et les noms des fichiers CSV associés
 - `README.md`: ce fichier
 
 ## Comment utiliser à date

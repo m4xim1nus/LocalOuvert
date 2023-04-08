@@ -2,7 +2,7 @@ import argparse
 import subprocess
 
 def runtest():
-    subprocess.run(["python", "scripts/scraper.py"])
+    subprocess.run(["python", "scripts/scrapers/first_scraper.py"])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Gestionnaire du projet LocalOuvert")
