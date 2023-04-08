@@ -10,11 +10,11 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
 
 ## Plan d'attaque
 
-1. Structuration des BDD localités
+1. Structuration des BDD collectivités
     * Recherche des collectivités locales concernées par la loi (plus de 3500 habitants, plus de 50 agents employés) à partir des données exposées par l'INSEE sur data.gouv.fr
     * Compléments d'info "open data" sur ces collectivités si existant (via les données exposées par OpenDataFrance)
 2. Structuration des infos recherchées
-    * Identification et validation des 6 informations essentielles à récupérer par localité :
+    * Identification et validation des 6 informations essentielles à récupérer par collectivité :
         - Subventions aux associations
         - Subventions aux entreprises
         - Passation de marchés publics
@@ -24,7 +24,7 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
     * Définition des fuzzy matches pour identifier ces informations et des standards des variables attendues
     * Établissement des critères de qualité de la donnée (e.g. format des données, lisibilité, pré-filtrage, fréquence de mise à jour)
 3. Scrapping différencié
-    * Catégorisation des localités selon la facilité du scrapping
+    * Catégorisation des collectivités selon la facilité du scrapping
         - Données accessibles via API sur data.gouv.fr
         - Données accessibles via un portail open data propre à la collectivité
         - Données uniquement disponibles sur le site web de la collectivité
@@ -36,24 +36,24 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
 ## Structure du projet
 
 - `data/`: dossier pour stocker les données du projet, organisées en sous-dossiers
-    - `localities/`: informations sur les localités
+    - `communities/`: informations sur les collectivités
     - `scraped_data/`: données récupérées par le scrapping
     - `processed_data/`: données traitées et prêtes pour l'analyse
 - `docs/`: dossier pour la documentation du projet, organisée en sous-dossiers
     - `general/`: documentation non technique
     - `scrapers/`: documentation sur les scrapers
-    - `localities/`: documentation sur la gestion des localités
+    - `communities/`: documentation sur la gestion des collectivités
     - `data_processing/`: documentation sur le traitement des données
     - `analysis/`: documentation sur l'analyse des données
 - `scripts/`: dossier pour les scripts Python du projet, organisés en sous-dossiers
     - `scrapers/`: scripts pour le scrapping des données
-    - `localities/`: scripts pour la gestion des localités
+    - `communities/`: scripts pour la gestion des collectivités
     - `data_processing/`: scripts pour le traitement des données
     - `analysis/`: scripts pour l'analyse des données
     - `utils/`: scripts utilitaires et helpers
 - `tests/`: dossier pour les tests unitaires du projet, organisés en sous-dossiers
     - `scrapers/`: tests pour les scrapers
-    - `localities/`: tests pour la gestion des localités
+    - `communities/`: tests pour la gestion des collectivités
     - `data_processing/`: tests pour le traitement des données
     - `analysis/`: tests pour l'analyse des données
 - `manage.py`: script principal pour exécuter les différentes commandes du projet

@@ -1,0 +1,95 @@
+COM_COMER,TNCC,NCC,NCCENR,LIBELLE,NATURE_ZONAGE,COMER,LIBELLE_COMER
+97501,0,MIQUELON LANGLADE,Miquelon-Langlade,Miquelon-Langlade,COM,975,Saint-Pierre-et-Miquelon
+97502,0,SAINT PIERRE,Saint-Pierre,Saint-Pierre,COM,975,Saint-Pierre-et-Miquelon
+97701,0,SAINT BARTHELEMY,Saint-Barthélemy,Saint-Barthélemy,COM,977,Saint-Barthélemy
+97801,0,SAINT MARTIN,Saint-Martin,Saint-Martin,COM,978,Saint-Martin
+98411,4,ILES SAINT PAUL ET AMSTERDAM,Îles Saint-Paul et Amsterdam,Îles Saint-Paul et Amsterdam,DIS,984,Terres australes et antarctiques françaises
+98412,5,ARCHIPEL DES KERGUELEN,Archipel des Kerguelen,Archipel des Kerguelen,DIS,984,Terres australes et antarctiques françaises
+98413,5,ARCHIPEL DES CROZET,Archipel des Crozet,Archipel des Crozet,DIS,984,Terres australes et antarctiques françaises
+98414,3,TERRE ADELIE,Terre-Adélie,Terre-Adélie,DIS,984,Terres australes et antarctiques françaises
+98415,4,ILES EPARSES DE L OCEAN INDIEN,Îles Éparses de l'océan Indien,Îles Éparses de l'océan Indien,DIS,984,Terres australes et antarctiques françaises
+98611,1,ALO,Alo,Alo,CIR,986,Wallis-et-Futuna
+98612,0,SIGAVE,Sigave,Sigave,CIR,986,Wallis-et-Futuna
+98613,1,UVEA,Uvea,Uvea,CIR,986,Wallis-et-Futuna
+98711,1,ANAA,Anaa,Anaa,COM,987,Polynésie française
+98712,1,ARUE,Arue,Arue,COM,987,Polynésie française
+98713,1,ARUTUA,Arutua,Arutua,COM,987,Polynésie française
+98714,0,BORA BORA,Bora-Bora,Bora-Bora,COM,987,Polynésie française
+98715,0,FAAA,Faaa,Faaa,COM,987,Polynésie française
+98716,0,FAKARAVA,Fakarava,Fakarava,COM,987,Polynésie française
+98717,0,FANGATAU,Fangatau,Fangatau,COM,987,Polynésie française
+98718,0,FATU HIVA,Fatu-Hiva,Fatu-Hiva,COM,987,Polynésie française
+98719,0,GAMBIER,Gambier,Gambier,COM,987,Polynésie française
+98720,0,HAO,Hao,Hao,COM,987,Polynésie française
+98721,0,HIKUERU,Hikueru,Hikueru,COM,987,Polynésie française
+98722,0,HITIAA O TE RA,Hitiaa O Te Ra,Hitiaa O Te Ra,COM,987,Polynésie française
+98723,0,HIVA OA,Hiva-Oa,Hiva-Oa,COM,987,Polynésie française
+98724,0,HUAHINE,Huahine,Huahine,COM,987,Polynésie française
+98725,0,MAHINA,Mahina,Mahina,COM,987,Polynésie française
+98726,0,MAKEMO,Makemo,Makemo,COM,987,Polynésie française
+98727,0,MANIHI,Manihi,Manihi,COM,987,Polynésie française
+98728,0,MAUPITI,Maupiti,Maupiti,COM,987,Polynésie française
+98729,0,MOOREA MAIAO,Moorea-Maiao,Moorea-Maiao,COM,987,Polynésie française
+98730,0,NAPUKA,Napuka,Napuka,COM,987,Polynésie française
+98731,0,NUKU HIVA,Nuku-Hiva,Nuku-Hiva,COM,987,Polynésie française
+98732,0,NUKUTAVAKE,Nukutavake,Nukutavake,COM,987,Polynésie française
+98733,0,PAEA,Paea,Paea,COM,987,Polynésie française
+98734,0,PAPARA,Papara,Papara,COM,987,Polynésie française
+98735,0,PAPEETE,Papeete,Papeete,COM,987,Polynésie française
+98736,0,PIRAE,Pirae,Pirae,COM,987,Polynésie française
+98737,0,PUKAPUKA,Pukapuka,Pukapuka,COM,987,Polynésie française
+98738,0,PUNAAUIA,Punaauia,Punaauia,COM,987,Polynésie française
+98739,0,RAIVAVAE,Raivavae,Raivavae,COM,987,Polynésie française
+98740,0,RANGIROA,Rangiroa,Rangiroa,COM,987,Polynésie française
+98741,0,RAPA,Rapa,Rapa,COM,987,Polynésie française
+98742,0,REAO,Reao,Reao,COM,987,Polynésie française
+98743,0,RIMATARA,Rimatara,Rimatara,COM,987,Polynésie française
+98744,0,RURUTU,Rurutu,Rurutu,COM,987,Polynésie française
+98745,0,TAHAA,Tahaa,Tahaa,COM,987,Polynésie française
+98746,0,TAHUATA,Tahuata,Tahuata,COM,987,Polynésie française
+98747,0,TAIARAPU EST,Taiarapu-Est,Taiarapu-Est,COM,987,Polynésie française
+98748,0,TAIARAPU OUEST,Taiarapu-Ouest,Taiarapu-Ouest,COM,987,Polynésie française
+98749,0,TAKAROA,Takaroa,Takaroa,COM,987,Polynésie française
+98750,0,TAPUTAPUATEA,Taputapuatea,Taputapuatea,COM,987,Polynésie française
+98751,0,TATAKOTO,Tatakoto,Tatakoto,COM,987,Polynésie française
+98752,0,TEVA I UTA,Teva I Uta,Teva I Uta,COM,987,Polynésie française
+98753,0,TUBUAI,Tubuai,Tubuai,COM,987,Polynésie française
+98754,0,TUMARAA,Tumaraa,Tumaraa,COM,987,Polynésie française
+98755,0,TUREIA,Tureia,Tureia,COM,987,Polynésie française
+98756,0,UA HUKA,Ua-Huka,Ua-Huka,COM,987,Polynésie française
+98757,0,UA POU,Ua-Pou,Ua-Pou,COM,987,Polynésie française
+98758,0,UTUROA,Uturoa,Uturoa,COM,987,Polynésie française
+98801,0,BELEP,Belep,Belep,COM,988,Nouvelle-Calédonie
+98802,0,BOULOUPARI,Bouloupari,Bouloupari,COM,988,Nouvelle-Calédonie
+98803,0,BOURAIL,Bourail,Bourail,COM,988,Nouvelle-Calédonie
+98804,0,CANALA,Canala,Canala,COM,988,Nouvelle-Calédonie
+98805,0,DUMBEA,Dumbéa,Dumbéa,COM,988,Nouvelle-Calédonie
+98806,0,FARINO,Farino,Farino,COM,988,Nouvelle-Calédonie
+98807,0,HIENGHENE,Hienghène,Hienghène,COM,988,Nouvelle-Calédonie
+98808,0,HOUAILOU,Houaïlou,Houaïlou,COM,988,Nouvelle-Calédonie
+98809,5,ILE DES PINS,Île-des-Pins,L'Île-des-Pins,COM,988,Nouvelle-Calédonie
+98810,0,KAALA GOMEN,Kaala-Gomen,Kaala-Gomen,COM,988,Nouvelle-Calédonie
+98811,0,KONE,Koné,Koné,COM,988,Nouvelle-Calédonie
+98812,0,KOUMAC,Koumac,Koumac,COM,988,Nouvelle-Calédonie
+98813,0,LA FOA,La Foa,La Foa,COM,988,Nouvelle-Calédonie
+98814,0,LIFOU,Lifou,Lifou,COM,988,Nouvelle-Calédonie
+98815,0,MARE,Maré,Maré,COM,988,Nouvelle-Calédonie
+98816,0,MOINDOU,Moindou,Moindou,COM,988,Nouvelle-Calédonie
+98817,2,MONT DORE,Mont-Dore,Le Mont-Dore,COM,988,Nouvelle-Calédonie
+98818,0,NOUMEA,Nouméa,Nouméa,COM,988,Nouvelle-Calédonie
+98819,0,OUEGOA,Ouégoa,Ouégoa,COM,988,Nouvelle-Calédonie
+98820,1,OUVEA,Ouvéa,Ouvéa,COM,988,Nouvelle-Calédonie
+98821,0,PAITA,Païta,Païta,COM,988,Nouvelle-Calédonie
+98822,0,POINDIMIE,Poindimié,Poindimié,COM,988,Nouvelle-Calédonie
+98823,0,PONERIHOUEN,Ponérihouen,Ponérihouen,COM,988,Nouvelle-Calédonie
+98824,0,POUEBO,Pouébo,Pouébo,COM,988,Nouvelle-Calédonie
+98825,0,POUEMBOUT,Pouembout,Pouembout,COM,988,Nouvelle-Calédonie
+98826,0,POUM,Poum,Poum,COM,988,Nouvelle-Calédonie
+98827,0,POYA,Poya,Poya,COM,988,Nouvelle-Calédonie
+98828,0,SARRAMEA,Sarraméa,Sarraméa,COM,988,Nouvelle-Calédonie
+98829,0,THIO,Thio,Thio,COM,988,Nouvelle-Calédonie
+98830,0,TOUHO,Touho,Touho,COM,988,Nouvelle-Calédonie
+98831,0,VOH,Voh,Voh,COM,988,Nouvelle-Calédonie
+98832,0,YATE,Yaté,Yaté,COM,988,Nouvelle-Calédonie
+98833,0,KOUAOUA,Kouaoua,Kouaoua,COM,988,Nouvelle-Calédonie
+98901,0,LA PASSION CLIPPERTON,La Passion-Clipperton,La Passion-Clipperton,CPT,989,La Passion-Clipperton
