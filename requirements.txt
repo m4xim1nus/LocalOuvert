@@ -1,2 +1,2 @@
-requests==2.26.0
+yrequests==2.26.0
 pandas==1.3.4
