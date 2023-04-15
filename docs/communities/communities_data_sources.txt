@@ -1,13 +1,18 @@
-https://www.insee.fr/fr/information/6800685
-https://www.data.gouv.fr/fr/datasets/code-officiel-geographique-cog/
+Base ID Collect : https://www.data.gouv.fr/fr/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/
 
-https://www.data.gouv.fr/fr/datasets/data-insee-sur-les-communes/
+Filtre hab Com : https://www.insee.fr/fr/statistiques/6683035?sommaire=6683037
+Filtre agents Com : https://www.sirene.fr/sirene/public/creation-fichier > Filtre Siège seulement, Catégorie juridique 72 
 
-https://www.insee.fr/fr/statistiques/1893198
+Filtre EPCI : https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/
 
-https://www.insee.fr/fr/information/2008354
-https://www.insee.fr/fr/statistiques/6683037
+Def mapping EPCI : https://www.collectivites-locales.gouv.fr/institutions/liste-et-composition-des-epci-fiscalite-propre
 
-https://www.insee.fr/fr/information/2044926
 
-https://www.data.gouv.fr/fr/datasets/donnees-de-lobservatoire-open-data-des-territoires-edition-2022/
+
+// Data source Com : https://www.insee.fr/fr/information/6800685
+// Data source Com : https://www.data.gouv.fr/fr/datasets/code-officiel-geographique-cog/
+// Data source EPCI : https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/
+
+// Data add. Com : https://www.data.gouv.fr/fr/datasets/data-insee-sur-les-communes/
+
+// OpenDataFrance mapping : https://www.data.gouv.fr/fr/datasets/donnees-de-lobservatoire-open-data-des-territoires-edition-2022/
