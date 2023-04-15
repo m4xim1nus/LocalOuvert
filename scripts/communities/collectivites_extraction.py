@@ -1,6 +1,7 @@
 from datetime import datetime
 import pandas as pd
 import requests
+import xlrd
 from io import StringIO
 from pathlib import Path
 
@@ -14,17 +15,26 @@ def save_csv(df, file_name):
     data_folder = Path("../../data/communities/processed_data/")
     df.to_csv(data_folder / file_name, index=False)
 
+# Téléchargement des fichiers Excel 
+def read_epci_mapping(file_path):
+    return pd.read_excel(file_path, dtype={"siren": str, "siren_membre": str})
+
 # URL des données
 url_regions = "https://data.ofgl.fr/explore/dataset/ofgl-base-regions-consolidee/download/?format=csv&disjunctive.reg_name=true&disjunctive.agregat=true&refine.agregat=D%C3%A9penses+totales&refine.exer=2020&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
 url_departements = "https://data.ofgl.fr/explore/dataset/ofgl-base-departements-consolidee/download/?format=csv&disjunctive.reg_name=true&disjunctive.dep_tranche_population=true&disjunctive.dep_name=true&disjunctive.agregat=true&refine.exer=2020&refine.agregat=D%C3%A9penses+totales&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
 url_communes = "https://data.ofgl.fr/explore/dataset/ofgl-base-communes-consolidee/download/?format=csv&disjunctive.reg_name=true&disjunctive.dep_name=true&disjunctive.epci_name=true&disjunctive.tranche_population=true&disjunctive.tranche_revenu_imposable_par_habitant=true&disjunctive.com_name=true&disjunctive.agregat=true&refine.exer=2020&refine.agregat=D%C3%A9penses+totales&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
 url_interco = "https://data.ofgl.fr/explore/dataset/ofgl-base-gfp-consolidee/download/?format=csv&disjunctive.dep_name=true&disjunctive.gfp_tranche_population=true&disjunctive.nat_juridique=true&disjunctive.mode_financement=true&disjunctive.gfp_tranche_revenu_imposable_par_habitant=true&disjunctive.epci_name=true&disjunctive.agregat=true&refine.exer=2020&refine.agregat=D%C3%A9penses+totales&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
 
+# Chemin des données téléchargées 
+# EPCI<>Communes : fichier excel téléchargé depuis https://www.collectivites-locales.gouv.fr/institutions/liste-et-composition-des-epci-fiscalite-propre
+epci_communes_path = "../../data/communities/scrapped_data/gouv_colloc/epcicom2023.xlsx"
+
 # Téléchargement des données
 OFGL_regions = download_csv(url_regions)
 OFGL_departements = download_csv(url_departements)
 OFGL_communes = download_csv(url_communes)
 OFGL_interco = download_csv(url_interco)
+epci_communes_mapping = read_epci_mapping(epci_communes_path)
 
 # Traitement des régions
 OFGL_regions = OFGL_regions[['Code Insee 2021 Région', 'Nom 2021 Région', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
@@ -49,6 +59,11 @@ OFGL_communes = OFGL_communes.astype({'SIREN': str, 'COG': str, 'code_departemen
 OFGL_communes['code_departement_3digits'] = OFGL_communes['code_departement'].str.zfill(3)
 OFGL_communes = OFGL_communes[['nom', 'SIREN', 'COG', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
 OFGL_communes = OFGL_communes.sort_values('COG')
+
+# Fusion du mapping communes <> EPCI
+OFGL_communes = OFGL_communes.merge(epci_communes_mapping[['siren', 'siren_membre']], left_on='SIREN', right_on='siren_membre', how='left')
+OFGL_communes = OFGL_communes.drop(columns=['siren_membre'])
+OFGL_communes.rename(columns={'siren': 'EPCI'}, inplace=True)
 
 # Traitement des intercommunalités
 OFGL_interco = OFGL_interco[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nature juridique 2021 abrégée', 'Code Siren 2021 EPCI', 'Nom 2021 EPCI', 'Population totale']]
