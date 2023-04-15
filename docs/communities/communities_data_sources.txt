@@ -1,6 +1,4 @@
-Base ID Collect : https://www.data.gouv.fr/fr/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/
 
-Filtre hab Com : https://www.insee.fr/fr/statistiques/6683035?sommaire=6683037
 Filtre agents Com : https://www.sirene.fr/sirene/public/creation-fichier > Filtre Siège seulement, Catégorie juridique 72 
 
 Filtre EPCI : https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/
@@ -9,9 +7,13 @@ Def mapping EPCI : https://www.collectivites-locales.gouv.fr/institutions/liste-
 
 
 
+
+// Inspi ID Collect : https://www.data.gouv.fr/fr/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/
+
 // Data source Com : https://www.insee.fr/fr/information/6800685
 // Data source Com : https://www.data.gouv.fr/fr/datasets/code-officiel-geographique-cog/
 // Data source EPCI : https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/
+// Data source hab Com : https://www.insee.fr/fr/statistiques/6683035?sommaire=6683037
 
 // Data add. Com : https://www.data.gouv.fr/fr/datasets/data-insee-sur-les-communes/
 
