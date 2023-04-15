@@ -4505,6 +4505,6 @@ COG,nom,type,SIREN,population,COG_3digits,code_region,code_departement,code_depa
 ,Bordeaux Métropole,MET,243300316,802350,,75,33,033,,,False
 ,Métropole Européenne de Lille,MET,200093201,1157126,,32,59,059,,,False
 ,Métropole Européenne de Lille,MET,200093201,1181692,,32,59,059,,,False
-,Métropole de Lyon,M,200046977,1402326,,84,69,069,,52.0,True
+,Métropole de Lyon,MET,200046977,1402326,,84,69,069,,52.0,True
 ,Métropole d'Aix-Marseille-Provence,MET,200054807,1900023,,93,"13,83,84","13,83,84",,,False
-,Métropole du Grand Paris,M,200054781,7109664,,11,"75,91,92,93,94,95","75,91,92,93,94,95",,,False
+,Métropole du Grand Paris,MET,200054781,7109664,,11,"75,91,92,93,94,95","75,91,92,93,94,95",,,False
