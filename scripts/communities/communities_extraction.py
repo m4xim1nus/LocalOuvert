@@ -68,7 +68,7 @@ OFGL_communes.rename(columns={'siren': 'EPCI'}, inplace=True)
 # Traitement des intercommunalités
 OFGL_interco = OFGL_interco[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nature juridique 2021 abrégée', 'Code Siren 2021 EPCI', 'Nom 2021 EPCI', 'Population totale']]
 OFGL_interco.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
-OFGL_interco['type'] = OFGL_interco['type'].replace({'MET69': 'M', 'MET75': 'M', 'M': 'MET'})
+OFGL_interco['type'] = OFGL_interco['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
 OFGL_interco = OFGL_interco.astype({'SIREN': str})
 OFGL_interco['code_departement_3digits'] = OFGL_interco['code_departement'].str.zfill(3)
 OFGL_interco = OFGL_interco[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
