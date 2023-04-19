@@ -63,4 +63,5 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
 ## Comment utiliser à date
 
 1. Installez les dépendances à l'aide de `pip install -r requirements.txt`.
-2. Exécutez runtest dans le script `manage.py` pour récupérer les données des APIs et les sauvegarder dans des fichiers CSV.
+2. Pour le moment, manage.py & scripts/scrapers sont sans utilité.
+3. Pour le moment, les collectivités filtrés sont identifiés dans [ce fichier](./data/communities/processed_data/selected_communities.csv), et ces données peuvent être explorées dans [ce notebook](./scripts/communities/selection_explorer.ipynb). 

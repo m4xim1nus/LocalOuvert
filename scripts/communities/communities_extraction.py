@@ -11,6 +11,11 @@ def download_csv(url):
     content = response.content.decode('utf-8')
     return pd.read_csv(StringIO(content), sep=";", dtype={"Code Insee 2021 Région": str, "Code Insee 2021 Département": str, "Code Insee 2021 Commune": str})
 
+def download_odf_data(url):
+    response = requests.get(url)
+    content = response.content.decode('utf-8')
+    return pd.read_csv(StringIO(content), dtype={'siren': str})
+
 def save_csv(df, file_name):
     data_folder = Path("../../data/communities/processed_data/")
     df.to_csv(data_folder / file_name, index=False)
@@ -85,6 +90,18 @@ infos_coll = pd.concat([OFGL_regions, OFGL_departements, OFGL_communes, OFGL_int
 
 # Remplir les valeurs manquantes par une chaîne vide
 infos_coll.fillna('', inplace=True)
+
+# Téléchargez les données OpenDataFrance
+url_odf = "https://static.data.gouv.fr/resources/donnees-de-lobservatoire-open-data-des-territoires-edition-2022/20230202-112356/indicateurs-odater-organisations-2022-12-31-.csv"
+odf_data = download_odf_data(url_odf)
+
+# Effectuez une jointure entre "infos_coll" et "odf_data" sur la colonne "SIREN"
+infos_coll = infos_coll.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], left_on='SIREN', right_on='siren', how='left')
+
+# Supprimez la colonne 'siren' dupliquée et réorganisez les colonnes
+infos_coll.drop(columns=['siren'], inplace=True)
+infos_coll = infos_coll[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
+
 
 # Enregistrement du fichier CSV
 save_csv(infos_coll, "infos_collectivites.csv")
