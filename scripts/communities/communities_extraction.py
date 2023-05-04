@@ -1,24 +1,11 @@
 from datetime import datetime
 import pandas as pd
-import requests
-import xlrd
-from io import StringIO
+import sys
 from pathlib import Path
 
-# Téléchargement des fichiers CSV
-def download_csv(url):
-    response = requests.get(url)
-    content = response.content.decode('utf-8')
-    return pd.read_csv(StringIO(content), sep=";", dtype={"Code Insee 2021 Région": str, "Code Insee 2021 Département": str, "Code Insee 2021 Commune": str})
-
-def download_odf_data(url):
-    response = requests.get(url)
-    content = response.content.decode('utf-8')
-    return pd.read_csv(StringIO(content), dtype={'siren': str})
-
-def save_csv(df, file_name):
-    data_folder = Path("../../data/communities/processed_data/")
-    df.to_csv(data_folder / file_name, index=False)
+# Ajoutez le dossier /scripts/utils au `sys.path`
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'utils'))
+from utils import load_from_url, save_csv, get_project_base_path
 
 # Téléchargement des fichiers Excel 
 def read_epci_mapping(file_path):
@@ -32,13 +19,15 @@ url_interco = "https://data.ofgl.fr/explore/dataset/ofgl-base-gfp-consolidee/dow
 
 # Chemin des données téléchargées 
 # EPCI<>Communes : fichier excel téléchargé depuis https://www.collectivites-locales.gouv.fr/institutions/liste-et-composition-des-epci-fiscalite-propre
-epci_communes_path = "../../data/communities/scrapped_data/gouv_colloc/epcicom2023.xlsx"
+base_path = get_project_base_path()
+epci_communes_path = base_path / "data/communities/scrapped_data/gouv_colloc" / "epcicom2023.xlsx"
 
 # Téléchargement des données
-OFGL_regions = download_csv(url_regions)
-OFGL_departements = download_csv(url_departements)
-OFGL_communes = download_csv(url_communes)
-OFGL_interco = download_csv(url_interco)
+OFGL_dtype = {"Code Insee 2021 Région": str, "Code Insee 2021 Département": str, "Code Insee 2021 Commune": str}
+OFGL_regions = load_from_url(url_regions, dtype=OFGL_dtype)
+OFGL_departements = load_from_url(url_departements, dtype=OFGL_dtype)
+OFGL_communes = load_from_url(url_communes, dtype=OFGL_dtype)
+OFGL_interco = load_from_url(url_interco, dtype=OFGL_dtype)
 epci_communes_mapping = read_epci_mapping(epci_communes_path)
 
 # Traitement des régions
@@ -80,10 +69,11 @@ OFGL_interco = OFGL_interco[['nom', 'SIREN', 'type', 'code_departement', 'code_d
 OFGL_interco = OFGL_interco.sort_values('population')
 
 # Export des fichiers CSV
-save_csv(OFGL_regions, f"identifiants_regions_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_departements, f"identifiants_departements_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_communes, f"identifiants_communes_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_interco, f"identifiants_epci_{datetime.now().strftime('%Y')}.csv")
+processed_data_folder = Path(base_path / "data/communities//processed_data/")
+save_csv(OFGL_regions, processed_data_folder, f"identifiants_regions_{datetime.now().strftime('%Y')}.csv")
+save_csv(OFGL_departements, processed_data_folder, f"identifiants_departements_{datetime.now().strftime('%Y')}.csv")
+save_csv(OFGL_communes, processed_data_folder, f"identifiants_communes_{datetime.now().strftime('%Y')}.csv")
+save_csv(OFGL_interco, processed_data_folder, f"identifiants_epci_{datetime.now().strftime('%Y')}.csv")
 
 # Fusion des DataFrames
 infos_coll = pd.concat([OFGL_regions, OFGL_departements, OFGL_communes, OFGL_interco], axis=0, ignore_index=True)
@@ -92,8 +82,9 @@ infos_coll = pd.concat([OFGL_regions, OFGL_departements, OFGL_communes, OFGL_int
 infos_coll.fillna('', inplace=True)
 
 # Téléchargez les données OpenDataFrance
+odf_dtype = {'siren': str}
 url_odf = "https://static.data.gouv.fr/resources/donnees-de-lobservatoire-open-data-des-territoires-edition-2022/20230202-112356/indicateurs-odater-organisations-2022-12-31-.csv"
-odf_data = download_odf_data(url_odf)
+odf_data = load_from_url(url_odf, dtype=odf_dtype)
 
 # Effectuez une jointure entre "infos_coll" et "odf_data" sur la colonne "SIREN"
 infos_coll = infos_coll.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], left_on='SIREN', right_on='siren', how='left')
@@ -102,6 +93,5 @@ infos_coll = infos_coll.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-
 infos_coll.drop(columns=['siren'], inplace=True)
 infos_coll = infos_coll[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
 
-
 # Enregistrement du fichier CSV
-save_csv(infos_coll, "infos_collectivites.csv")
+save_csv(infos_coll, processed_data_folder, "infos_collectivites.csv")

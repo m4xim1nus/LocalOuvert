@@ -1,0 +1,434 @@
+id_x,title_x,url_x,description_x,organization,organization_id,frequency,dataset.id,dataset.title,dataset.slug,dataset.url,dataset.organization,dataset.organization_id,dataset.license,dataset.private,dataset.archived,id_y,url_y,title_y,description_y,filetype,format,mime,filesize,checksum.type,checksum.value,created_at,modified,downloads,harvest.created_at,harvest.modified_at
+6430af207f3e31d2c253867d,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-7/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,6430af207f3e31d2c253867d,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-7,http://www.data.gouv.fr/fr/datasets/1646230541247-1-7/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,False,04479a92-5ddf-4f21-8c0e-35cc3e4a4fd3,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2023-04-07T00:00:00,2023-04-08T02:02:40.284000,0,2023-04-07T00:00:00,
+642cbb15b047f22ca7538678,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-6/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,642cbb15b047f22ca7538678,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-6,http://www.data.gouv.fr/fr/datasets/1646230541247-1-6/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2023-04-15T02:14:47.516000,22cb2009-4177-4056-acd6-52e2a9af0a00,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2023-04-04T00:00:00,2023-04-05T02:04:37.379000,0,2023-04-04T00:00:00,
+63d85a7f4c2526cadb40440d,Interventions de la Région des Pays de la Loire,http://www.data.gouv.fr/fr/datasets/interventions-de-la-region-des-pays-de-la-loire/,"Liste des interventions (Aides, Appels à projets, Appels à manifestation d'intérêt, Aides en nature, Prets...) actifs et diffusés sur le site internet de la Région des Pays de la Loire.",Région des Pays de la Loire,534fffa7a3a7292c64a780c5,unknown,63d85a7f4c2526cadb40440d,Interventions de la Région des Pays de la Loire,interventions-de-la-region-des-pays-de-la-loire,http://www.data.gouv.fr/fr/datasets/interventions-de-la-region-des-pays-de-la-loire/,Région des Pays de la Loire,534fffa7a3a7292c64a780c5,Licence Ouverte / Open Licence version 2.0,False,False,6437d3ed-b65c-47d3-8323-b2f775128fd1,https://paysdelaloire.opendatasoft.com/explore/dataset/234400034_fluxinterventionsprod_pdl/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *InterventionID*: intervention_id[text]
+- *AidNom*: aide_nom[text]
+- *AidObjetCourtHtml*: aid_objet_court[text]
+- *ThematiqueLibelle*: thematique_libelle[text]
+- *SsThematiqueLibelle*: ss_thematique_libelle[text]
+- *Web*: web[text]
+- *Actif*: actif[text]
+- *Thematique*: thematique[text]
+- *Ss_Thematique*: ss_thematique[text]
+- *AidBenef*: aid_benef[text]
+- *TypeAide*: type_aide[text]
+- *Logo*: logo[text]
+- *SourceReglement*: sourcereglement[text]
+- *TypeDeSubvention*: type_de_subvention[text]
+- *Temporalite*: temporalite[text]
+- *ConditionVersement*: conditions_de_versement[text]
+- *DateDebut*: date_de_debut[date]
+- *AidOperationsEIHtml*: aid_operations_ei[text]
+- *AidConditions*: aidconditions[text]
+- *TypeProcedure*: type_procedure[text]
+- *Dematerialisation*: dematerialisation[text]
+- *Source Lien*: source_lien[text]
+- *Ar*: ar[text]
+- *InfosComplementaireshtml*: infoscomplementaires[text]
+- *Direction*: direction[text]
+- *Service*: service[text]
+- *Pole*: pole[text]
+- *ContactNom*: contact_nom[text]
+- *ContactPrenom*: contact_prenom[text]
+- *ContactEmail*: contact_email[text]
+- *Tel*: tel[text]
+- *SsDomaine*: ss_domaine[text]
+- *Nature*: nature[text]
+- *AidDemandeurs*: aid_demandeurs[text]
+- *AideHandicapes*: aide_handicapes[int]
+- *AideFemmes*: aide_femmes[text]
+- *AideSeniors*: aide_seniors[text]
+- *AideJeunes*: aide_jeunes[int]
+- *AidObjetHtml*: aid_objet[text]
+- *InformationsComplementaires*: informations_complementaires[text]
+- *InformationsComplementairesHtml*: informationscomplementaireshtml[text]
+- *SourceInfo*: source_info[text]
+- *NouvLienFormPapierCol*: nouvlienformpapiercol[text]
+- *CouvertureGeo*: couverture_geo[text]
+- *ProjLibelle*: proj_libelle[text]
+- *SuiviDossier*: suivi_dossier[text]
+- *NotificationUE*: notification_ue[text]
+- *ModifObjet*: modifobjet[text]
+- *InformationsContactHTML*: informations_contact[text]
+- *InformationsContact*: informationscontact[text]
+- *AgeEntreprise*: age_entreprise[text]
+- *LienFormPapierCol*: lienformpapiercol[text]
+- *LienFormDematCol*: lienformdematcol[text]
+- *AgeLimite*: age_limite[text]
+- *MontantIntervMax*: montant_interv_max[int]
+- *NomAttribuant*: nom_attribuant[text]
+- *SourceTexteInfo*: source_texte_info[text]
+- *ModifType*: modif_type[text]
+- *MontantPlafond*: montant_plafond[int]
+- *LienFormPapierInd*: lienformpapierind[text]
+- *DeposantCode*: deposant_code[text]
+- *ModifDate*: modifdate[date]
+- *SuiviLienHtml*: suivi_lien[text]
+- *IdDomaine*: id_domaine[text]
+- *DateFin*: date_de_fin[date]
+- *Annee*: annee[text]
+- *NouvLienFormPapierInd*: nouvlienformpapierind[text]
+- *IdRAE*: idrae[text]
+- *DeposantLibelle*: deposant_libelle[text]
+- *SuiviLien*: suivilien[text]
+- *TutLibelle*: tut_libelle[text] Typologie de bénéficiaire(s)
+- *TerritoiresCode*: territoires_code[text]
+- *DateConvention*: date_convention[text]
+- *Territoires*: territoires[text]
+- *SourceLienDelegue*: sourceliendelegue[text]
+- *AidOperationsEI*: aidoperationsei[text]
+- *AidObjetCourt*: aidobjetcourt[text]
+- *AidObjet*: aidobjet[text]
+",remote,csv,text/csv,,,,2023-01-31T01:02:07.319000,2023-04-27T21:11:05.847000,0,,2023-04-27T21:11:05.847000
+63d071ccf66c897ec1404414,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-5/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,63d071ccf66c897ec1404414,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-5,http://www.data.gouv.fr/fr/datasets/1646230541247-1-5/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2023-04-11T02:16:16.010000,0b5f63cd-ac77-4253-90cd-42286648b3db,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2023-01-24T00:00:00,2023-01-25T01:03:24.644000,3,2023-01-24T00:00:00,
+63a24f0c207bdb78a99dde9e,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-4/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,63a24f0c207bdb78a99dde9e,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-4,http://www.data.gouv.fr/fr/datasets/1646230541247-1-4/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2023-02-01T01:14:46.665000,e910660b-48e9-42a9-8369-cdccaa3c1b81,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2022-12-20T00:00:00,2022-12-21T01:10:52.399000,2,2022-12-20T00:00:00,
+639d06f5a87da15486a80dcb,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-3/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,639d06f5a87da15486a80dcb,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-3,http://www.data.gouv.fr/fr/datasets/1646230541247-1-3/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2022-12-28T01:15:14.188000,9ff14c6f-a055-4062-a97b-624f9baad871,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2022-12-15T00:00:00,2022-12-17T01:01:57.578000,2,2022-12-15T00:00:00,
+638008717a2207667c2908e8,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-2/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,638008717a2207667c2908e8,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-2,http://www.data.gouv.fr/fr/datasets/1646230541247-1-2/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2022-12-23T01:14:47.507000,b0390a85-8e1a-47d4-9217-30c6e05392b0,https://www.datagrandest.fr/metadata/region-grand-est/1646230541247-1/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,,,,,2022-11-23T00:00:00,2022-11-25T01:12:33.764000,2,2022-11-23T00:00:00,
+637eb6dc21e37581262908e9,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1-1/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,637eb6dc21e37581262908e9,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1-1,http://www.data.gouv.fr/fr/datasets/1646230541247-1-1/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2022-12-02T01:14:39.432000,9f59a6ce-aab7-4d20-a6ec-c5d4fc329e2c,https://grandestprod.data4citizen.com/data4citizen/sites/default/files/dataset/2022/11/23/ecf06d2f-12b9-4972-b50d-dca572fd509e/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,text/csv,,,,2022-11-23T00:00:00,2022-11-24T01:12:12.690000,0,2022-11-23T00:00:00,
+63781e9e86c86fe1272908e3,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/1646230541247-1/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,63781e9e86c86fe1272908e3,Données essentielles des conventions de subvention Région Grand Est,1646230541247-1,http://www.data.gouv.fr/fr/datasets/1646230541247-1/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2022-11-30T01:14:22.220000,e15e2b43-07ef-4e6d-a324-3b74968621f1,https://grandestprod.data4citizen.com/data4citizen/sites/default/files/dataset/2022/11/18/4846b2ca-0fee-4297-a4ae-96280c453908/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,text/csv,,,,2022-11-18T00:00:00,2022-11-19T01:09:02.755000,0,2022-11-18T00:00:00,
+6244ef7dfc371b3d1deb4ce2,Conventions de subventions attribuées par la Région Centre-Val de Loire 2020,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2020/,"Liste des conventions de subventions supérieures à 23 000€ attribuées par la Région Centre-Val de Loire en 2020.
+
+Conformément à la publication, le 7 mai 2017, du [décret n°2017-779 du 5 mai](https://www.legifrance.gouv.fr/eli/decret/2017/5/5/PRMJ1636989D/jo/texte/fr), relatif à l’accès sous forme électronique aux données des conventions de subvention et de l’[a](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528)[rrêté du 17 novembre 2017](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528) relatif aux conditions de mises à disposition des données essentielles des conventions de subvention.",Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,unknown,6244ef7dfc371b3d1deb4ce2,Conventions de subventions attribuées par la Région Centre-Val de Loire 2020,conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2020,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2020/,Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,Licence Ouverte / Open Licence version 2.0,False,False,8cfbc4b0-5fd5-42bd-98c5-0bde30ee7db4,https://data.centrevaldeloire.fr/explore/dataset/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2020/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text] Nom officiel de l'organisme attribuant la subvention
+- *idAttribuant*: idattribuant[double] Identifiant unique de l'attribuant de la subvention (SIRET)
+- *DateConvention*: dateconvention[date] Date de la convention qui attribue la subvention
+- *referenceDecision*: referencedecision[text] Référence de l'acte matérialisant la décision d'attribution de la subvention
+- *nomBeneficiaire*: nombeneficiaire[text] Nom du bénéficiaire
+- *idBeneficiaire*: idbeneficiaire[text] Identifiant unique du bénéficiaire de la subvention (SIRET)
+- *objet *: objet[text] Objet de la subvention attribuée
+- *montant *: montant[int] Montant total de la subvention attribuée en € TTC, avant répartition entre les bénéficiaires
+- *nature*: nature[text] Nature de la subvention attribuée
+- *conditionsVersement *: conditionsversement[text] Conditions de versement de la subvention
+- *DatePeriodedVersement*: dateperiodedversement[text]
+- *idRAE*: idrae[text]
+- *notificationUE*: notificationue[text] Mention de l'existence d'une notification aux dispositions du règlement UE
+- *pourcentageSubvention*: pourcentagesubvention[text] Pourcentage du montant de la subvention attribuée au bénéficiaire
+",remote,csv,text/csv,,,,2022-03-31T02:02:05.461000,2022-03-30T15:48:33,0,,2022-03-30T15:48:33
+62fe518358fc49892d9c0168,Données essentielles des conventions de subvention Région Grand Est,http://www.data.gouv.fr/fr/datasets/donnees-essentielles-des-conventions-de-subvention-region-grand-est/,"Données essentielles des conventions de subvention conclues par la Région Grand Est. Ce jeu de données présente les données essentielles des conventions pour l'octroi de subventions attribuées par la Région Grand Est d'un montant supérieur à 23 000 euros, au sens du décret n° 2017-779 du 5 mai 2017. Liens connexes Legifrance.fr Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention Données sous licence ouverte Etalab",Région GRAND EST,55df259f88ee386e57a46ec2,,62fe518358fc49892d9c0168,Données essentielles des conventions de subvention Région Grand Est,donnees-essentielles-des-conventions-de-subvention-region-grand-est,http://www.data.gouv.fr/fr/datasets/donnees-essentielles-des-conventions-de-subvention-region-grand-est/,Région GRAND EST,55df259f88ee386e57a46ec2,License Not Specified,False,2022-11-26T01:14:19.115000,401d5541-5c32-44d6-ada0-64f5f823c72d,https://grandestprod.data4citizen.com/data4citizen/sites/default/files/dataset/2022/03/15/86423489-e587-4d46-8d11-460679dbbbfe/subvention_region_grandest.csv,subvention_region_grandest.csv,,remote,csv,text/csv,,,,2022-03-15T00:00:00,2022-11-16T01:13:26.526000,0,2022-03-15T00:00:00,
+60820f244ab8fdeb9a296bc5,SCDL - Subventions - Collectivité de Corse - 2020,http://www.data.gouv.fr/fr/datasets/scdl-subventions-collectivite-de-corse-2020/,"Socle Commun des Données Locales (SCDL)   
+
+
+Données subventions Collectivité de Corse - année 2020
+
+URL du schéma :  <https://git.opendatafrance.net/scdl/subventions/raw/v2.0.1/schema.json>
+
+Spécification du modèle de données relatif aux subventions attribuées par une collectivité
+
+## Contexte
+
+Dans le but de renforcer la transparence financière des aides octroyées par les personnes publiques, les collectivités locales, de plus de 3500 habitants et plus de 50 agents, qui attribuent des subventions dont le montant annuel est supérieur à 23 000€ ont l’obligation, à compter du 1er août 2017, de rendre accessibles, sous forme électronique, dans un standard ouvert aisément réutilisable et exploitable par un système de traitement automatisé, les données essentielles de leurs conventions de subvention. La nature et les modalités de diffusion de ces données essentielles ont été fixées par voie réglementaire.
+
+De fait, la spécification SCDL du modèle de données relatif aux subventions attribuées par une collectivité locale a été élaborée à partir des sources suivantes :
+
+  * Documents de cadrage juridique
+    * [​Décret n° 2017-779 du 5 mai 2017 relatif à l'accès sous forme électronique aux données essentielles des conventions de subvention​](https://www.legifrance.gouv.fr/jo_pdf.do?id=JORFTEXT000034600552)
+    * [​Arrêté du 17 novembre 2017 relatif aux conditions de mises à disposition des données essentielles des conventions de subvention​](https://www.legifrance.gouv.fr/jo_pdf.do?id=JORFTEXT000036040528)
+  * Document de cadrage technique
+    * [​Format réglementaire pour la publication des données essentielles des conventions de subventions sur le dépôt Github de la mission Etalab​](https://github.com/etalab/format-subventions)
+
+
+
+
+
+
+Avertissement : les bénéficiaires de type ""particuliers"" ont été retirés dans le cadre du traitement des données personnelles
+
+  *",Collectivité de Corse,537d58eea3a72973a2dc026c,unknown,60820f244ab8fdeb9a296bc5,SCDL - Subventions - Collectivité de Corse - 2020,scdl-subventions-collectivite-de-corse-2020,http://www.data.gouv.fr/fr/datasets/scdl-subventions-collectivite-de-corse-2020/,Collectivité de Corse,537d58eea3a72973a2dc026c,Licence Ouverte / Open Licence version 2.0,False,2022-11-02T17:20:53.332000,3da11906-0735-4da9-9035-cf42d3fe6744,https://www.data.corsica/explore/dataset/scdl-donnees-subventions-collectivite-de-corse-2020/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant
+*: nomattribuant[text]
+- *idAttribuant
+*: idattribuant[text]
+- *dateConvention
+*: dateconvention[date]
+- *referenceDecision
+*: referencedecision[text]
+- *nomBeneficiaire
+*: nombeneficiaire[text]
+- *idBeneficiaire
+*: idbeneficiaire[text]
+- *objet
+*: objet[text]
+- *montant*: montant[double]
+- *NATURETIERS*: naturetiers[text]
+- *nature
+*: nature[text]
+- *conditionsVersement
+*: conditionsversement[text]
+- *datesPeriodeVersement
+*: datesperiodeversement[text]
+- *idRAE
+*: idrae[text]
+- *notificationUE*: notificationue[text]
+- *pourcentageSubvention
+*: pourcentagesubvention[text]
+",remote,csv,text/csv,,,,2021-04-23T02:04:52.111000,2021-04-22T13:32:32,2,,
+5ff3ae4f0d49440e995d201e,Conventions de subventions attribuées par la Région Centre-Val de Loire 2019,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2019/,"Liste des conventions de subventions supérieures à 23 000€ attribuées par la Région Centre-Val de Loire en 2019.
+
+Conformément à la publication, le 7 mai 2017, du [décret n°2017-779 du 5 mai](https://www.legifrance.gouv.fr/eli/decret/2017/5/5/PRMJ1636989D/jo/texte/fr), relatif à l’accès sous forme électronique aux données des conventions de subvention et de l’[a](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528)[rrêté du 17 novembre 2017](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528) relatif aux conditions de mises à disposition des données essentielles des conventions de subvention.",Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,unknown,5ff3ae4f0d49440e995d201e,Conventions de subventions attribuées par la Région Centre-Val de Loire 2019,conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2019,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2019/,Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,Licence Ouverte / Open Licence version 2.0,False,False,d06c6936-2ba4-424c-bf3a-4e61c0cf647f,https://data.centrevaldeloire.fr/explore/dataset/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2019/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text] Nom officiel de l'organisme attribuant la subvention
+- *idAttribuant*: idattribuant[int] Identifiant unique de l'attribuant de la subvention (SIRET)
+- *datedeConvention*: datedeconvention[date]
+- *referenceDecision*: referencedecision[text] Référence de l'acte matérialisant la décision d'attribution de la subvention
+- *nomBénéficiaire*: nombeneficiaire[text] Nom du bénéficiaire
+- *idBeneficiaire*: idbeneficiaire[text] Identifiant unique du bénéficiaire de la subvention (SIRET)
+- *objet*: objet[text] Objet de la subvention attribuée
+- *montant*: montant[int] Montant total de la subvention attribuée en € TTC, avant répartition entre les bénéficiaires
+- *nature*: nature[text] Nature de la subvention attribuée
+- *conditionsVersement*: conditionsversement[text] Conditions de versement de la subvention
+- *datesPeriodeVersement*: datesperiodeversement[text] Date ou période de versement
+- *idRAE*: idrae[text]
+- *notificationUE*: notificationue[text] Mention de l'existence d'une notification aux dispositions du règlement UE
+- *pourcentageSubvention*: pourcentagesubvention[int] Pourcentage du montant de la subvention attribuée au bénéficiaire
+",remote,csv,text/csv,,,,2021-01-05T01:09:51.429000,2021-01-04T10:33:49,0,,2021-01-04T10:33:49
+5d36f8119ce2e7204990b698,Les subventions attribuées depuis 2014,http://www.data.gouv.fr/fr/datasets/les-subventions-attribuees-depuis-2014/,"Ce jeu de données contient les subventions attribuées depuis 2014 par la Région Bretagne. Il est conforme au socle commun des données locales (<https://schema.data.gouv.fr/scdl/subventions/latest.html>).
+
+Contrairement aux obligations portant sur les données essentielles des conventions de subvention, au sens du décret n° 2017-779 du 5 mai 2017, la Région Bretagne a choisi de publier l'intégralité des subventions sans seuil minimal.
+
+Le champ date de convention correspond à la date de décision et, seuls les dossiers localisés au niveau des communes sont géolocalisés sur l'onglet visualisation.
+
+Les axes de programme sont ceux de la nomenclature stratégique par programme [(NSP) en cours](https://data.megalis.bretagne.bzh/OpenData/233500016/Deliberation/2022/e4223a2619ca204cd1fda0eb16cb4f33a7aca63a1bc564d908fc141a0cfad5b3.pdf). 
+
+Quand des programmes ont été arrêté, ils sont classés dans la catégorie axe de programme : MX-Autre.",Région Bretagne,559a4970c751df46a9a453ba,unknown,5d36f8119ce2e7204990b698,Les subventions attribuées depuis 2014,les-subventions-attribuees-depuis-2014,http://www.data.gouv.fr/fr/datasets/les-subventions-attribuees-depuis-2014/,Région Bretagne,559a4970c751df46a9a453ba,Licence Ouverte / Open Licence version 2.0,False,False,805dabc3-dcb8-4ab4-b847-7afe49ef0582,https://breizh.opendatasoft.com/explore/dataset/subventions_attribuees_scdl0/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text]
+- *idAttribuant*: idattribuant[int]
+- *dateconvention*: dateconvention[date]
+- *referenceDecision*: referencedecision[text]
+- *nomBeneficiaire*: nombeneficiaire[text]
+- *idBeneficiaire*: idbeneficiaire[text]
+- *objet*: objet[text]
+- *montant*: montant[double]
+- *nature*: nature[text]
+- *conditionsVersement*: conditionsversement[text]
+- *datesPeriodeVersement*: datesperiodeversement[date]
+- *idRAE*: idrae[text]
+- *notificationUE*: notificationue[text]
+- *pourcentageSubvention*: pourcentagesubvention[double]
+- *tiers_categorie*: tiers_categorie[text]
+- *tiers_commune_insee*: tiers_commune_insee[text]
+- *tiers_commune_libl*: tiers_commune_libl[text]
+- *programme_code*: programme_code[text]
+- *programme_libl*: programme_libl[text]
+- *programme_axe*: programme_axe[text]
+- *dossier_commune_insee*: dossier_commune_insee[text]
+- *dossier_commune_libl*: dossier_commune_libl[text]
+- *dossier_latitude*: dossier_latitude[text]
+- *dossier_longitude*: dossier_longitude[text]
+- *dossier_epci_libl*: dossier_epci_libl[text]
+- *point_geo*: point_geo[geo_point_2d]
+",remote,csv,text/csv,,,,2019-07-23T14:05:37.445000,2022-04-19T15:18:38,0,,
+5d36f8119ce2e7204990b698,Les subventions attribuées depuis 2014,http://www.data.gouv.fr/fr/datasets/les-subventions-attribuees-depuis-2014/,"Ce jeu de données contient les subventions attribuées depuis 2014 par la Région Bretagne. Il est conforme au socle commun des données locales (<https://schema.data.gouv.fr/scdl/subventions/latest.html>).
+
+Contrairement aux obligations portant sur les données essentielles des conventions de subvention, au sens du décret n° 2017-779 du 5 mai 2017, la Région Bretagne a choisi de publier l'intégralité des subventions sans seuil minimal.
+
+Le champ date de convention correspond à la date de décision et, seuls les dossiers localisés au niveau des communes sont géolocalisés sur l'onglet visualisation.
+
+Les axes de programme sont ceux de la nomenclature stratégique par programme [(NSP) en cours](https://data.megalis.bretagne.bzh/OpenData/233500016/Deliberation/2022/e4223a2619ca204cd1fda0eb16cb4f33a7aca63a1bc564d908fc141a0cfad5b3.pdf). 
+
+Quand des programmes ont été arrêté, ils sont classés dans la catégorie axe de programme : MX-Autre.",Région Bretagne,559a4970c751df46a9a453ba,unknown,5d36f8119ce2e7204990b698,Les subventions attribuées depuis 2014,les-subventions-attribuees-depuis-2014,http://www.data.gouv.fr/fr/datasets/les-subventions-attribuees-depuis-2014/,Région Bretagne,559a4970c751df46a9a453ba,Licence Ouverte / Open Licence version 2.0,False,False,f382371b-d673-462b-8916-769bcbfe4240,http://breizh.opendatasoft.com/explore/dataset/subventions_attribuees_scdl0/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text]
+- *idAttribuant*: idattribuant[int]
+- *dateconvention*: dateconvention[date]
+- *referenceDecision*: referencedecision[text]
+- *nomBeneficiaire*: nombeneficiaire[text]
+- *idBeneficiaire*: idbeneficiaire[text]
+- *objet*: objet[text]
+- *montant*: montant[double]
+- *nature*: nature[text]
+- *conditionsVersement*: conditionsversement[text]
+- *datesPeriodeVersement*: datesperiodeversement[date]
+- *idRAE*: idrae[text]
+- *notificationUE*: notificationue[text]
+- *pourcentageSubvention*: pourcentagesubvention[double]
+- *tiers_categorie*: tiers_categorie[text]
+- *tiers_commune_insee*: tiers_commune_insee[text]
+- *tiers_commune_libl*: tiers_commune_libl[text]
+- *programme_code*: programme_code[text]
+- *programme_libl*: programme_libl[text]
+- *programme_axe*: programme_axe[text]
+- *dossier_commune_insee*: dossier_commune_insee[text]
+- *dossier_commune_libl*: dossier_commune_libl[text]
+- *dossier_latitude*: dossier_latitude[double]
+- *dossier_longitude*: dossier_longitude[double]
+- *dossier_epci_libl*: dossier_epci_libl[text]
+- *point_geo*: point_geo[geo_point_2d]
+",remote,csv,text/csv,,,,2019-08-12T11:46:57.407000,2023-04-17T10:06:58,0,,2023-04-17T10:06:58
+5caaf23406e3e718494eac1a,Subventions du Conseil départemental de la Haute-Garonne,http://www.data.gouv.fr/fr/datasets/subventions-du-conseil-departemental-de-la-haute-garonne-1/,"Les collectivités locales ont l’obligation, à compter du 1er août 2017, de communiquer les subventions qu’elles attribuent. 
+
+Cette obligation leur incombe avec la publication le 7 mai 2017 du[ décret n°2017-779 du 5 mai](https://www.legifrance.gouv.fr/eli/decret/2017/5/5/PRMJ1636989D/jo/texte/fr), relatif à l’accès sous forme électronique aux données des conventions de subvention et de l’[arrêté du 17 novembre 2017](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528) relatif aux conditions de mises à disposition des données essentielles des conventions de subvention
+
+Ce texte met en application l’article 18 de la loi pour une République numérique (n°2016-1321 du 7 octobre 2016), venu lui-même modifier l’[article 10 de la loi n° 2000-321 du 12 avril 2000](https://www.legifrance.gouv.fr/affichTexteArticle.do?cidTexte=JORFTEXT000000215117&idArticle=LEGIARTI000006529194&dateTexte=20000413&categorieLien=cid) relative aux droits des citoyens dans leurs relations avec les administrations.
+
+Cette communication concerne les conventions de subventions passées en application de l'article 10 de la Loi du 12 avril 2000, c'est à dire, en principe, uniquement seules supérieure à 23 000 € et conclues avec un demandeur privé ce seuil est fixé par l’art. 1er du [décret n°2001-495 du 6 juin 2001 pris pour l'application de l'article 10 de la loi n° 2000-321 du 12 avril 2000 et relatif à la transparence financière des aides octroyées par les personnes publiques](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=LEGITEXT000005631044)).
+
+(Pour ce qui concerne la nature de la subvention, l’obligation de diffusion des données essentielles de la convention concerne toutes les subventions qui répondent à la définition qui figure à l’article [9-1 de la loi du 12 avril 2000](https://www.legifrance.gouv.fr/affichTexteArticle.do;jsessionid=05750891A4EBA2EC7F8992401755C612.tpdila18v_2?idArticle=LEGIARTI000029318586&cidTexte=JORFTEXT000000215117&dateTexte=20170705&categorieLien=id&oldAction=)).",Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,unknown,5caaf23406e3e718494eac1a,Subventions du Conseil départemental de la Haute-Garonne,subventions-du-conseil-departemental-de-la-haute-garonne-1,http://www.data.gouv.fr/fr/datasets/subventions-du-conseil-departemental-de-la-haute-garonne-1/,Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,Licence Ouverte / Open Licence version 2.0,False,2020-01-23T01:22:09.280000,d7d40801-b9d0-42aa-86a4-6958803a9bcf,http://data.laregion.fr/explore/dataset/datalocale-subventions-du-conseil-departemental-haute-garonne/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text] Nom officiel de l'organisme attribuant la subvention
+- *idAttribuant*: idattribuant[int] Identifiant du Système d'Identification du Répertoire des Etablissements (SIRET) de l'attributaire
+- *dateConvention*: dateconvention[date] Date de la convention de subvention
+- *referenceDecision*: referencedecision[text] Référence de la décision
+- *idBeneficiaire*: idbeneficiaire[int] Identifiant du Système d'Identification du Répertoire des Etablissements (SIRET) du bénéficiaire
+- *nomBeneficiaire*: nombeneficiaire[text] Nom du bénéficiaire
+- *objet*: objet[text] Objet de la subvention
+- *montant*: montant[double] Le montant total de la subvention, avant répartition entre les bénéficiaires.
+- *nature*: nature[text] Nature de la subvention
+- *conditionsVersement*: conditionsversement[text] Conditions de versement
+- *datesPeriodeVersement*: datesperiodeversement[text] Date (s) ou période (s) de versement 
+- *idRAE*: idrae[text] Numéro unique de référencement au répertoire des aides aux entreprises (RAE)
+- *notificationUE*: notificationue[text] Aide d'Etat notifiée à la Commission européenne, conformément aux dispositions du règlement (UE) n° 1407/2013 de la Commission du 18 décembre 2013
+- *pourcentageSubvention*: pourcentagesubvention[double] Pourcentage du montant de la subvention attribuée au bénéficiaire
+",remote,csv,text/csv,,,,2019-04-08T09:03:16.695000,2018-06-29T07:27:08,0,,
+5caaf2069ce2e753a68c381b,Subventions (expérimentation),http://www.data.gouv.fr/fr/datasets/subventions-experimentation-1/,"Les collectivités locales ont l’obligation, depuis le 1er août 2017, de communiquer sur les subventions qu’elles attribuent. 
+
+Cette obligation leur incombe avec la publication le 7 mai 2017 du[ décret n°2017-779 du 5 mai](https://www.legifrance.gouv.fr/eli/decret/2017/5/5/PRMJ1636989D/jo/texte/fr), relatif à l’accès sous forme électronique aux données des conventions de subvention et de l’[arrêté du 17 novembre 2017](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528) relatif aux conditions de mises à disposition des données essentielles des conventions de subvention.
+
+Ce texte met en application l’article 18 de la loi pour une République numérique (n°2016-1321 du 7 octobre 2016), venu lui-même modifier l’[article 10 de la loi n° 2000-321 du 12 avril 2000](https://www.legifrance.gouv.fr/affichTexteArticle.do?cidTexte=JORFTEXT000000215117&idArticle=LEGIARTI000006529194&dateTexte=20000413&categorieLien=cid) relative aux droits des citoyens dans leurs relations avec les administrations.
+
+Cette communication concerne les conventions de subventions passées en application de l'article 10 de la Loi du 12 avril 2000, c'est à dire, en principe, uniquement seules supérieure à 23 000 € et conclues avec un demandeur privé ce seuil est fixé par l’art. 1er du [décret n°2001-495 du 6 juin 2001 pris pour l'application de l'article 10 de la loi n° 2000-321 du 12 avril 2000 et relatif à la transparence financière des aides octroyées par les personnes publiques](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=LEGITEXT000005631044)).
+
+(Pour ce qui concerne la nature de la subvention, l’obligation de diffusion des données essentielles de la convention concerne toutes les subventions qui répondent à la définition qui figure à l’article [9-1 de la loi du 12 avril 2000](https://www.legifrance.gouv.fr/affichTexteArticle.do;jsessionid=05750891A4EBA2EC7F8992401755C612.tpdila18v_2?idArticle=LEGIARTI000029318586&cidTexte=JORFTEXT000000215117&dateTexte=20170705&categorieLien=id&oldAction=)).
+
+Ce jeu intègre les subventions en deçà du seuil réglementaire des 23000 euros.",Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,unknown,5caaf2069ce2e753a68c381b,Subventions (expérimentation),subventions-experimentation-1,http://www.data.gouv.fr/fr/datasets/subventions-experimentation-1/,Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,Licence Ouverte / Open Licence version 2.0,False,2020-01-23T01:22:12.952000,fad0a2d6-1892-4803-8b53-af2e398a10f9,http://data.laregion.fr/explore/dataset/datalocale-subvention/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text] Nom officiel de l'organisme attribuant la subvention
+- *idAttribuant*: idattribuant[int] Identifiant du Système d'Identification du Répertoire des Etablissements (SIRET) de l'attributaire
+- *dateConvention*: dateconvention[date] Date de la convention de subvention
+- *referenceDecision*: referencedecision[text] Référence de la décision
+- *nomBeneficiaire*: nombeneficiaire[text] Nom du bénéficiaire
+- *idBeneficiaire*: idbeneficiaire[int] Identifiant du Système d'Identification du Répertoire des Etablissements (SIRET) du bénéficiaire
+- *objet*: objet[text] Objet de la subvention
+- *montant*: montant[double] Le montant total de la subvention, avant répartition entre les bénéficiaires.
+- *nature*: nature[text] Nature de la subvention
+- *conditionsVersement*: conditionsversement[text] Conditions de versement
+- *datesPeriodeVersement*: datesperiodeversement[date] Date (s) ou période (s) de versement 
+- *idRAE*: idrae[text] Numéro unique de référencement au répertoire des aides aux entreprises (RAE)
+- *notificationUE*: notificationue[text] Aide d'Etat notifiée à la Commission européenne, conformément aux dispositions du règlement (UE) n° 1407/2013 de la Commission du 18 décembre 2013
+- *pourcentageSubvention*: pourcentagesubvention[double] Pourcentage du montant de la subvention attribuée au bénéficiaire
+",remote,csv,text/csv,,,,2019-04-08T09:02:30.942000,2019-01-18T16:28:31.767000,0,,
+5c771bb406e3e71d5bfe3786,Subventions versées en 2016 et 2017 par la Région aux associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-et-2017-par-la-region-aux-associations/,"Montant des subventions versées aux associations comprend les mandats effectués par la Région et ceux versés par l'Association de Service et de Paiement en tant que délégataire de la Région.
+
+La liste des subventions versées par la Région aux associations est établie à partir des critères suivants :
+
+  * Natures comptables de type : 204 ""Subventions d'équipement versées"" ; 657 ""Subventions"" ; 674 ""Subventions exceptionnelles""
+  * Types de Tiers : Associations, Collèges privés, Congrégations, Fondations, Indivision, Lycée privé, Syndicat de copropriété, Syndicat patronal, Syndicat",Région Île-de-France,534fffa8a3a7292c64a780c8,unknown,5c771bb406e3e71d5bfe3786,Subventions versées en 2016 et 2017 par la Région aux associations,subventions-versees-en-2016-et-2017-par-la-region-aux-associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-et-2017-par-la-region-aux-associations/,Région Île-de-France,534fffa8a3a7292c64a780c8,Licence Ouverte / Open Licence version 2.0,False,False,452318f6-a70c-4440-a55e-5b968d0c0eb9,https://data.iledefrance.fr/explore/dataset/subventions-versees-aux-associations-par-la-region-ile-de-france/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *ANNEE*: annee[text]
+- *NOM DE L'ASSOCIATION OU DE LA FONDATION BENEFICIAIRE*: nom_de_l_association_ou_de_la_fondation_beneficiaire[text]
+- *ADRESSE COMPLETE*: adresse_complete[text]
+- *ADRESSE*: adresse[text]
+- *CODE POSTAL*: cp[text]
+- *VILLE*: ville[text]
+- *N° SIREN*: ndeg_siren[text]
+- *AUTRE N° D'IDENTIFICATION*: autre_ndeg_d_identification[text]
+- *MONTANT DE LA SUBVENTION*: montant_de_la_subvention[double]
+- *MONTANT DU PRÊT*: montant_du_pret[double]
+- *MONTANT DE LA GARANTIE D'EMPRUNT*: montant_de_la_garantie_d_emprunt[double]
+- *AVANTAGES EN NATURE*: avantages_en_nature[text]
+- *LOCALISATION*: localisation[geo_point_2d]
+- *CONCAT LOCALISATION*: concat_localisation[text]
+- *latitude*: latitude[text]
+- *longitude*: longitude[text]
+- *result_label*: result_label[text]
+- *result_score*: result_score[text]
+- *result_type*: result_type[text]
+- *result_id*: result_id[text]
+- *result_housenumber*: result_housenumber[text]
+- *result_name*: result_name[text]
+- *result_street*: result_street[text]
+- *result_postcode*: result_postcode[double]
+- *result_city*: result_city[text]
+- *DEPARTEMENT*: departement[text]
+- *result_citycode*: result_citycode[double]
+",remote,csv,text/csv,,,,2019-02-28T00:22:28.732000,2019-02-25T13:48:14,2,,2019-02-25T13:48:14
+5c4ae9be9ce2e71b15275b85,Conventions de subventions attribuées par la Région Centre-Val de Loire 2018,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2018/,"Liste des conventions de subventions supérieures à 23 000€ attribuées par la Région Centre-Val de Loire en 2018.
+
+Conformément à la publication, le 7 mai 2017, du [décret n°2017-779 du 5 mai](https://www.legifrance.gouv.fr/eli/decret/2017/5/5/PRMJ1636989D/jo/texte/fr), relatif à l’accès sous forme électronique aux données des conventions de subvention et de l’[a](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528)[rrêté du 17 novembre 2017](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000036040528) relatif aux conditions de mises à disposition des données essentielles des conventions de subvention.",Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,unknown,5c4ae9be9ce2e71b15275b85,Conventions de subventions attribuées par la Région Centre-Val de Loire 2018,conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2018,http://www.data.gouv.fr/fr/datasets/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2018/,Région Centre-Val de Loire,561a7f00c751df4e6dcdbb48,Licence Ouverte / Open Licence version 2.0,False,False,e4135b31-d06c-4cd6-b75c-bd4d243fb07e,https://data.centrevaldeloire.fr/explore/dataset/conventions-de-subventions-attribuees-par-la-region-centre-val-de-loire-2018/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *nomAttribuant*: nomattribuant[text] Nom officiel de l'organisme attribuant la subvention
+- *idAttribuant*: idattribuant[int] Identifiant unique de l'attribuant de la subvention (SIRET)
+- *dateConvention*: dateconvention[date] Date de la convention qui attribue la subvention
+- *referenceDecision*: referencedecision[text] Référence de l'acte matérialisant la décision d'attribution de la subvention
+- *nomBeneficiaire*: nombeneficiaire[text] Nom du bénéficiaire
+- *idBeneficiaire*: idbeneficiaire[int] Identifiant unique du bénéficiaire de la subvention (SIRET)
+- *objet*: objet[text] Objet de la subvention attribuée
+- *montant*: montant[int] Montant total de la subvention attribuée en € TTC, avant répartition entre les bénéficiaires
+- *nature*: nature[text] Nature de la subvention attribuée
+- *conditionsVersement*: conditionsversement[text] Conditions de versement de la subvention
+- *datesPeriodeVersement*: datesperiodeversement[text] Date ou période de versement
+- *notificationUE*: notificationue[text] Mention de l'existence d'une notification aux dispositions du règlement UE
+- *pourcentageSubvention*: pourcentagesubvention[int] Pourcentage du montant de la subvention attribuée au bénéficiaire
+",remote,csv,text/csv,,,,2019-01-25T11:49:34.645000,2018-11-30T16:33:08,0,,2018-11-30T16:33:08
+5beafbaf9ce2e77441830ffe,Subventions attribuées aux associations par la CTC en 2016,http://www.data.gouv.fr/fr/datasets/subventions-attribuees-aux-associations-par-la-ctc-en-2016/,Subventions attribuées aux associations par la Collectivité Territoriale de Corse en 2016,Collectivité de Corse,537d58eea3a72973a2dc026c,unknown,5beafbaf9ce2e77441830ffe,Subventions attribuées aux associations par la CTC en 2016,subventions-attribuees-aux-associations-par-la-ctc-en-2016,http://www.data.gouv.fr/fr/datasets/subventions-attribuees-aux-associations-par-la-ctc-en-2016/,Collectivité de Corse,537d58eea3a72973a2dc026c,Licence Ouverte / Open Licence version 2.0,False,2022-11-02T17:21:01.963000,656213ad-be93-4b8b-aff5-c758499ef57c,https://www.data.corsica/explore/dataset/subventions-attribuees-aux-associations-par-la-ctc-en-2016/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *Num Programme*: num_programme[text]
+- *nom association*: nom_association[text]
+- *code postal*: code_postal[text]
+- *ville*: ville[text]
+- *nature de l’opération subventionnée*: nature_de_l_operation_subventionnee[text]
+- *type d’aide*: type_d_aide[text]
+- *montant affecté*: montant_affecte[double]
+- *Année*: annee[text]
+",remote,csv,text/csv,,,,2018-11-13T17:28:31.504000,2017-09-06T09:09:40,1,,
+5bd89d5d06e3e738ef8c0ebe,Subventions du Conseil Régional,http://www.data.gouv.fr/fr/datasets/subventions-du-conseil-regional/,Listes des subventions accordées aux organismes de droit privé en commission permanente dont le montant est supérieur à 23 000 € depuis juillet 2018.,Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,unknown,5bd89d5d06e3e738ef8c0ebe,Subventions du Conseil Régional,subventions-du-conseil-regional,http://www.data.gouv.fr/fr/datasets/subventions-du-conseil-regional/,Région Occitanie / Pyrénées Méditerranée,5a153f5688ee3829e2fbf39f,Licence Ouverte / Open Licence version 2.0,False,False,ebb11142-c461-494c-bebf-fbb83102f79e,http://data.laregion.fr/explore/dataset/subventions-du-conseil-regional/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *Nom attribuant*: nomattribuant[text]
+- *Id Attribuant*: idattribuant[text]
+- *Date de convention*: dateconvention[text]
+- *Date de vote*: datevote[date]
+- *Référence décision 1*: referencedecision1[text]
+- *Référence décision 2*: referencedecision2[text]
+- *Nom bénéficiaire*: nombeneficiaire[text]
+- *Id bénéficiaire*: idbeneficiaire[text]
+- *Objet de la subvention*: objet[text]
+- *Montant*: montant[double]
+- *Nature*: nature[text]
+- *Conditions de versement*: conditionsversement[text]
+- *Dates période versement*: datesperiodeversement[text]
+- *Id RAE*: idrae[text]
+- *Notification UE*: notificationue[text]
+- *Pourcentage subvention*: pourcentagesubvention[text]
+",remote,csv,text/csv,,,,2018-10-30T19:05:17.898000,2021-08-31T07:42:05,2,,2021-08-31T07:42:05
+5a3368b8b5950814d4601d58,Subventions versées en 2016 par la Région aux associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-par-la-region-aux-associations/,"Montant des subventions versées aux associations comprend les mandats effectués par la Région et ceux versés par l'Association de Service et de Paiement en tant que délégataire de la Région.
+
+La liste des subventions versées par la Région aux associations est établie à partir des critères suivants :
+
+  * Natures comptables de type  : 204 ""Subventions d'équipement versées"" ; 657 ""Subventions"" ; 674 ""Subventions exceptionnelles""
+  * Types de Tiers : Associations, Collèges privés, Congrégations, Fondations, Indivision, Lycée privé, Syndicat de copropriété, Syndicat patronal, Syndicat",Région Île-de-France,534fffa8a3a7292c64a780c8,unknown,5a3368b8b5950814d4601d58,Subventions versées en 2016 par la Région aux associations,subventions-versees-en-2016-par-la-region-aux-associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-par-la-region-aux-associations/,Région Île-de-France,534fffa8a3a7292c64a780c8,Licence Ouverte / Open Licence version 2.0,False,2020-01-23T05:08:48.495000,24a43226-0d08-4713-8ecf-8a85fae3fb3d,https://data.iledefrance.fr//explore/dataset/liste-des-subventions-versees-en-2016-par-la-region-aux-associations/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *NOM DE L'ASSOCIATION OU DE LA FONDATION BENEFICIAIRE*: nom_de_l_association_ou_de_la_fondation_beneficiaire[text]
+- *ADRESSE COMPLETE*: adresse_complete[text]
+- *ADRESSE*: adresse[text]
+- *CP*: cp[int]
+- *VILLE*: ville[text]
+- *N° SIREN*: ndeg_siren[int]
+- *AUTRE N° D'IDENTIFICATION*: autre_ndeg_d_identification[text]
+- *MONTANT DE LA SUBVENTION*: montant_de_la_subvention[double]
+- *MONTANT DU PRÊT*: montant_du_pret[text]
+- *MONTANT DE LA GARANTIE D'EMPRUNT*: montant_de_la_garantie_d_emprunt[text]
+- *AVANTAGES EN NATURE*: avantages_en_nature[text]
+- *LOCALISATION*: localisation[geo_point_2d]
+",remote,csv,text/csv,,,,2018-03-14T07:35:29.031000,2017-12-14T11:52:16,19,,
+5a3368b8b5950814d4601d58,Subventions versées en 2016 par la Région aux associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-par-la-region-aux-associations/,"Montant des subventions versées aux associations comprend les mandats effectués par la Région et ceux versés par l'Association de Service et de Paiement en tant que délégataire de la Région.
+
+La liste des subventions versées par la Région aux associations est établie à partir des critères suivants :
+
+  * Natures comptables de type  : 204 ""Subventions d'équipement versées"" ; 657 ""Subventions"" ; 674 ""Subventions exceptionnelles""
+  * Types de Tiers : Associations, Collèges privés, Congrégations, Fondations, Indivision, Lycée privé, Syndicat de copropriété, Syndicat patronal, Syndicat",Région Île-de-France,534fffa8a3a7292c64a780c8,unknown,5a3368b8b5950814d4601d58,Subventions versées en 2016 par la Région aux associations,subventions-versees-en-2016-par-la-region-aux-associations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2016-par-la-region-aux-associations/,Région Île-de-France,534fffa8a3a7292c64a780c8,Licence Ouverte / Open Licence version 2.0,False,2020-01-23T05:08:48.495000,f69a7e5d-3565-4c77-a28e-0e34da8fa2cf,https://data.iledefrance.fr/explore/dataset/liste-des-subventions-versees-en-2016-par-la-region-aux-associations/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *NOM DE L'ASSOCIATION OU DE LA FONDATION BENEFICIAIRE*: nom_de_l_association_ou_de_la_fondation_beneficiaire[text]
+- *ADRESSE COMPLETE*: adresse_complete[text]
+- *ADRESSE*: adresse[text]
+- *CP*: cp[int]
+- *VILLE*: ville[text]
+- *N° SIREN*: ndeg_siren[int]
+- *AUTRE N° D'IDENTIFICATION*: autre_ndeg_d_identification[text]
+- *MONTANT DE LA SUBVENTION*: montant_de_la_subvention[double]
+- *MONTANT DU PRÊT*: montant_du_pret[text]
+- *MONTANT DE LA GARANTIE D'EMPRUNT*: montant_de_la_garantie_d_emprunt[text]
+- *AVANTAGES EN NATURE*: avantages_en_nature[text]
+- *LOCALISATION*: localisation[geo_point_2d]
+",remote,csv,text/csv,,,,2018-03-16T07:40:33.227000,2017-12-14T11:52:16,2,,
+5959189da3a7291dcf9c80d6,Subventions versées en 2013 aux associations ou aux fondations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2013-aux-associations-ou-aux-fondations/,"Liste des bénéficiaires des subventions que la Région Île-de-France a versées sous forme monétaire ou consenties sous forme d’un prêt, d’une garantie ou d’un avantage en nature aux associations de droit français ou aux fondations reconnues d’utilité publique en 2013.
+
+Les bénéficiaires correspondent aux types de tiers suivants : associations loi 1901, collèges privés, congrégations, fondations, indivisions, lycées privés, syndicats de copropriétés, syndicats patronaux, syndicats.
+
+A noter qu'il s'agit d'associations domiciliées en France et que figurent parmi les associations loi 1901 les structures bénéficiant de subventions au titre de la formation professionnelle et de l'apprentissage (CFA et instituts de formation notamment).
+
+Les subventions sont versées directement par la Région et par l'entremise de l'ASP (Association de Service et de Paiement) en tant que délégataire de la Région.",Région Île-de-France,534fffa8a3a7292c64a780c8,unknown,5959189da3a7291dcf9c80d6,Subventions versées en 2013 aux associations ou aux fondations,subventions-versees-en-2013-aux-associations-ou-aux-fondations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2013-aux-associations-ou-aux-fondations/,Région Île-de-France,534fffa8a3a7292c64a780c8,Licence Ouverte / Open Licence version 2.0,False,False,01ef6967-1723-4ca9-b163-adf80aec0da7,https://data.iledefrance.fr//explore/dataset/subventions-versees-en-2013-aux-associations-ou-aux-fondations/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *Identifiant unique*: identifiant_unique[int]
+- *Bénéficiaire*: beneficiaire[text]
+- *Adresse*: adresse[text]
+- *N° SIREN*: ndeg_siren[int]
+- *Montant  subvention*: montant_subvention[double]
+- *Gestion*: gestion[text]
+",remote,csv,text/csv,,,,2018-03-14T07:21:42.369000,2015-12-22T13:54:47,53,,
+5959189da3a7291dcf9c80d6,Subventions versées en 2013 aux associations ou aux fondations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2013-aux-associations-ou-aux-fondations/,"Liste des bénéficiaires des subventions que la Région Île-de-France a versées sous forme monétaire ou consenties sous forme d’un prêt, d’une garantie ou d’un avantage en nature aux associations de droit français ou aux fondations reconnues d’utilité publique en 2013.
+
+Les bénéficiaires correspondent aux types de tiers suivants : associations loi 1901, collèges privés, congrégations, fondations, indivisions, lycées privés, syndicats de copropriétés, syndicats patronaux, syndicats.
+
+A noter qu'il s'agit d'associations domiciliées en France et que figurent parmi les associations loi 1901 les structures bénéficiant de subventions au titre de la formation professionnelle et de l'apprentissage (CFA et instituts de formation notamment).
+
+Les subventions sont versées directement par la Région et par l'entremise de l'ASP (Association de Service et de Paiement) en tant que délégataire de la Région.",Région Île-de-France,534fffa8a3a7292c64a780c8,unknown,5959189da3a7291dcf9c80d6,Subventions versées en 2013 aux associations ou aux fondations,subventions-versees-en-2013-aux-associations-ou-aux-fondations,http://www.data.gouv.fr/fr/datasets/subventions-versees-en-2013-aux-associations-ou-aux-fondations/,Région Île-de-France,534fffa8a3a7292c64a780c8,Licence Ouverte / Open Licence version 2.0,False,False,b5d28b3d-c535-4e11-91da-76b091638a8c,https://data.iledefrance.fr/explore/dataset/subventions-versees-en-2013-aux-associations-ou-aux-fondations/download?format=csv&timezone=Europe/Berlin&use_labels_for_header=false,Export au format CSV,"- *Identifiant unique*: identifiant_unique[int]
+- *Bénéficiaire*: beneficiaire[text]
+- *Adresse*: adresse[text]
+- *N° SIREN*: ndeg_siren[int]
+- *Montant  subvention*: montant_subvention[double]
+- *Gestion*: gestion[text]
+",remote,csv,text/csv,,,,2018-03-16T07:30:29.063000,2015-12-22T13:54:47,0,,2015-12-22T13:54:47

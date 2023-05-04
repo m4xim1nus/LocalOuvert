@@ -1,9 +1,15 @@
+import sys
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
+# Ajoutez le dossier /scripts/utils au `sys.path`
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'utils'))
+from utils import save_csv, get_project_base_path
+
 # Charger les fichiers CSV
-data_folder = Path("../../data/communities/")
+base_path = get_project_base_path()
+data_folder = Path(base_path / "data/communities/")
 infos_collectivites = pd.read_csv(data_folder / "processed_data/infos_collectivites.csv")
 sirene_data = pd.read_csv(data_folder / "scrapped_data/sirene/download_20230413.csv", usecols=['siren', 'trancheEffectifsUniteLegale'])
 
@@ -26,4 +32,4 @@ filtered_collectivites = infos_collectivites.loc[
 ]
 
 # Sauvegarder les données filtrées
-filtered_collectivites.to_csv(data_folder / "processed_data/selected_communities.csv", index=False)
+save_csv(filtered_collectivites, data_folder, "processed_data/selected_communities.csv")
