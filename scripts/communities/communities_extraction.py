@@ -4,12 +4,50 @@ import sys
 from pathlib import Path
 
 # Ajoutez le dossier /scripts/utils au `sys.path`
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'utils'))
-from utils import load_from_url, save_csv, get_project_base_path
+utils_path = str(Path(__file__).resolve().parents[1] / 'utils')
+if utils_path not in sys.path:
+    sys.path.insert(0, utils_path)
 
-# Téléchargement des fichiers Excel 
-def read_epci_mapping(file_path):
-    return pd.read_excel(file_path, dtype={"siren": str, "siren_membre": str})
+from files_operation import load_from_path, load_from_url, save_csv, download_and_process_data
+from config import get_project_base_path
+
+# Processus de traitement spécifiques des données
+def process_data(df, key, epci_communes_mapping=None):
+    if key == 'regions':
+        df = df[['Code Insee 2021 Région', 'Nom 2021 Région', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
+        df.columns = ['COG', 'nom', 'type', 'SIREN', 'population']
+        df = df.astype({'SIREN': str, 'COG': str})
+        df = df.sort_values('COG')
+        
+    elif key == 'departements':
+        df = df[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nom 2021 Département', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
+        df.columns = ['code_region', 'COG', 'nom', 'type', 'SIREN', 'population']
+        df['type'] = 'DEP'
+        df = df.astype({'SIREN': str, 'COG': str, 'code_region': str})
+        df['COG_3digits'] = df['COG'].str.zfill(3)
+        df = df[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_region', 'population']]
+        df = df.sort_values('COG')
+        
+    elif key == 'communes':
+        df = df[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Code Insee 2021 Commune', 'Nom 2021 Commune', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
+        df.columns = ['code_region', 'code_departement', 'COG', 'nom', 'type', 'SIREN', 'population']
+        df['type'] = 'COM'
+        df = df.astype({'SIREN': str, 'COG': str, 'code_departement': str})
+        df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
+        df = df[['nom', 'SIREN', 'COG', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
+        df = df.sort_values('COG')
+        df = df.merge(epci_communes_mapping[['siren', 'siren_membre']], left_on='SIREN', right_on='siren_membre', how='left')
+        df = df.drop(columns=['siren_membre'])
+        df.rename(columns={'siren': 'EPCI'}, inplace=True)
+        
+    elif key == 'interco':
+        df = df[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nature juridique 2021 abrégée', 'Code Siren 2021 EPCI', 'Nom 2021 EPCI', 'Population totale']]
+        df.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
+        df['type'] = df['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
+        df = df.astype({'SIREN': str, 'code_departement': str})
+        df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
+        df = df[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
+        df = df.sort_values('SIREN')
 
 # URL des données
 url_regions = "https://data.ofgl.fr/explore/dataset/ofgl-base-regions-consolidee/download/?format=csv&disjunctive.reg_name=true&disjunctive.agregat=true&refine.agregat=D%C3%A9penses+totales&refine.exer=2020&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
@@ -21,62 +59,34 @@ url_interco = "https://data.ofgl.fr/explore/dataset/ofgl-base-gfp-consolidee/dow
 # EPCI<>Communes : fichier excel téléchargé depuis https://www.collectivites-locales.gouv.fr/institutions/liste-et-composition-des-epci-fiscalite-propre
 base_path = get_project_base_path()
 epci_communes_path = base_path / "data/communities/scrapped_data/gouv_colloc" / "epcicom2023.xlsx"
+epci_communes_mapping = load_from_path(epci_communes_path, dtype={"siren": str, "siren_membre": str})
 
 # Téléchargement des données
 OFGL_dtype = {"Code Insee 2021 Région": str, "Code Insee 2021 Département": str, "Code Insee 2021 Commune": str}
-OFGL_regions = load_from_url(url_regions, dtype=OFGL_dtype)
-OFGL_departements = load_from_url(url_departements, dtype=OFGL_dtype)
-OFGL_communes = load_from_url(url_communes, dtype=OFGL_dtype)
-OFGL_interco = load_from_url(url_interco, dtype=OFGL_dtype)
-epci_communes_mapping = read_epci_mapping(epci_communes_path)
+url_data = {'regions': url_regions, 'departements': url_departements, 'communes': url_communes, 'interco': url_interco}
+data_frames = {}
+infos_coll = pd.DataFrame()
 
-# Traitement des régions
-OFGL_regions = OFGL_regions[['Code Insee 2021 Région', 'Nom 2021 Région', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
-OFGL_regions.columns = ['COG', 'nom', 'type', 'SIREN', 'population']
-OFGL_regions = OFGL_regions.astype({'SIREN': str, 'COG': str})
-OFGL_regions = OFGL_regions.sort_values('COG')
-
-# Traitement des départements
-OFGL_departements = OFGL_departements[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nom 2021 Département', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
-OFGL_departements.columns = ['code_region', 'COG', 'nom', 'type', 'SIREN', 'population']
-OFGL_departements['type'] = 'DEP'
-OFGL_departements = OFGL_departements.astype({'SIREN': str, 'COG': str, 'code_region': str})
-OFGL_departements['COG_3digits'] = OFGL_departements['COG'].str.zfill(3)
-OFGL_departements = OFGL_departements[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_region', 'population']]
-OFGL_departements = OFGL_departements.sort_values('COG')
-
-# Traitement des communes
-OFGL_communes = OFGL_communes[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Code Insee 2021 Commune', 'Nom 2021 Commune', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
-OFGL_communes.columns = ['code_region', 'code_departement', 'COG', 'nom', 'type', 'SIREN', 'population']
-OFGL_communes['type'] = 'COM'
-OFGL_communes = OFGL_communes.astype({'SIREN': str, 'COG': str, 'code_departement': str})
-OFGL_communes['code_departement_3digits'] = OFGL_communes['code_departement'].str.zfill(3)
-OFGL_communes = OFGL_communes[['nom', 'SIREN', 'COG', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
-OFGL_communes = OFGL_communes.sort_values('COG')
-
-# Fusion du mapping communes <> EPCI
-OFGL_communes = OFGL_communes.merge(epci_communes_mapping[['siren', 'siren_membre']], left_on='SIREN', right_on='siren_membre', how='left')
-OFGL_communes = OFGL_communes.drop(columns=['siren_membre'])
-OFGL_communes.rename(columns={'siren': 'EPCI'}, inplace=True)
-
-# Traitement des intercommunalités
-OFGL_interco = OFGL_interco[['Code Insee 2021 Région', 'Code Insee 2021 Département', 'Nature juridique 2021 abrégée', 'Code Siren 2021 EPCI', 'Nom 2021 EPCI', 'Population totale']]
-OFGL_interco.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
-OFGL_interco['type'] = OFGL_interco['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
-OFGL_interco = OFGL_interco.astype({'SIREN': str})
-OFGL_interco['code_departement_3digits'] = OFGL_interco['code_departement'].str.zfill(3)
-OFGL_interco = OFGL_interco[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
-OFGL_interco = OFGL_interco.sort_values('population')
-
-# Export des fichiers CSV
 processed_data_folder = Path(base_path / "data/communities//processed_data/")
-save_csv(OFGL_regions, processed_data_folder, f"identifiants_regions_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_departements, processed_data_folder, f"identifiants_departements_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_communes, processed_data_folder, f"identifiants_communes_{datetime.now().strftime('%Y')}.csv")
-save_csv(OFGL_interco, processed_data_folder, f"identifiants_epci_{datetime.now().strftime('%Y')}.csv")
 
-# Fusion des DataFrames
-infos_coll = pd.concat([OFGL_regions, OFGL_departements, OFGL_communes, OFGL_interco], axis=0, ignore_index=True)
+for key, url in url_data.items():
+    # Téléchargement des données
+    df = load_from_url(url, dtype=OFGL_dtype)
+
+    # Traitement spécifique pour chaque base en utilisant la fonction process_data
+    if key == 'communes':
+        df = process_data(df, key, epci_communes_mapping)
+    else:
+        df = process_data(df, key)
+
+    # Sauvegarde du fichier CSV
+    save_csv(df, processed_data_folder, f"identifiants_{key}_{datetime.now().strftime('%Y')}.csv")
+
+    # Ajout du DataFrame traité dans le dictionnaire "data_frames"
+    data_frames[key] = df
+
+    # Concaténation des DataFrames traités dans infos_coll
+    infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
 
 # Remplir les valeurs manquantes par une chaîne vide
 infos_coll.fillna('', inplace=True)

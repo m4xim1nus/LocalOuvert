@@ -4,8 +4,12 @@ import numpy as np
 from pathlib import Path
 
 # Ajoutez le dossier /scripts/utils au `sys.path`
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'utils'))
-from utils import save_csv, get_project_base_path
+utils_path = str(Path(__file__).resolve().parents[1] / 'utils')
+if utils_path not in sys.path:
+    sys.path.insert(0, utils_path)
+
+from files_operation import save_csv
+from config import get_project_base_path
 
 # Charger les fichiers CSV
 base_path = get_project_base_path()
