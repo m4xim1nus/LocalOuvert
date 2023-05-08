@@ -1,6 +1,8 @@
+import csv
 import gzip
 import time
 import requests
+import chardet
 import pandas as pd
 from io import StringIO
 from requests.exceptions import Timeout
@@ -23,7 +25,7 @@ def detect_delimiter(text, num_lines=5, delimiters=None):
     return max(counts, key=counts.get)
 
 # Fonction pour télécharger un fichier CSV
-def load_from_url(url, dtype=None, num_retries=3, delay_between_retries=5):
+def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_between_retries=5):
     for attempt in range(num_retries):
         try:
             response = requests.get(url)
@@ -35,8 +37,15 @@ def load_from_url(url, dtype=None, num_retries=3, delay_between_retries=5):
                 content = response.content
                 if 'gzip' in content_type:
                     content = gzip.decompress(content)
-                delimiter = detect_delimiter(content.decode('utf-8'))
-                df = pd.read_csv(StringIO(content.decode('utf-8')), delimiter=delimiter, dtype=dtype)
+                
+                #Détection de l'encoding
+                encoding = 'utf-8' #chardet.detect(content)['encoding']
+
+                #Décodage du contenu
+                decoded_content = content.decode(encoding)
+
+                delimiter = detect_delimiter(decoded_content)
+                df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, usecols=columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
                 return df
         except Timeout:
             if attempt < num_retries - 1:
