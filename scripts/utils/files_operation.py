@@ -45,7 +45,10 @@ def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_be
                 decoded_content = content.decode(encoding)
 
                 delimiter = detect_delimiter(decoded_content)
-                df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, usecols=columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
+                if columns_to_keep is not None:
+                    df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, usecols=lambda c: c in columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
+                else:
+                    df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
                 return df
         except Timeout:
             if attempt < num_retries - 1:
