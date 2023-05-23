@@ -12,31 +12,37 @@ from config import get_project_base_path
 
 class OfglLoader():
     def __init__(self,config):
-        base_path = get_project_base_path()
-        epci_communes_path = base_path / config["epci"]["file"]
-        epci_communes_mapping = load_from_path(epci_communes_path, dtype=config["epci"]["dtype"])
-        infos_coll = pd.DataFrame()
-        for key, url in config["url"].items():
-            # Téléchargement des données
-            df = load_from_url(url, dtype=config["dtype"])
-            # Traitement spécifique pour chaque base en utilisant la fonction process_data
-            if key == 'communes':
-                df = self.process_data(df, key, epci_communes_mapping)
-            else:
-                df = self.process_data(df, key)
+        data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
+        data_file = data_folder / config["processed_data"]["filename"]
+        if data_file.exists():
+            self.data = pd.read_csv(data_file)
+        else:
+            base_path = get_project_base_path()
+            epci_communes_path = base_path / config["epci"]["file"]
+            epci_communes_mapping = load_from_path(epci_communes_path, dtype=config["epci"]["dtype"])
+            infos_coll = pd.DataFrame()
+            for key, url in config["url"].items():
+                # Téléchargement des données
+                df = load_from_url(url, dtype=config["dtype"])
+                # Traitement spécifique pour chaque base en utilisant la fonction process_data
+                if key == 'communes':
+                    df = self.process_data(df, key, epci_communes_mapping)
+                else:
+                    df = self.process_data(df, key)
 
-            # Concaténation des DataFrames traités dans infos_coll
-            infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
+                # Concaténation des DataFrames traités dans infos_coll
+                infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
 
-        # Remplir les valeurs manquantes par une chaîne vide
-        infos_coll.fillna('', inplace=True)
-        self.data = infos_coll
+            # Remplir les valeurs manquantes par une chaîne vide
+            infos_coll.fillna('', inplace=True)
+            self.data = infos_coll
+            self.save(Path(config["processed_data"]["path"]),config["processed_data"]["filename"])
     
     def get(self):
         return self.data
     
-    def save(self):
-        save_csv(self.data,config["processed_data_folder"],f"ofgl_data_{datetime.now().strftime('%Y')}.csv")
+    def save(self,path,filename):
+        save_csv(self.data,path,filename)
 
     def process_data(self, df, key, epci_communes_mapping=None):
         if key == 'regions':
