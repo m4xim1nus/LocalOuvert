@@ -17,7 +17,12 @@ class CommunitiesSelector():
         ofgl = OfglLoader(config["ofgl"])
         odf = OdfLoader(config["odf"])
         sirene = SireneLoader(config["sirene"])
-        all_data = ofgl.get().merge(odf.get()[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], left_on='SIREN', right_on='siren', how='left')
+        ofgl_data = ofgl.get()
+        odf_data = odf.get()
+        # Worth Exploring Here ! If you cast to Int, it breaks
+        ofgl_data["SIREN"] = ofgl_data["SIREN"].astype(str)
+        odf_data["siren"] = odf_data["siren"].astype(str) 
+        all_data = ofgl_data.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], left_on='SIREN', right_on='siren', how='left')
 
         # Supprimer la colonne 'siren' dupliquée et réorganiser les colonnes
         all_data.drop(columns=['siren'], inplace=True)
@@ -39,12 +44,17 @@ class CommunitiesSelector():
 
         self.all_data = all_data
     
-    def select(self):
+    def filter(self):
         self.filtered_data = self.all_data.loc[
                             (self.all_data['type'] != 'COM') |
                             ((self.all_data['type'] == 'COM') &
                             (self.all_data['population'] >= 3500) &
                             (self.all_data['EffectifsSup50'] == True))]
+    def get_filtered_data(self):
+        return self.filtered_data
+    
+    def get_datagouv_ids_list(self):
+        return self.filtered_data[self.filtered_data["id-datagouv"].notnull()]["id-datagouv"].to_list()
 
     def save_csv(self,config):
         print("hello")

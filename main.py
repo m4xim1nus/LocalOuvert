@@ -4,11 +4,11 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-utils_path = str(Path(__file__).resolve().parents[0] / 'scripts' /'communities')
+utils_path = str(Path(__file__).resolve().parents[0] / 'scripts' /'datasets')
 if utils_path not in sys.path:
     sys.path.insert(0, utils_path)
 
-from communities_selector import CommunitiesSelector
+from datagouv_searcher import DataGouvSearcher
 
 utils_path = str(Path(__file__).resolve().parents[0] / 'scripts' /'utils')
 if utils_path not in sys.path:
@@ -24,4 +24,4 @@ if __name__ == "__main__":
     with open(args.filename) as f:
         # use safe_load instead load
         config = yaml.safe_load(f)
-    selector = CommunitiesSelector(config["communities"])
+    datagouv = DataGouvSearcher(config)

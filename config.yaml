@@ -9,6 +9,9 @@ communities:
       Code Insee 2021 Région: str
       Code Insee 2021 Département: str
       Code Insee 2021 Commune: str
+    processed_data:
+      path: data/communities/processed_data
+      filename: ofgl_data.csv
 
     epci:
       file: data/communities/scrapped_data/gouv_colloc/epcicom2023.xlsx
@@ -21,9 +24,27 @@ communities:
     url: https://static.data.gouv.fr/resources/donnees-de-lobservatoire-open-data-des-territoires-edition-2022/20230202-112356/indicateurs-odater-organisations-2022-12-31-.csv
     dtype:
       siren: str
+    processed_data:
+      path: data/communities/processed_data
+      filename: odf_data.csv
+
   sirene:
     path: data/communities/
     filename: scrapped_data/sirene/download_20230413.csv
     columns:
       - "siren"
       - "trancheEffectifsUniteLegale"
+
+datagouv:
+  datasets:
+    url: https://www.data.gouv.fr/fr/datasets/r/f868cca6-8da1-4369-a78d-47463f19a9a3
+    columns:
+      - "id"
+      - "title"
+      - "url"
+      - "description"
+      - "organization"
+      - "organization_id"
+      - "frequency"
+  datafiles:
+    url: https://www.data.gouv.fr/fr/datasets/r/4babf5f2-6a9c-45b5-9144-ca5eae6a7a6d
