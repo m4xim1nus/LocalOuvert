@@ -31,8 +31,6 @@ class CommunitiesSelector():
         all_data = all_data[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
         all_data["SIREN"] = all_data["SIREN"].astype(int)
 
-        print(all_data.SIREN)
-        print(sirene.get()['siren'])
         all_data = all_data.merge(sirene.get(), left_on='SIREN', right_on='siren', how='left')
         all_data.drop(columns=['siren'], inplace=True)
         

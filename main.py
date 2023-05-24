@@ -25,3 +25,6 @@ if __name__ == "__main__":
         # use safe_load instead load
         config = yaml.safe_load(f)
     datagouv = DataGouvSearcher(config)
+    out = datagouv.get_datasets_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
+    print(out.index.size)
+    datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"],file_title_filter="asso")

@@ -48,3 +48,12 @@ datagouv:
       - "frequency"
   datafiles:
     url: https://www.data.gouv.fr/fr/datasets/r/4babf5f2-6a9c-45b5-9144-ca5eae6a7a6d
+
+search:
+  subventions:
+    title_filter: (?:conventions de subvention|subv.*asso|subvention.*association|Subventions du Conseil Régional|Interventions de la Région des Pays de la Loire|SCDL - Subventions)
+    description_filter: (?:conventions de subvention|subvention.*association|subv.*asso)
+    column_filter:
+      - montant
+    content_filter:
+      - asso
