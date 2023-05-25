@@ -21,31 +21,25 @@ class DataGouvSearcher():
         self.datagouv_ids_list = self.scope.get_datagouv_ids_list()
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
-        self.dataset_catalog_df = self.filter_organizations_by_id(self.dataset_catalog_df,self.datagouv_ids_list)
+        self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
 
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
-        self.datafile_catalog_df = self.filter_organizations_by_id(self.datafile_catalog_df,self.datagouv_ids_list)
-    
-    def filter_organizations_by_id(self, df, organization_ids, return_mask=False):
-        mask = df['organization_id'].isin(organization_ids)
+        self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
+        
+    def filter_by(self, df, column, value, return_mask=False):
+        if isinstance(value, str):
+            mask = df[column].str.contains(value, case=False, na=False)
+        else:
+            mask = df[column].isin(value)
         return mask if return_mask else df[mask]
-
-    def filter_description(self, df, pattern, return_mask=False):
-        mask = df['description'].str.contains(pattern, case=False, na=False)
-        return mask if return_mask else df[mask]
-
-    def filter_titles(self, df, pattern, return_mask=False):
-        mask = df['title'].str.contains(pattern, case=False, regex=True, na=False)
-        return mask if return_mask else df[mask]
-
     
     def get_datasets_by_title_and_desc(self,title_filter,description_filter):
         # First we get the masks on the data:
-        mask_desc = self.filter_description(self.dataset_catalog_df, description_filter, return_mask=True)
+        mask_desc = self.filter_by(self.dataset_catalog_df, "description", description_filter, return_mask=True)
         print(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")
 
-        mask_titles = self.filter_titles(self.dataset_catalog_df, title_filter, return_mask=True)
+        mask_titles = self.filter_by(self.dataset_catalog_df, "title", title_filter, return_mask=True)
         print(f"Nombre de datasets correspondant au filtre de titre : {mask_titles.sum()}")
 
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
