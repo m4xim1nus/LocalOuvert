@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import pandas as pd
+import logging
 
 communities_path = str(Path(__file__).resolve().parents[1] /'communities')
 if communities_path not in sys.path:
@@ -12,8 +13,11 @@ utils_path = str(Path(__file__).resolve().parents[2] / 'utils')
 if utils_path not in sys.path:
     sys.path.insert(0, utils_path)
 
-
 from files_operation import load_from_path, load_from_url, save_csv, download_and_process_data
+
+# Configure the logger
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class DataGouvSearcher():
     def __init__(self,config):
@@ -37,10 +41,10 @@ class DataGouvSearcher():
     def get_datasets_by_title_and_desc(self,title_filter,description_filter):
         # First we get the masks on the data:
         mask_desc = self.filter_by(self.dataset_catalog_df, "description", description_filter, return_mask=True)
-        print(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")
+        logger.info(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")
 
         mask_titles = self.filter_by(self.dataset_catalog_df, "title", title_filter, return_mask=True)
-        print(f"Nombre de datasets correspondant au filtre de titre : {mask_titles.sum()}")
+        logger.info(f"Nombre de datasets correspondant au filtre de titre : {mask_titles.sum()}")
 
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
 
@@ -71,9 +75,9 @@ class DataGouvSearcher():
                 if (isinstance(content,pd.DataFrame)) and self.check_columns(content,column_filter):
                     for column in content.columns:
                         if content[column].dtype == 'object' and content[column].str.contains('|'.join(content_filter)).any():
-                            print("SUCCESS")
+                            logger.info("SUCCESS")
             else:
-                print("OUT OF SCOPE FORMAT")
+                logger.info("OUT OF SCOPE FORMAT")
         
 
 
