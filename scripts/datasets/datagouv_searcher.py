@@ -18,14 +18,14 @@ from files_operation import load_from_path, load_from_url, save_csv, download_an
 class DataGouvSearcher():
     def __init__(self,config):
         self.scope = CommunitiesSelector(config["communities"])
-        self.scope.filter() # Not elegant, we need to change this (only share the organization_ids for instance ?)
+        self.datagouv_ids_list = self.scope.get_datagouv_ids_list()
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
-        self.dataset_catalog_df = self.filter_organizations_by_id(self.dataset_catalog_df,self.scope.get_datagouv_ids_list())
+        self.dataset_catalog_df = self.filter_organizations_by_id(self.dataset_catalog_df,self.datagouv_ids_list)
 
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
-        self.datafile_catalog_df = self.filter_organizations_by_id(self.datafile_catalog_df,self.scope.get_datagouv_ids_list())
+        self.datafile_catalog_df = self.filter_organizations_by_id(self.datafile_catalog_df,self.datagouv_ids_list)
     
     def filter_organizations_by_id(self, df, organization_ids, return_mask=False):
         mask = df['organization_id'].isin(organization_ids)

@@ -41,18 +41,16 @@ class CommunitiesSelector():
         all_data['EffectifsSup50'] = np.where(all_data['trancheEffectifsUniteLegale'] > 15, True, False)
 
         self.all_data = all_data
-    
-    def filter(self):
-        self.filtered_data = self.all_data.loc[
-                            (self.all_data['type'] != 'COM') |
-                            ((self.all_data['type'] == 'COM') &
-                            (self.all_data['population'] >= 3500) &
-                            (self.all_data['EffectifsSup50'] == True))]
-    def get_filtered_data(self):
-        return self.filtered_data
-    
+        
     def get_datagouv_ids_list(self):
-        return self.filtered_data[self.filtered_data["id-datagouv"].notnull()]["id-datagouv"].to_list()
+        new_instance = self.all_data.copy()
+        new_instance = new_instance.loc[
+                        (self.all_data['type'] != 'COM') |
+                        ((self.all_data['type'] == 'COM') &
+                        (self.all_data['population'] >= 3500) &
+                        (self.all_data['EffectifsSup50'] == True))]
+        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()]["id-datagouv"].to_list()        
+        return datagouv_ids
 
     def save_csv(self,config):
         print("hello")
