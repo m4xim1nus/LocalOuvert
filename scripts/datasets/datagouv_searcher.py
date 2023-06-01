@@ -13,7 +13,7 @@ utils_path = str(Path(__file__).resolve().parents[2] / 'utils')
 if utils_path not in sys.path:
     sys.path.insert(0, utils_path)
 
-from files_operation import load_from_path, load_from_url, save_csv, download_and_process_data
+from files_operation import load_from_url
 
 # Configure the logger
 logging.basicConfig(level=logging.DEBUG)
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 class DataGouvSearcher():
     def __init__(self,config):
         self.scope = CommunitiesSelector(config["communities"])
-        self.datagouv_ids_list = self.scope.get_datagouv_ids_list()
+        self.datagouv_ids_list = self.scope.get_datagouv_ids_list() # return a list of datagouv ids, type: list
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
@@ -32,6 +32,7 @@ class DataGouvSearcher():
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
         
     def filter_by(self, df, column, value, return_mask=False):
+
         if isinstance(value, str):
             mask = df[column].str.contains(value, case=False, na=False)
         else:

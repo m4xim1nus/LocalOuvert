@@ -14,15 +14,20 @@ def detect_delimiter(text, num_lines=5, delimiters=None):
         delimiters = [',', ';', '\t', '|']
 
     counts = {delimiter: 0 for delimiter in delimiters}
-    
+    line_counts = {delimiter: 0 for delimiter in delimiters}
+
     for line_number, line in enumerate(StringIO(text)):
         if line_number >= num_lines:
             break
         for delimiter in delimiters:
             if delimiter in line:
-                counts[delimiter] += 1
-                    
-    return max(counts, key=counts.get)
+                counts[delimiter] += line.count(delimiter)
+                line_counts[delimiter] += 1
+
+    # Compute average occurrences per line for each delimiter
+    averages = {delimiter: counts[delimiter] / line_counts[delimiter] for delimiter in delimiters if line_counts[delimiter] > 0}
+
+    return max(averages, key=averages.get)
 
 # Fonction pour télécharger un fichier CSV
 def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_between_retries=5):
