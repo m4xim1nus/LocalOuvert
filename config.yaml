@@ -57,3 +57,13 @@ search:
       - montant
     content_filter:
       - asso
+
+# Testé avec config2.yaml
+# search:
+#   subventions:
+#     title_filter: (?:conv|subv|interv)
+#     description_filter: (?:conv|subv|interv)
+#     column_filter:
+#       - montant
+#     content_filter:
+#       - asso
