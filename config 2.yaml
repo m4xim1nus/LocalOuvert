@@ -1,3 +1,5 @@
+# Fichier pour tester des relaxations des critères de filtrage - config.yaml est le fichier de référence
+
 communities:
   ofgl:
     url:
@@ -51,8 +53,8 @@ datagouv:
 
 search:
   subventions:
-    title_filter: (?:conventions de subvention|subv.*asso|subvention.*association|Subventions du Conseil Régional|Interventions de la Région des Pays de la Loire|SCDL - Subventions)
-    description_filter: (?:conventions de subvention|subvention.*association|subv.*asso)
+    title_filter: (?:conv|subv|interv)
+    description_filter: (?:conv|subv|interv)
     column_filter:
       - montant
     content_filter:

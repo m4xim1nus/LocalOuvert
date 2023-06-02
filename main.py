@@ -26,7 +26,7 @@ if __name__ == "__main__":
     datagouv = DataGouvSearcher(config)
     topdown_out = datagouv.get_datasets_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
     
-#     #print topdown_out basic info
+#     #print topdown_out basic info - Données avec config.yaml
 #     print(f"Nombre de datasets correspondant au filtre de titre ou de description : {topdown_out.id.nunique()}")
 #     print(f"Nombre de fichiers : {topdown_out.shape[0]}")
 #     print(f"Nombre de fichiers uniques : {topdown_out.url.nunique()}")
