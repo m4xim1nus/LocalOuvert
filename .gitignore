@@ -4,3 +4,7 @@
 loc_env/
 data - sauv refacto/
 .vscode/
+
+# Ignore all .pyc & .ipynb files
+*.pyc
+*.ipynb
