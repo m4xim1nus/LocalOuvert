@@ -53,8 +53,8 @@ datagouv:
 
 search:
   subventions:
-    title_filter: (?:conv|subv|interv)
-    description_filter: (?:conv|subv|interv)
+    title_filter: (?:subv|intervention|asso)
+    description_filter: (?:subv|intervention|asso)
     column_filter:
       - montant
     content_filter:
