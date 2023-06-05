@@ -28,14 +28,14 @@ if __name__ == "__main__":
     # print(f"Nombre de fichiers par format : {topdown_out.groupby('format').size().to_dict()}")
     # print(f"Nombre de fichiers par fréquence : {topdown_out.groupby('frequency').size().to_dict()}")
 
-    bottomup_out = datagouv.get_datasets_by_content(config["search"]["subventions"]["api"]["url"],config["search"]["subventions"]["api"]["title"],config["search"]["subventions"]["api"]["description"],config["search"]["subventions"]["api"]["columns"])
+    bottomup_out = datagouv.get_datafiles_by_content(config["search"]["subventions"]["api"]["url"],config["search"]["subventions"]["api"]["title"],config["search"]["subventions"]["api"]["description"],config["search"]["subventions"]["api"]["columns"])
 
-    # print topdown_out basic info
+    # print bottomup_out basic info
     # print(f"Bottom-up : Nombre de datasets correspondant au filtre de titre ou de description : {bottomup_out.id.nunique()}")
     # print(f"Bottom-up : Nombre de fichiers : {bottomup_out.shape[0]}")
     # print(f"Bottom-up : Nombre de fichiers uniques : {bottomup_out.url.nunique()}")
     # print(f"Bottom-up : Nombre de fichiers par format : {bottomup_out.groupby('format').size().to_dict()}")
     # print(f"Bottom-up : Nombre de fichiers par fréquence : {bottomup_out.groupby('frequency').size().to_dict()}")
-    #print(f"Bottom-up : Index size : {bottomup_out.index.size}"")
+    # print(f"Bottom-up : Index size : {bottomup_out.index.size}")
     #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"],file_title_filter="asso")
     #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"])

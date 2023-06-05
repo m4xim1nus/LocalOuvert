@@ -55,8 +55,8 @@ class DataGouvSearcher():
         filtered_files = filtered_catalog_df[["id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         # Food for thought, do we need id from datafile ?
-        print(filtered_files.columns)
-        print(filtered_files.iloc[0])
+        # print(filtered_files.columns)
+        # print(filtered_files.iloc[0])
         return filtered_files
     
     def check_columns(self,dataframe, columns):
@@ -119,7 +119,7 @@ class DataGouvSearcher():
                 break;
         return scoped_files
 
-    def get_datasets_by_content(self,url,title_filter,description_filter,column_filter):
+    def get_datafiles_by_content(self,url,title_filter,description_filter,column_filter):
         all_files = []
         for orga in self.datagouv_ids_list:
             cur_files = self.get_files_by_org_from_api(url,orga,title_filter,description_filter,column_filter)
