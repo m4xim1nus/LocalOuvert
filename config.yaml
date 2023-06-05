@@ -53,7 +53,19 @@ search:
   subventions:
     title_filter: (?:conventions de subvention|subv.*asso|subvention.*association|Subventions du Conseil Régional|Interventions de la Région des Pays de la Loire|SCDL - Subventions)
     description_filter: (?:conventions de subvention|subvention.*association|subv.*asso)
-    column_filter:
-      - montant
-    content_filter:
-      - asso
+    api:
+      url: "https://www.data.gouv.fr/api/1/datasets/"
+      title:
+        - "association"
+        - "subvention"
+        - "intervention"
+        - "aide"
+        - "versement"
+      description:
+        - "association"
+        - "subvention"
+        - "intervention"
+        - "aide"
+        - "versement"
+      columns:
+        - "montant"

@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import requests
 import pandas as pd
 import logging
 
@@ -25,6 +26,7 @@ class DataGouvSearcher():
         self.datagouv_ids_list = self.scope.get_datagouv_ids_list() # return a list of datagouv ids, type: list
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
+        
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
 
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
@@ -53,7 +55,8 @@ class DataGouvSearcher():
         filtered_files = filtered_catalog_df[["id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         # Food for thought, do we need id from datafile ?
-
+        print(filtered_files.columns)
+        print(filtered_files.iloc[0])
         return filtered_files
     
     def check_columns(self,dataframe, columns):
@@ -61,24 +64,70 @@ class DataGouvSearcher():
         lowercase_check = [col.lower() in lowercase_columns for col in columns]
         return all(lowercase_check)
 
+    def get_preferred_format(self,records):
+        preferred_formats = ["csv", "xls", "json", "zip"] # Could be put outside
 
-    def get_datasets_by_content(self,column_filter,content_filter,file_title_filter=None, formats=["csv"]):
-        ### NOT WORKING ### 
-        # For the moment we do it only on csv to be extended
-        if file_title_filter:
-            files_df = self.datafile_catalog_df[self.datafile_catalog_df.title.str.contains(file_title_filter,case=False, na=False)] 
-        else:
-            files_df = self.datafile_catalog_df
+        for format in preferred_formats:
+            for record in records:
+                if record.get("format: ") == format:
+                    return record
 
-        for df_index, line_data in files_df.iterrows():
-            if line_data.format in formats:
-                content = load_from_url(line_data.url)
-                if (isinstance(content,pd.DataFrame)) and self.check_columns(content,column_filter):
-                    for column in content.columns:
-                        if content[column].dtype == 'object' and content[column].str.contains('|'.join(content_filter)).any():
-                            logger.info("SUCCESS")
+        for record in records:
+            if record.get("format: ") is not None:
+                return record
+
+        return records[0] if records else None
+
+
+    def get_files_by_org_from_api(self,url,organization_id,title_filter,description_filter, column_filter):
+        params = {"organization": organization_id}
+        scoped_files = []
+        while True:
+            response = requests.get(url, params=params)
+            try:
+                response.raise_for_status()
+            except:
+                break;
+            data = response.json()
+            for result in data["data"]:
+                files = []
+                if any(word in result["title"].lower() for word in title_filter):
+                    keyword_in_title = True
+                else:
+                    keyword_in_title = False
+
+                if any(word in result["description"].lower() for word in description_filter):
+                    keyword_in_description = True
+                else:
+                    keyword_in_description = False
+                montant_col = None
+                for resource in result["resources"]:
+                    if resource["description"] is None:
+                        montant_col = None
+                    elif any(word in resource["description"].lower() for word in column_filter):
+                        montant_col = True
+                    else:
+                        montant_col = False
+
+                    files.append({"organization":result["organization"]["name"],"title":result["title"],"description":result["description"],"id":result["id"],"frequency":result["frequency"],"format":resource["format"],"url":resource["latest"],"created_at":resource["created_at"],'montant_col':montant_col,"keyword_in_description":keyword_in_description,"keyword_in_title":keyword_in_title})
+                if (keyword_in_description or keyword_in_title or montant_col) and len(files)>0:
+                    scoped_files.append(self.get_preferred_format(files))
+            if data["next_page"]:
+                url=data["next_page"]
+                params = {}
             else:
-                logger.info("OUT OF SCOPE FORMAT")
-        
+                break;
+        return scoped_files
+
+    def get_datasets_by_content(self,url,title_filter,description_filter,column_filter):
+        all_files = []
+        for orga in self.datagouv_ids_list:
+            cur_files = self.get_files_by_org_from_api(url,orga,title_filter,description_filter,column_filter)
+            all_files = all_files + cur_files
+
+        bottom_up_files_df = pd.DataFrame(all_files)
+        return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
+
+
 
 
