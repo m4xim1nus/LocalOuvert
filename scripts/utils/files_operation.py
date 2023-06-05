@@ -1,8 +1,8 @@
+import os
 import csv
 import gzip
 import time
 import requests
-import chardet
 import pandas as pd
 from io import StringIO
 from requests.exceptions import Timeout
@@ -82,4 +82,8 @@ def load_from_path(file_path, dtype=None):
     return pd.read_excel(file_path, dtype=dtype)
 
 def save_csv(df, file_folder, file_name):
+    # Vérifie si le répertoire existe, le crée si nécessaire
+    if not os.path.exists(file_folder):
+        os.makedirs(file_folder)
+
     df.to_csv(file_folder / file_name, index=False)

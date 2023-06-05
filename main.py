@@ -18,14 +18,24 @@ if __name__ == "__main__":
         # use safe_load instead load
         config = yaml.safe_load(f)
     datagouv = DataGouvSearcher(config)
+
     topdown_out = datagouv.get_datafiles_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
     
-    # print topdown_out basic info - Données avec config.yaml
+    # print topdown_out basic info
     # print(f"Nombre de datasets correspondant au filtre de titre ou de description : {topdown_out.id.nunique()}")
     # print(f"Nombre de fichiers : {topdown_out.shape[0]}")
     # print(f"Nombre de fichiers uniques : {topdown_out.url.nunique()}")
     # print(f"Nombre de fichiers par format : {topdown_out.groupby('format').size().to_dict()}")
     # print(f"Nombre de fichiers par fréquence : {topdown_out.groupby('frequency').size().to_dict()}")
 
-    #Bottom-up search: not working
-    # datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"],file_title_filter="asso")
+    bottomup_out = datagouv.get_datafiles_by_content(config["search"]["subventions"]["api"]["url"],config["search"]["subventions"]["api"]["title"],config["search"]["subventions"]["api"]["description"],config["search"]["subventions"]["api"]["columns"])
+
+    # print bottomup_out basic info
+    # print(f"Bottom-up : Nombre de datasets correspondant au filtre de titre ou de description : {bottomup_out.id.nunique()}")
+    # print(f"Bottom-up : Nombre de fichiers : {bottomup_out.shape[0]}")
+    # print(f"Bottom-up : Nombre de fichiers uniques : {bottomup_out.url.nunique()}")
+    # print(f"Bottom-up : Nombre de fichiers par format : {bottomup_out.groupby('format').size().to_dict()}")
+    # print(f"Bottom-up : Nombre de fichiers par fréquence : {bottomup_out.groupby('frequency').size().to_dict()}")
+    # print(f"Bottom-up : Index size : {bottomup_out.index.size}")
+    #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"],file_title_filter="asso")
+    #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"])
