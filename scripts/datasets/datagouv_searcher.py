@@ -39,7 +39,7 @@ class DataGouvSearcher():
             mask = df[column].isin(value)
         return mask if return_mask else df[mask]
     
-    def get_datasets_by_title_and_desc(self,title_filter,description_filter):
+    def get_datafiles_by_title_and_desc(self,title_filter,description_filter):
         # First we get the masks on the data:
         mask_desc = self.filter_by(self.dataset_catalog_df, "description", description_filter, return_mask=True)
         logger.info(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")

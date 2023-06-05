@@ -18,9 +18,9 @@ if __name__ == "__main__":
         # use safe_load instead load
         config = yaml.safe_load(f)
     datagouv = DataGouvSearcher(config)
-    topdown_out = datagouv.get_datasets_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
+    topdown_out = datagouv.get_datafiles_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
     
-    #print topdown_out basic info - Données avec config.yaml
+    # print topdown_out basic info - Données avec config.yaml
     # print(f"Nombre de datasets correspondant au filtre de titre ou de description : {topdown_out.id.nunique()}")
     # print(f"Nombre de fichiers : {topdown_out.shape[0]}")
     # print(f"Nombre de fichiers uniques : {topdown_out.url.nunique()}")

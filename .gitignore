@@ -1,8 +1,7 @@
-#data/communitities/processed_data/
-#data/datasets/
+data/communitities/processed_data/
+data/datasets/
 
 loc_env/
-data - sauv refacto/
 .vscode/
 
 # Ignore all .pyc & .ipynb files
