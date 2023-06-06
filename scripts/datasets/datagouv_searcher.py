@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 import requests
@@ -23,15 +24,22 @@ logger = logging.getLogger(__name__)
 class DataGouvSearcher():
     def __init__(self,config):
         self.scope = CommunitiesSelector(config["communities"])
-        self.datagouv_ids_list = self.scope.get_datagouv_ids_list() # return a list of datagouv ids, type: list
+        self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with SIREN and id-datagouv columns
+        self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
         
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
+        # join SIREN to dataset_catalog_df based on organization_id
+        self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
+        self.dataset_catalog_df.drop(columns=['id-datagouv'], inplace=True)
 
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
+        # join SIREN to datafile_catalog_df based on organization_id
+        self.datafile_catalog_df = self.datafile_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
+        self.datafile_catalog_df.drop(columns=['id-datagouv'], inplace=True)
         
     def filter_by(self, df, column, value, return_mask=False):
 
@@ -52,7 +60,7 @@ class DataGouvSearcher():
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
 
         # Now we merge with files 
-        filtered_files = filtered_catalog_df[["id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
+        filtered_files = filtered_catalog_df[["SIREN","id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         # Food for thought, do we need id from datafile ?
         # print(filtered_files.columns)
@@ -87,8 +95,12 @@ class DataGouvSearcher():
             try:
                 response.raise_for_status()
             except:
-                break;
-            data = response.json()
+                break
+            try:
+                data = response.json()
+            except json.JSONDecodeError as e:
+                logger.error(f"Error while decoding json from {url} : {e}")
+                break
             for result in data["data"]:
                 files = []
                 if any(word in result["title"].lower() for word in title_filter):
@@ -109,23 +121,28 @@ class DataGouvSearcher():
                     else:
                         montant_col = False
 
-                    files.append({"organization":result["organization"]["name"],"title":result["title"],"description":result["description"],"id":result["id"],"frequency":result["frequency"],"format":resource["format"],"url":resource["latest"],"created_at":resource["created_at"],'montant_col':montant_col,"keyword_in_description":keyword_in_description,"keyword_in_title":keyword_in_title})
+                    files.append({"organization-id":result["organization"]["id"], "organization":result["organization"]["name"],"title":result["title"],"description":result["description"],"id":result["id"],"frequency":result["frequency"],"format":resource["format"],"url":resource["url"],"created_at":resource["created_at"],'montant_col':montant_col,"keyword_in_description":keyword_in_description,"keyword_in_title":keyword_in_title})
                 if (keyword_in_description or keyword_in_title or montant_col) and len(files)>0:
                     scoped_files.append(self.get_preferred_format(files))
             if data["next_page"]:
                 url=data["next_page"]
                 params = {}
             else:
-                break;
+                break
         return scoped_files
 
     def get_datafiles_by_content(self,url,title_filter,description_filter,column_filter):
         all_files = []
+
         for orga in self.datagouv_ids_list:
             cur_files = self.get_files_by_org_from_api(url,orga,title_filter,description_filter,column_filter)
             all_files = all_files + cur_files
 
         bottom_up_files_df = pd.DataFrame(all_files)
+        # Join with SIREN based on organization
+        bottom_up_files_df = bottom_up_files_df.merge(self.datagouv_ids, left_on="organization-id", right_on="id-datagouv", how="left")
+        bottom_up_files_df.drop(columns=['id-datagouv'], inplace=True)
+        bottom_up_files_df.drop(columns=['organization-id'], inplace=True)
         return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
 
 

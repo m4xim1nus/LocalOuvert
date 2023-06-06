@@ -53,10 +53,10 @@ class CommunitiesSelector():
                         ]
         self.selected_data = selected_data
      
-    def get_datagouv_ids_list(self):
+    def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()
-        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()]["id-datagouv"].to_list()        
-        return datagouv_ids # return a list of datagouv ids, type: list
+        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()][["SIREN", "id-datagouv"]]        
+        return datagouv_ids # return a dataframe with SIREN and id-datagouv columns
 
     def save_csv(self,config):
         print("hello")
