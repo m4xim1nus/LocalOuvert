@@ -1,3 +1,4 @@
+import logging
 import os
 import csv
 import gzip
@@ -6,6 +7,10 @@ import requests
 import pandas as pd
 from io import StringIO
 from requests.exceptions import Timeout
+
+# Configure the logger
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 # Fonction pour détecter le délimiteur d'un fichier CSV
@@ -57,14 +62,14 @@ def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_be
                 return df
         except Timeout:
             if attempt < num_retries - 1:
-                print(f"Le téléchargement a échoué en raison d'un timeout. Tentative de réessai après {delay_between_retries} secondes...")
+                logger.warning(f"Le téléchargement a échoué en raison d'un timeout. Tentative de réessai après {delay_between_retries} secondes...")
                 time.sleep(delay_between_retries)
             else:
-                print(f"Le téléchargement a échoué après {num_retries} tentatives en raison d'un timeout.")
+                logger.error(f"Le téléchargement a échoué après {num_retries} tentatives en raison d'un timeout.")
                 break
         except Exception as e:
-            print(f"Erreur lors du téléchargement du fichier CSV à l'URL : {url}")
-            print(f"Erreur : {e}")
+            logger.error(f"Erreur lors du téléchargement du fichier CSV à l'URL : {url}")
+            logger.error(f"Erreur : {e}")
             break
     return None
 
@@ -81,9 +86,10 @@ def download_and_process_data(urls_list, dtype=None):
 def load_from_path(file_path, dtype=None):
     return pd.read_excel(file_path, dtype=dtype)
 
-def save_csv(df, file_folder, file_name):
+def save_csv(df, file_folder, file_name, sep=","):
     # Vérifie si le répertoire existe, le crée si nécessaire
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)
 
-    df.to_csv(file_folder / file_name, index=False)
+    df.to_csv(file_folder / file_name, index=False, sep=sep)
+    logger.info(f"Le fichier {file_name} a été enregistré dans le répertoire {file_folder}")

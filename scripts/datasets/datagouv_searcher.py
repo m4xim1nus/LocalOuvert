@@ -144,7 +144,37 @@ class DataGouvSearcher():
         bottom_up_files_df.drop(columns=['id-datagouv'], inplace=True)
         bottom_up_files_df.drop(columns=['organization-id'], inplace=True)
         return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
+    
+    def log_basic_info(self,df):
+        logger.info(f"Nombre de datasets correspondant au filtre de titre ou de description : {df.id.nunique()}")
+        logger.info(f"Nombre de fichiers : {df.shape[0]}")
+        logger.info(f"Nombre de fichiers uniques : {df.url.nunique()}")
+        logger.info(f"Nombre de fichiers par format : {df.groupby('format').size().to_dict()}")
+        logger.info(f"Nombre de fichiers par fréquence : {df.groupby('frequency').size().to_dict()}")
+    
+    def get_datafiles(self, search_config, method="all"):
+        if not method=="bu_only":
+            topdown_datafiles = self.get_datafiles_by_title_and_desc(search_config["title_filter"],search_config["description_filter"])
+            logger.info("Topdown datafiles basic info :")
+            self.log_basic_info(topdown_datafiles)
 
+        if not method=="td_only":
+            bottomup_datafiles = self.get_datafiles_by_content(search_config["api"]["url"],search_config["api"]["title"],search_config["api"]["description"],search_config["api"]["columns"])
+            logger.info("Bottomup datafiles basic info :")
+            self.log_basic_info(bottomup_datafiles)
+            
+        match method:
+            case "td_only":
+                datafiles = topdown_datafiles
+            case "bu_only":
+                datafiles = bottomup_datafiles
+            case "all":
+                # Merge topdown and bottomup: bottomup has 3 additional columns that must be dropped
+                datafiles = pd.concat([topdown_datafiles, bottomup_datafiles], ignore_index=False)
+                datafiles.drop_duplicates(subset=["url"], inplace=True)     # Drop duplicates based on url
+                logger.info("Total datafiles basic info :")
+                self.log_basic_info(datafiles)
+            case _:
+                raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")
 
-
-
+        return datafiles
