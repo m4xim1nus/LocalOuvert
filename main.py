@@ -22,13 +22,13 @@ if __name__ == "__main__":
         config = yaml.safe_load(f)
     datagouv = DataGouvSearcher(config)
 
-    files_list = datagouv.get_datafiles(config["search"]["subventions"])
+    files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
     data_folder = Path(get_project_base_path()) / "data" / "datasets"
-    fileslist_filename = "files_list.csv"
-    save_csv(files_list, data_folder, fileslist_filename, sep=";")
+    files_in_scope_filename = "files_in_scope.csv"
+    save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
 
-    # # Build new object taking files_list & config as inputs in init, to load the datafiles, normalize them and save them in a new folder. Class is called DatafilesLoader
-    # datafiles = DatafilesLoader(files_list,config)
+    # Build new object taking files_in_scope & config as inputs in init, to load the datafiles, normalize them and save them in a new folder.
+    datafiles = DatafilesLoader(files_in_scope,config)
     # # Save the normalized data in a csv file
     # normalized_data_filename = "normalized_data.csv"
     # save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=";")
