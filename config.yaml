@@ -74,7 +74,7 @@ search:
 
 datafile_loader:
   file_info_columns:
-    - "SIREN"
+    - "siren"
     - "organization"
     - "title"
     - "created_at"

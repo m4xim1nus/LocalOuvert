@@ -24,20 +24,20 @@ logger = logging.getLogger(__name__)
 class DataGouvSearcher():
     def __init__(self,config):
         self.scope = CommunitiesSelector(config["communities"])
-        self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with SIREN and id-datagouv columns
+        self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id-datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
 
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
         
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
-        # join SIREN to dataset_catalog_df based on organization_id
+        # join siren to dataset_catalog_df based on organization_id
         self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
         self.dataset_catalog_df.drop(columns=['id-datagouv'], inplace=True)
 
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
-        # join SIREN to datafile_catalog_df based on organization_id
+        # join siren to datafile_catalog_df based on organization_id
         self.datafile_catalog_df = self.datafile_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
         self.datafile_catalog_df.drop(columns=['id-datagouv'], inplace=True)
         
@@ -60,7 +60,7 @@ class DataGouvSearcher():
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
 
         # Now we merge with files 
-        filtered_files = filtered_catalog_df[["SIREN","id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
+        filtered_files = filtered_catalog_df[["siren","id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         # Food for thought, do we need id from datafile ?
         # print(filtered_files.columns)
@@ -139,7 +139,7 @@ class DataGouvSearcher():
             all_files = all_files + cur_files
 
         bottom_up_files_df = pd.DataFrame(all_files)
-        # Join with SIREN based on organization
+        # Join with siren based on organization
         bottom_up_files_df = bottom_up_files_df.merge(self.datagouv_ids, left_on="organization-id", right_on="id-datagouv", how="left")
         bottom_up_files_df.drop(columns=['id-datagouv'], inplace=True)
         bottom_up_files_df.drop(columns=['organization-id'], inplace=True)

@@ -89,16 +89,19 @@ class DatafilesLoader():
         file_info_columns = config["datafile_loader"]["file_info_columns"]
         normalized_data = pd.DataFrame(columns=self.schema["name"])
         for col in file_info_columns:
-            normalized_data[col] = ""        
+            normalized_data[col] = ""
+        schema_lower = [col.lower() for col in self.schema["name"].values]           
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
         for df in self.corpus:
+            df.columns = df.columns.astype(str)
+            columns_lower = [col.lower() for col in df.columns]
             # Check if the dataframe has at least 1 column in common with the schema
-            if len(set(df.columns).intersection(set(self.schema["name"]))) > 0:
+            if len(set(columns_lower).intersection(set(schema_lower))) > 0:
                 common_columns = []
-                for col in df.columns:
-                    if col in self.schema["name"].values or col in file_info_columns:
+                for col, col_lower in zip(df.columns, columns_lower):
+                    if col_lower in schema_lower or col in file_info_columns:
                         common_columns.append(col)
                     else:
                         datacolumns_out = datacolumns_out.append({"filename":df["url"].iloc[0], "column_name":col, "column_type":df[col].dtype, "nb_non_null_values":df[col].count()}, ignore_index=True)
