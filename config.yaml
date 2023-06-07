@@ -71,3 +71,11 @@ search:
         - "montant"
     schema:
       url: "https://schema.data.gouv.fr/schemas/scdl/subventions/2.1.0/schema.json"
+
+datafile_loader:
+  file_info_columns:
+    - "SIREN"
+    - "organization"
+    - "title"
+    - "created_at"
+    - "url"
