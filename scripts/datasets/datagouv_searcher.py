@@ -1,28 +1,16 @@
 import json
-import sys
-from pathlib import Path
 import requests
 import pandas as pd
 import logging
 
-communities_path = str(Path(__file__).resolve().parents[1] /'communities')
-if communities_path not in sys.path:
-    sys.path.insert(0, communities_path)
-
 from communities_selector import CommunitiesSelector
-
-utils_path = str(Path(__file__).resolve().parents[2] / 'utils')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
-
 from files_operation import load_from_url
 
-# Configure the logger
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 class DataGouvSearcher():
     def __init__(self,config):
+        self.logger = logging.getLogger(__name__)
+
         self.scope = CommunitiesSelector(config["communities"])
         self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id-datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
@@ -52,10 +40,10 @@ class DataGouvSearcher():
     def get_datafiles_by_title_and_desc(self,title_filter,description_filter):
         # First we get the masks on the data:
         mask_desc = self.filter_by(self.dataset_catalog_df, "description", description_filter, return_mask=True)
-        logger.info(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")
+        self.logger.info(f"Nombre de datasets correspondant au filtre de description : {mask_desc.sum()}")
 
         mask_titles = self.filter_by(self.dataset_catalog_df, "title", title_filter, return_mask=True)
-        logger.info(f"Nombre de datasets correspondant au filtre de titre : {mask_titles.sum()}")
+        self.logger.info(f"Nombre de datasets correspondant au filtre de titre : {mask_titles.sum()}")
 
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
 
@@ -63,8 +51,6 @@ class DataGouvSearcher():
         filtered_files = filtered_catalog_df[["siren","id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         # Food for thought, do we need id from datafile ?
-        # print(filtered_files.columns)
-        # print(filtered_files.iloc[0])
         return filtered_files
     
     def check_columns(self,dataframe, columns):
@@ -99,7 +85,7 @@ class DataGouvSearcher():
             try:
                 data = response.json()
             except json.JSONDecodeError as e:
-                logger.error(f"Error while decoding json from {url} : {e}")
+                self.logger.error(f"Error while decoding json from {url} : {e}")
                 break
             for result in data["data"]:
                 files = []
@@ -146,21 +132,21 @@ class DataGouvSearcher():
         return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
     
     def log_basic_info(self,df):
-        logger.info(f"Nombre de datasets correspondant au filtre de titre ou de description : {df.id.nunique()}")
-        logger.info(f"Nombre de fichiers : {df.shape[0]}")
-        logger.info(f"Nombre de fichiers uniques : {df.url.nunique()}")
-        logger.info(f"Nombre de fichiers par format : {df.groupby('format').size().to_dict()}")
-        logger.info(f"Nombre de fichiers par fréquence : {df.groupby('frequency').size().to_dict()}")
+        self.logger.info(f"Nombre de datasets correspondant au filtre de titre ou de description : {df.id.nunique()}")
+        self.logger.info(f"Nombre de fichiers : {df.shape[0]}")
+        self.logger.info(f"Nombre de fichiers uniques : {df.url.nunique()}")
+        self.logger.info(f"Nombre de fichiers par format : {df.groupby('format').size().to_dict()}")
+        self.logger.info(f"Nombre de fichiers par fréquence : {df.groupby('frequency').size().to_dict()}")
     
     def get_datafiles(self, search_config, method="all"):
         if not method=="bu_only":
             topdown_datafiles = self.get_datafiles_by_title_and_desc(search_config["title_filter"],search_config["description_filter"])
-            logger.info("Topdown datafiles basic info :")
+            self.logger.info("Topdown datafiles basic info :")
             self.log_basic_info(topdown_datafiles)
 
         if not method=="td_only":
             bottomup_datafiles = self.get_datafiles_by_content(search_config["api"]["url"],search_config["api"]["title"],search_config["api"]["description"],search_config["api"]["columns"])
-            logger.info("Bottomup datafiles basic info :")
+            self.logger.info("Bottomup datafiles basic info :")
             self.log_basic_info(bottomup_datafiles)
             
         match method:
@@ -172,7 +158,7 @@ class DataGouvSearcher():
                 # Merge topdown and bottomup: bottomup has 3 additional columns that must be dropped
                 datafiles = pd.concat([topdown_datafiles, bottomup_datafiles], ignore_index=False)
                 datafiles.drop_duplicates(subset=["url"], inplace=True)     # Drop duplicates based on url
-                logger.info("Total datafiles basic info :")
+                self.logger.info("Total datafiles basic info :")
                 self.log_basic_info(datafiles)
             case _:
                 raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")

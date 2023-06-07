@@ -1,12 +1,6 @@
-import sys
-from pathlib import Path
+import logging
 import pandas as pd
 import numpy as np
-
-# Ajoutez le dossier /scripts/utils au `sys.path`
-utils_path = str(Path(__file__).resolve().parents[1] / 'communities'/'loaders')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
 
 from odf import OdfLoader
 from ofgl import OfglLoader
@@ -14,6 +8,7 @@ from sirene import SireneLoader
 
 class CommunitiesSelector():
     def __init__(self,config):
+        self.logger = logging.getLogger(__name__)
         ofgl = OfglLoader(config["ofgl"])
         odf = OdfLoader(config["odf"])
         sirene = SireneLoader(config["sirene"])
@@ -54,7 +49,3 @@ class CommunitiesSelector():
         new_instance = self.selected_data.copy()
         datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()][["siren", "id-datagouv"]]        
         return datagouv_ids # return a dataframe with siren and id-datagouv columns
-
-    def save_csv(self,config):
-        print("hello")
-        #save_csv(self["data_folder"], "processed_data/selected_communities.csv"

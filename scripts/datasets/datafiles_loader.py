@@ -1,22 +1,13 @@
 import collections
 import logging
-from pathlib import Path
-import sys
 import pandas as pd
-
-
-utils_path = str(Path(__file__).resolve().parents[2] / 'utils')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
 
 from files_operation import load_from_url
 
-# Configure the logger
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 class DatafilesLoader():
     def __init__(self,files_in_scope,config):
+        self.logger = logging.getLogger(__name__)
         self.files_in_scope = files_in_scope
         self.schema = self.load_schema(config)
         readable_files, self.datafiles_out = self.keep_readable_datafiles()
@@ -50,38 +41,38 @@ class DatafilesLoader():
                 if isinstance(df, dict):
                     for key, value in df.items():
                         if isinstance(value, collections.abc.Collection):
-                            logger.info(f"Length of array for key {key}: {len(value)}")
+                            self.logger.info(f"Length of array for key {key}: {len(value)}")
                         else:
-                            logger.info(f"Value for key {key} is not a collection, it's a(n) {type(value).__name__}")
+                            self.logger.info(f"Value for key {key} is not a collection, it's a(n) {type(value).__name__}")
                     try:
                         df = pd.DataFrame(df)
                     except ValueError as ve:
-                        logger.error(f"Error while converting dict to DataFrame: {ve}")
-                        logger.error(f"Failed dict: {df}")
-                        logger.error(f"Failed url: {url}")
+                        self.logger.error(f"Error while converting dict to DataFrame: {ve}")
+                        self.logger.error(f"Failed dict: {df}")
+                        self.logger.error(f"Failed url: {url}")
                         self.datafiles_out = self.datafiles_out.append(row)
                         continue
                     
                 if df.empty:
-                    logger.warning(f"Data from {url} is empty.")
+                    self.logger.warning(f"Data from {url} is empty.")
                     self.datafiles_out = self.datafiles_out.append(row)
-                    logger.warning("Unable to load file %s", url)
+                    self.logger.warning("Unable to load file %s", url)
                     continue
                 
                 for col in file_info_columns:
                     if col not in row:
-                        logger.warning("Column %s not found in readable_files", col)
+                        self.logger.warning("Column %s not found in readable_files", col)
                         continue
                     df[col] = row[col]
                 data.append(df)
             else:
                 # Add to self.datafiles_out
                 self.datafiles_out = self.datafiles_out.append(row)
-                logger.warning("Unable to load file %s", url)
+                self.logger.warning("Unable to load file %s", url)
 
-        logger.info("Number of dataframes loaded: %s", len(data))
-        logger.info("Number of elements in data that are not dataframes: %s", sum([not isinstance(df, pd.DataFrame) for df in data]))
-        logger.info("Number of files not loaded: %s", len(self.datafiles_out)-len_out)
+        self.logger.info("Number of dataframes loaded: %s", len(data))
+        self.logger.info("Number of elements in data that are not dataframes: %s", sum([not isinstance(df, pd.DataFrame) for df in data]))
+        self.logger.info("Number of files not loaded: %s", len(self.datafiles_out)-len_out)
         return data
     
     def normalize_data(self, config):
@@ -109,21 +100,21 @@ class DatafilesLoader():
                 df_filtered = df[common_columns]
                 normalized_data = normalized_data.append(df_filtered, ignore_index=True)
 
-                logger.info("Normalized dataframe %s", df["url"].iloc[0])
-                logger.info("Number of columns in schema: %s", len(common_columns) - len(file_info_columns))
-                logger.info("Number of columns not in schema: %s", len(df.columns)-len(common_columns) + len(file_info_columns))
+                self.logger.info("Normalized dataframe %s", df["url"].iloc[0])
+                self.logger.info("Number of columns in schema: %s", len(common_columns) - len(file_info_columns))
+                self.logger.info("Number of columns not in schema: %s", len(df.columns)-len(common_columns) + len(file_info_columns))
             else:
                 self.datafiles_out = self.datafiles_out.append(df.iloc[0])
-                logger.warning("No column in common with schema for file %s", df["url"].iloc[0])
+                self.logger.warning("No column in common with schema for file %s", df["url"].iloc[0])
         
         # Drop potential duplicates (potentially with different values in the columns not in schema, eg filename, url, etc)
         normalized_data = normalized_data.drop_duplicates(subset=normalized_data.columns.difference(self.schema["name"]), keep="first")
 
-        logger.info("Number of datapoints in normalized_data: %s", len(normalized_data))
-        logger.info("Number of columns in normalized_data: %s", len(normalized_data.columns))
-        logger.info("Number of files not normalized: %s", len(self.datafiles_out)-len_out)
-        logger.info("Number of columns in datacolumns_out: %s", len(datacolumns_out))
-        logger.info("Number of NaN values in normalized_data, per column: %s", normalized_data.isna().sum())
+        self.logger.info("Number of datapoints in normalized_data: %s", len(normalized_data))
+        self.logger.info("Number of columns in normalized_data: %s", len(normalized_data.columns))
+        self.logger.info("Number of files not normalized: %s", len(self.datafiles_out)-len_out)
+        self.logger.info("Number of columns in datacolumns_out: %s", len(datacolumns_out))
+        self.logger.info("Number of NaN values in normalized_data, per column: %s", normalized_data.isna().sum())
 
         return normalized_data, datacolumns_out
     

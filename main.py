@@ -1,17 +1,26 @@
+import logging
 import yaml
 import argparse
 import sys
 from pathlib import Path
 import pandas as pd
 
-utils_path = str(Path(__file__).resolve().parents[0] / 'scripts' /'datasets')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
+# Pré-nettoyage des ajouts à sys_path : à sortir dans config & utils (?)
+def add_to_sys_path(path: str):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+base_path = Path(__file__).resolve().parents[0] / 'scripts'
+add_to_sys_path(str(base_path / 'datasets'))
+add_to_sys_path(str(base_path / 'utils'))
+add_to_sys_path(str(base_path / 'communities'))
+add_to_sys_path(str(base_path / 'communities' / 'loaders'))
 
 from datagouv_searcher import DataGouvSearcher
 from datafiles_loader import DatafilesLoader
 from config import get_project_base_path
 from files_operation import save_csv
+from logger import configure_logger
 
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description="Gestionnaire du projet LocalOuvert")
@@ -20,6 +29,9 @@ if __name__ == "__main__":
     with open(args.filename) as f:
         # use safe_load instead load
         config = yaml.safe_load(f)
+
+    configure_logger(config)    
+
     datagouv = DataGouvSearcher(config)
 
     files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
@@ -38,5 +50,3 @@ if __name__ == "__main__":
     # Save the list of files that have columns not in common with the schema in a csv file
     datacolumns_out_filename = "datacolumns_out.csv"
     save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";")
-
-
