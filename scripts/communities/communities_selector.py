@@ -1,10 +1,14 @@
 import logging
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
 from odf import OdfLoader
 from ofgl import OfglLoader
 from sirene import SireneLoader
+
+from files_operation import save_csv
+from config import get_project_base_path
 
 class CommunitiesSelector():
     def __init__(self,config):
@@ -44,6 +48,13 @@ class CommunitiesSelector():
                         (self.all_data['EffectifsSup50'] == True))
                         ]
         self.selected_data = selected_data
+
+        # save all_data & selected_data to csv
+        data_folder = Path(get_project_base_path()) / "data" / "communities" / "processed_data"
+        all_data_filename = "all_communities_data.csv"
+        selected_data_filename = "selected_communities_data.csv"
+        save_csv(all_data, data_folder, all_data_filename, sep=";")
+        save_csv(selected_data, data_folder, selected_data_filename, sep=";")
      
     def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()

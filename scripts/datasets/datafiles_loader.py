@@ -81,7 +81,10 @@ class DatafilesLoader():
         normalized_data = pd.DataFrame(columns=self.schema["name"])
         for col in file_info_columns:
             normalized_data[col] = ""
-        schema_lower = [col.lower() for col in self.schema["name"].values]           
+        schema_lower = [col.lower() for col in self.schema["name"].values]
+
+        # Create a mapping dictionary between lower case schema names and original schema names
+        schema_mapping = dict(zip(schema_lower, self.schema["name"].values))
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
@@ -98,17 +101,24 @@ class DatafilesLoader():
                         datacolumns_out = datacolumns_out.append({"filename":df["url"].iloc[0], "column_name":col, "column_type":df[col].dtype, "nb_non_null_values":df[col].count()}, ignore_index=True)
                 
                 df_filtered = df[common_columns]
+
+                # Rename the columns in df_filtered using the schema_mapping
+                df_filtered.columns = [schema_mapping[col.lower()] if col.lower() in schema_mapping else col for col in df_filtered.columns]
+                # Append df_filtered to normalized_data
                 normalized_data = normalized_data.append(df_filtered, ignore_index=True)
 
                 self.logger.info("Normalized dataframe %s", df["url"].iloc[0])
+                self.logger.info("Number of datapoints in normalized_data: %s", len(normalized_data))
                 self.logger.info("Number of columns in schema: %s", len(common_columns) - len(file_info_columns))
                 self.logger.info("Number of columns not in schema: %s", len(df.columns)-len(common_columns) + len(file_info_columns))
             else:
                 self.datafiles_out = self.datafiles_out.append(df.iloc[0])
                 self.logger.warning("No column in common with schema for file %s", df["url"].iloc[0])
         
-        # Drop potential duplicates (potentially with different values in the columns not in schema, eg filename, url, etc)
-        normalized_data = normalized_data.drop_duplicates(subset=normalized_data.columns.difference(self.schema["name"]), keep="first")
+        # Drop potential duplicates (same values for schema & siren columns)
+        subset_columns = list(self.schema["name"].values)
+        subset_columns.append("siren")
+        normalized_data = normalized_data.drop_duplicates(subset=subset_columns, keep="first")
 
         self.logger.info("Number of datapoints in normalized_data: %s", len(normalized_data))
         self.logger.info("Number of columns in normalized_data: %s", len(normalized_data.columns))
@@ -117,4 +127,3 @@ class DatafilesLoader():
         self.logger.info("Number of NaN values in normalized_data, per column: %s", normalized_data.isna().sum())
 
         return normalized_data, datacolumns_out
-    
