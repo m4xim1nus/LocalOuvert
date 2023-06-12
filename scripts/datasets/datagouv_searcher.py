@@ -149,18 +149,16 @@ class DataGouvSearcher():
             self.logger.info("Bottomup datafiles basic info :")
             self.log_basic_info(bottomup_datafiles)
             
-        match method:
-            case "td_only":
-                datafiles = topdown_datafiles
-            case "bu_only":
-                datafiles = bottomup_datafiles
-            case "all":
-                # Merge topdown and bottomup: bottomup has 3 additional columns that must be dropped
-                datafiles = pd.concat([topdown_datafiles, bottomup_datafiles], ignore_index=False)
-                datafiles.drop_duplicates(subset=["url"], inplace=True)     # Drop duplicates based on url
-                self.logger.info("Total datafiles basic info :")
-                self.log_basic_info(datafiles)
-            case _:
-                raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")
-
+        if method == "td_only":
+            datafiles = topdown_datafiles
+        elif method == "bu_only":
+            datafiles = bottomup_datafiles
+        elif method == "all":
+            # Merge topdown and bottomup: bottomup has 3 additional columns that must be dropped
+            datafiles = pd.concat([topdown_datafiles, bottomup_datafiles], ignore_index=False)
+            datafiles.drop_duplicates(subset=["url"], inplace=True)     # Drop duplicates based on url
+            self.logger.info("Total datafiles basic info :")
+            self.log_basic_info(datafiles)
+        else:
+            raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")
         return datafiles
