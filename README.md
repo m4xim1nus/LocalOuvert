@@ -8,44 +8,9 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
 2. Effectuer un scrapping différencié des données en fonction des sources disponibles (APIs, open data, sites web des collectivités) pour recueillir des informations essentielles.
 3. Préparer et analyser les données récupérées pour évaluer la transparence des collectivités locales et contribuer au projet "République Numérique" d'Anticor.
 
-## Plan d'attaque
+## Plan d'attaque & Avancement
 
-1. Structuration des BDD collectivités
-    * Recherche des collectivités locales concernées par la loi (plus de 3500 habitants, plus de 50 agents employés) à partir des données exposées par l'INSEE, ou d'autres organismes officielles
-    * Compléments d'info "open data" sur ces collectivités si existant (via les données exposées par OpenDataFrance)
-2. Structuration des infos recherchées
-    * Identification et validation des 6 informations essentielles à récupérer par collectivité :
-        - Subventions aux associations
-        - Subventions aux entreprises
-        - Passation de marchés publics
-        - Plan local d’urbanisme
-        - Indemnités des élus
-        - Assiduité des élus aux séances et commissions de la collectivité
-    * REcherche et/ou définition des standards des variables attendues, et des critères de filtre associés
-    * Établissement des critères de qualité de la donnée (e.g. format des données, lisibilité, pré-filtrage, fréquence de mise à jour)
-3. Scrapping différencié
-    * Catégorisation des collectivités selon la facilité du scrapping
-        - Données accessibles via API sur data.gouv.fr
-        - Données accessibles via un portail open data propre à la collectivité
-        - (si besoin) Données uniquement disponibles sur le site web de la collectivité
-    * Scrapping spécifique selon la catégorie
-    * Suivi et stockage de l'ensemble de ces scrapping
-4. Préparation pour l'analyse des données récupérées (normalisation, extraction, pré-analyse)
-5. Analyse
-
-## Avancement
-
-* Fait
-    - Base de données complète des collectivités (hors arrondissements)
-    - Scripts d'extraction et de traitement de jeux de données sur data gouv
-    - Premier test concluant de bout en bout pour les régions & leurs subventions aux associations
-
-* En cours
-    - (max) Application du script du test régional à l'ensemble de la base 
-    - (cycy) Exploration / structuration du scripts pour d'autres infos (subventions entreprises, marchés publics)
-
-* A faire
-    - Ajout des arrondissements
+* Voir le Trello
 
 ## Structure du projet
 
@@ -53,44 +18,44 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
     - `communities/`: informations sur les collectivités
     - `datasets/`: données récupérées et filtrées
     - `processed_data/`: données traitées et prêtes pour l'analyse
-- `docs/`: dossier pour la documentation du projet, organisée en sous-dossiers
-    - `general/`: documentation non technique
-    - `scrapers/`: documentation sur les scrapers
-    - `communities/`: documentation sur la gestion des collectivités
-    - `data_processing/`: documentation sur le traitement des données
-    - `analysis/`: documentation sur l'analyse des données
 - `scripts/`: dossier pour les scripts Python du projet, organisés en sous-dossiers
     - `communities/`: scripts pour la gestion des collectivités
     - `datasets/`: scripts pour le scrapping et le filtrage des données
-    - `data_processing/`: scripts pour le traitement des données
-    - `analysis/`: scripts pour l'analyse des données
+    - `data_processing/`: scripts pour le traitement des données (vide à date)
+    - `analysis/`: scripts pour l'analyse des données (vide à date)
     - `utils/`: scripts utilitaires et helpers
-- `tests/`: dossier pour les tests unitaires du projet, organisés en sous-dossiers
-    - `scrapers/`: tests pour les scrapers
-    - `communities/`: tests pour la gestion des collectivités
-    - `data_processing/`: tests pour le traitement des données
-    - `analysis/`: tests pour l'analyse des données
-- `manage.py`: script principal pour exécuter les différentes commandes du projet
+- `main.py`: script principal pour exécuter les scripts du projet
+- `config.yaml`: fichier de configuration pour faire tourner `main.py`.
 - `requirements.txt`: fichier contenant les dépendances Python
+ - `.gitignore`: fichier contenant les références ignorées par git
 - `README.md`: ce fichier
 
 
 ## Comment utiliser à date
 
-1. Clonez ce dépôt. 
- - Si vous souhaitez cloner sans les données, utilisez la **branche without-data** `:git clone -b without-data https://github.com/m4xim1nus/LocalOuvert.git`
- - Pour cloner avec les données, utilisez la **branche principale** : `git clone https://github.com/m4xim1nus/LocalOuvert.git`
+1. Clonez ce dépôt : `git clone https://github.com/m4xim1nus/LocalOuvert.git`
 
 2. Installez les dépendances à l'aide de `pip install -r requirements.txt`.
 
-3. Si vous avez cloné la branche sans les données, vous pouvez exécuter les scripts pour télécharger et traiter les données en utilisant `manage.py`. Le script `run_all` exécute les 4 scripts suivants :
-- "run_communities_extraction"
-- "run_communities_selection"
-- "run_datasets_selection"
-- "run_datafiles_selection"
+3. Pour exécuter les scripts pour télécharger et traiter les données, executez ` python main.py config.yaml `
 
-Pour exécuter tous les scripts en une seule commande, utilisez : ` python manage.py run_all `
 
-4. Les collectivités filtrées sont identifiées dans [ce fichier](./data/communities/processed_data/selected_communities.csv), et ces données peuvent être explorées dans [ce notebook](./scripts/communities/selection_explorer.ipynb).
+## License
 
-5. Les données récoltées sont identifiées dans [ce fichier](./data/datasets/filtered_detailed_data.csv), et ces données peuvent être explorées dans [ce notebook](./scripts/datasets/datasets_explorer.ipynb).
+### Code
+
+The code in this repository is licensed under the MIT License:
+
+MIT License
+
+Copyright (c) 2023 Max Lévy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+### Data and Analyses
+
+Unless otherwise stated, the data and analyses in this repository are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License. For more information, please visit [Creative Commons License](https://creativecommons.org/licenses/by/4.0/).
