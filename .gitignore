@@ -1,5 +1,6 @@
-data/communitities/processed_data/
+data/communities/processed_data/
 data/datasets/
+data/logs/
 
 loc_env/
 .vscode/

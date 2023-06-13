@@ -1,38 +1,34 @@
-import sys
+import logging
 from pathlib import Path
 import pandas as pd
 import numpy as np
-
-# Ajoutez le dossier /scripts/utils au `sys.path`
-utils_path = str(Path(__file__).resolve().parents[1] / 'communities'/'loaders')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
 
 from odf import OdfLoader
 from ofgl import OfglLoader
 from sirene import SireneLoader
 
+from files_operation import save_csv
+from config import get_project_base_path
+
 class CommunitiesSelector():
     def __init__(self,config):
+        self.logger = logging.getLogger(__name__)
         ofgl = OfglLoader(config["ofgl"])
         odf = OdfLoader(config["odf"])
         sirene = SireneLoader(config["sirene"])
         ofgl_data = ofgl.get()
         odf_data = odf.get()
         # Worth Exploring Here ! If you cast to Int, it breaks
-        ofgl_data["SIREN"] = ofgl_data["SIREN"].astype(str)
+        ofgl_data["siren"] = ofgl_data["SIREN"].astype(str)
+        ofgl_data.drop(columns=['SIREN'], inplace=True)
         odf_data["siren"] = odf_data["siren"].astype(str) 
-        all_data = ofgl_data.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], left_on='SIREN', right_on='siren', how='left')
-
-        # Supprimer la colonne 'siren' dupliquée et réorganiser les colonnes
-        all_data.drop(columns=['siren'], inplace=True)
+        all_data = ofgl_data.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], on='siren', how='left')
         
         # TODO Manage columns outside of classes (configs ?)
-        all_data = all_data[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
-        all_data["SIREN"] = all_data["SIREN"].astype(int)
+        all_data = all_data[['nom', 'siren', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
+        all_data["siren"] = all_data["siren"].astype(int)
 
-        all_data = all_data.merge(sirene.get(), left_on='SIREN', right_on='siren', how='left')
-        all_data.drop(columns=['siren'], inplace=True)
+        all_data = all_data.merge(sirene.get(), on='siren', how='left')
         
         # Conversion de la colonne 'trancheEffectifsUniteLegale' en type numérique
         all_data['trancheEffectifsUniteLegale'] = pd.to_numeric(all_data['trancheEffectifsUniteLegale'].astype(str), errors='coerce')
@@ -52,12 +48,15 @@ class CommunitiesSelector():
                         (self.all_data['EffectifsSup50'] == True))
                         ]
         self.selected_data = selected_data
-     
-    def get_datagouv_ids_list(self):
-        new_instance = self.selected_data.copy()
-        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()]["id-datagouv"].to_list()        
-        return datagouv_ids # return a list of datagouv ids, type: list
 
-    def save_csv(self,config):
-        print("hello")
-        #save_csv(self["data_folder"], "processed_data/selected_communities.csv"
+        # save all_data & selected_data to csv
+        data_folder = Path(get_project_base_path()) / "data" / "communities" / "processed_data"
+        all_data_filename = "all_communities_data.csv"
+        selected_data_filename = "selected_communities_data.csv"
+        save_csv(all_data, data_folder, all_data_filename, sep=";")
+        save_csv(selected_data, data_folder, selected_data_filename, sep=";")
+     
+    def get_datagouv_ids(self):
+        new_instance = self.selected_data.copy()
+        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()][["siren", "id-datagouv"]]        
+        return datagouv_ids # return a dataframe with siren and id-datagouv columns

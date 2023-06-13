@@ -1,3 +1,4 @@
+import logging
 import os
 import csv
 import gzip
@@ -6,6 +7,7 @@ import requests
 import pandas as pd
 from io import StringIO
 from requests.exceptions import Timeout
+
 
 
 # Fonction pour détecter le délimiteur d'un fichier CSV
@@ -31,12 +33,14 @@ def detect_delimiter(text, num_lines=5, delimiters=None):
 
 # Fonction pour télécharger un fichier CSV
 def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_between_retries=5):
+    logger = logging.getLogger(__name__)
     for attempt in range(num_retries):
         try:
             response = requests.get(url)
 
             content_type = response.headers.get('content-type')
             if 'json' in content_type:
+                logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {url}")
                 return response.json()
             else:
                 content = response.content
@@ -54,17 +58,18 @@ def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_be
                     df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, usecols=lambda c: c in columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
                 else:
                     df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
+                logger.info(f"Le fichier CSV a été téléchargé avec succès à l'URL : {url}")
                 return df
         except Timeout:
             if attempt < num_retries - 1:
-                print(f"Le téléchargement a échoué en raison d'un timeout. Tentative de réessai après {delay_between_retries} secondes...")
+                logger.warning(f"Le téléchargement a échoué en raison d'un timeout. Tentative de réessai après {delay_between_retries} secondes...")
                 time.sleep(delay_between_retries)
             else:
-                print(f"Le téléchargement a échoué après {num_retries} tentatives en raison d'un timeout.")
+                logger.error(f"Le téléchargement a échoué après {num_retries} tentatives en raison d'un timeout.")
                 break
         except Exception as e:
-            print(f"Erreur lors du téléchargement du fichier CSV à l'URL : {url}")
-            print(f"Erreur : {e}")
+            logger.error(f"Erreur lors du téléchargement du fichier CSV à l'URL : {url}")
+            logger.error(f"Erreur : {e}")
             break
     return None
 
@@ -81,9 +86,11 @@ def download_and_process_data(urls_list, dtype=None):
 def load_from_path(file_path, dtype=None):
     return pd.read_excel(file_path, dtype=dtype)
 
-def save_csv(df, file_folder, file_name):
+def save_csv(df, file_folder, file_name, sep=","):
+    logger = logging.getLogger(__name__)
     # Vérifie si le répertoire existe, le crée si nécessaire
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)
 
-    df.to_csv(file_folder / file_name, index=False)
+    df.to_csv(file_folder / file_name, index=False, sep=sep)
+    logger.info(f"Le fichier {file_name} a été enregistré dans le répertoire {file_folder}")

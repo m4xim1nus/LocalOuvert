@@ -1,14 +1,26 @@
+import logging
 import yaml
 import argparse
 import sys
 from pathlib import Path
 import pandas as pd
 
-utils_path = str(Path(__file__).resolve().parents[0] / 'scripts' /'datasets')
-if utils_path not in sys.path:
-    sys.path.insert(0, utils_path)
+# Pré-nettoyage des ajouts à sys_path : à sortir dans config & utils (?)
+def add_to_sys_path(path: str):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+base_path = Path(__file__).resolve().parents[0] / 'scripts'
+add_to_sys_path(str(base_path / 'datasets'))
+add_to_sys_path(str(base_path / 'utils'))
+add_to_sys_path(str(base_path / 'communities'))
+add_to_sys_path(str(base_path / 'communities' / 'loaders'))
 
 from datagouv_searcher import DataGouvSearcher
+from datafiles_loader import DatafilesLoader
+from config import get_project_base_path
+from files_operation import save_csv
+from logger import configure_logger
 
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description="Gestionnaire du projet LocalOuvert")
@@ -17,25 +29,24 @@ if __name__ == "__main__":
     with open(args.filename) as f:
         # use safe_load instead load
         config = yaml.safe_load(f)
+
+    configure_logger(config)    
+
     datagouv = DataGouvSearcher(config)
 
-    topdown_out = datagouv.get_datafiles_by_title_and_desc(config["search"]["subventions"]["title_filter"],config["search"]["subventions"]["description_filter"])
-    
-    # print topdown_out basic info
-    # print(f"Nombre de datasets correspondant au filtre de titre ou de description : {topdown_out.id.nunique()}")
-    # print(f"Nombre de fichiers : {topdown_out.shape[0]}")
-    # print(f"Nombre de fichiers uniques : {topdown_out.url.nunique()}")
-    # print(f"Nombre de fichiers par format : {topdown_out.groupby('format').size().to_dict()}")
-    # print(f"Nombre de fichiers par fréquence : {topdown_out.groupby('frequency').size().to_dict()}")
+    files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
+    data_folder = Path(get_project_base_path()) / "data" / "datasets"
+    files_in_scope_filename = "files_in_scope.csv"
+    save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
 
-    bottomup_out = datagouv.get_datafiles_by_content(config["search"]["subventions"]["api"]["url"],config["search"]["subventions"]["api"]["title"],config["search"]["subventions"]["api"]["description"],config["search"]["subventions"]["api"]["columns"])
-
-    # print bottomup_out basic info
-    # print(f"Bottom-up : Nombre de datasets correspondant au filtre de titre ou de description : {bottomup_out.id.nunique()}")
-    # print(f"Bottom-up : Nombre de fichiers : {bottomup_out.shape[0]}")
-    # print(f"Bottom-up : Nombre de fichiers uniques : {bottomup_out.url.nunique()}")
-    # print(f"Bottom-up : Nombre de fichiers par format : {bottomup_out.groupby('format').size().to_dict()}")
-    # print(f"Bottom-up : Nombre de fichiers par fréquence : {bottomup_out.groupby('frequency').size().to_dict()}")
-    # print(f"Bottom-up : Index size : {bottomup_out.index.size}")
-    #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"],file_title_filter="asso")
-    #datagouv.get_datasets_by_content(config["search"]["subventions"]["column_filter"],config["search"]["subventions"]["content_filter"])
+    # Build new object taking files_in_scope & config as inputs in init, to load the datafiles, normalize them and save them in a new folder.
+    datafiles = DatafilesLoader(files_in_scope,config)
+    # Save the normalized data in a csv file
+    normalized_data_filename = "normalized_data.csv"
+    save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=";")
+    # Save the list of files that are not readable in a csv file
+    datafiles_out_filename = "datafiles_out.csv"
+    save_csv(datafiles.datafiles_out, data_folder, datafiles_out_filename, sep=";")
+    # Save the list of files that have columns not in common with the schema in a csv file
+    datacolumns_out_filename = "datacolumns_out.csv"
+    save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";")

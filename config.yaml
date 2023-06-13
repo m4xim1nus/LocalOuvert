@@ -69,3 +69,33 @@ search:
         - "versement"
       columns:
         - "montant"
+    schema:
+      url: "https://schema.data.gouv.fr/schemas/scdl/subventions/2.1.0/schema.json"
+
+datafile_loader:
+  file_info_columns:
+    - "siren"
+    - "organization"
+    - "title"
+    - "created_at"
+    - "url"
+
+logging:
+  version: 1
+  formatters:
+    simple:
+      format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: simple
+      stream: ext://sys.stdout
+    file:
+      class: logging.FileHandler
+      level: DEBUG
+      formatter: simple
+      filename: data/logs/log.txt
+  root:
+    level: DEBUG
+    handlers: [console, file]
