@@ -43,7 +43,7 @@ if __name__ == "__main__":
     datafiles = DatafilesLoader(files_in_scope,config)
     # Save the normalized data in a csv file
     normalized_data_filename = "normalized_data.csv"
-    save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=";")
+    save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=",")
     # Save the list of files that are not readable in a csv file
     datafiles_out_filename = "datafiles_out.csv"
     save_csv(datafiles.datafiles_out, data_folder, datafiles_out_filename, sep=";")
