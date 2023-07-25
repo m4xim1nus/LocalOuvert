@@ -14,14 +14,11 @@ class DataGouvSearcher():
         self.scope = CommunitiesSelector(config["communities"])
         self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id-datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
-
         self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
-        
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
         # join siren to dataset_catalog_df based on organization_id
         self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
         self.dataset_catalog_df.drop(columns=['id-datagouv'], inplace=True)
-
         self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)

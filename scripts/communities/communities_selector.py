@@ -19,14 +19,16 @@ class CommunitiesSelector():
         ofgl_data = ofgl.get()
         odf_data = odf.get()
         # Worth Exploring Here ! If you cast to Int, it breaks
-        ofgl_data["siren"] = ofgl_data["SIREN"].astype(str)
+        ofgl_data["siren"] = pd.to_numeric(ofgl_data["SIREN"], errors="coerce")
+        ofgl_data["siren"] = ofgl_data["siren"].fillna(0).astype(int) 
         ofgl_data.drop(columns=['SIREN'], inplace=True)
-        odf_data["siren"] = odf_data["siren"].astype(str) 
+        odf_data["siren"] = pd.to_numeric(odf_data["siren"], errors="coerce")
+        odf_data["siren"] = odf_data["siren"].fillna(0).astype(int)
         all_data = ofgl_data.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], on='siren', how='left')
-        
         # TODO Manage columns outside of classes (configs ?)
         all_data = all_data[['nom', 'siren', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
-        all_data["siren"] = all_data["siren"].astype(int)
+        all_data['siren'] = pd.to_numeric(all_data['siren'], errors='coerce')
+        all_data["siren"] = all_data["siren"].fillna(0).astype(int)
 
         all_data = all_data.merge(sirene.get(), on='siren', how='left')
         
