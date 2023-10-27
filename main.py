@@ -34,7 +34,11 @@ if __name__ == "__main__":
 
     datagouv = DataGouvSearcher(config)
 
-    files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
+    datagouv_files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
+    single_urls_source_file = Path(get_project_base_path()) / config["search"]["subventions"]["single_urls_file"]
+    single_urls_file_in_scope = pd.read_csv(single_urls_source_file, sep=";")
+    files_in_scope = pd.concat([datagouv_files_in_scope, single_urls_file_in_scope], ignore_index=True)
+
     data_folder = Path(get_project_base_path()) / "data" / "datasets"
     files_in_scope_filename = "files_in_scope.csv"
     save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
