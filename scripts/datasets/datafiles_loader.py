@@ -1,6 +1,9 @@
 import collections
 import logging
 import pandas as pd
+from pathlib import Path
+
+from config import get_project_base_path
 
 from files_operation import load_from_url
 
@@ -85,10 +88,14 @@ class DatafilesLoader():
 
         # Create a mapping dictionary between lower case schema names and original schema names
         schema_mapping = dict(zip(schema_lower, self.schema["name"].values))
+
+        schema_dict_file = Path(get_project_base_path()) / config["search"]["subventions"]["schema_dict_file"]
+        schema_dict = pd.read_csv(schema_dict_file, sep=";").set_index('original_name')['official_name'].to_dict()
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
         for df in self.corpus:
+            df.rename(columns=schema_dict, inplace=True)
             df.columns = df.columns.astype(str)
             columns_lower = [col.lower() for col in df.columns]
             # Check if the dataframe has at least 1 column in common with the schema

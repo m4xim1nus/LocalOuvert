@@ -1,0 +1,21 @@
+﻿original_name;official_name
+Nom de l'attribuant;nomAttribuant
+Identification de l'attributaire;idAttribuant
+Date de la convention;dateConvention
+Référence de la décision;referenceDecision
+N° SIRET;idBeneficiaire
+NOM Bénéficiaire;nomBeneficiaire
+Raison sociale (SIRENE);rnaBeneficiaire
+Objet de la subvention;objet
+Montant total de la subvention;montant
+Nature de la subvention;nature
+Conditions de versement;conditionsVersement
+Date(s) ou période(s) de versement;datesPeriodeVersement
+N° unique de référencement au RAE;idRAE
+Aide d'Etat (ou pas) notifiée à l'UE;notificationUE
+% du mt de la subvention attribuée au bénéficiaire;pourcentageSubvention
+nom_beneficiaire;nomBeneficiaire
+numero_siret;idBeneficiaire
+objet_du_dossier;objet
+montant_vote;montant
+nature_de_la_subvention;nature
