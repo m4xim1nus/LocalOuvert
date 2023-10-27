@@ -20,7 +20,7 @@ class DatafilesLoader():
         return schema_df
 
     def keep_readable_datafiles(self):
-        preferred_formats = ["csv", "xls", "json", "zip"] # Could be put outside
+        preferred_formats = ["csv", "xls", "xlsx", "json", "zip"] # Could be put outside
 
         readable_files = self.files_in_scope[self.files_in_scope["format"].isin(preferred_formats)]
         datafiles_out = self.files_in_scope[~self.files_in_scope["format"].isin(preferred_formats)]
