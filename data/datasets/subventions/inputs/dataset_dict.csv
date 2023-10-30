@@ -19,3 +19,64 @@ numero_siret;idBeneficiaire
 objet_du_dossier;objet
 montant_vote;montant
 nature_de_la_subvention;nature
+datedeconvention;dateConvention
+datedecision;dateConvention
+Date de signature de la convention;dateConvention
+Date de la convention de subvention;dateConvention
+Date de délibération;dateConvention
+DATE CONVENTION;dateConvention
+decision_date;dateConvention
+date_decision;dateConvention
+dateDécision;dateConvention
+dateSoldeVersement;datesPeriodeVersement
+conditionVersement;datesPeriodeVersement
+datePeriodeVersement;datesPeriodeVersement
+dateperiodedversement;datesPeriodeVersement
+dateVersementSolde;datesPeriodeVersement
+Dates de periode de versement;datesPeriodeVersement
+identification_de_l_attribuant;idAttribuant
+Identification SIRET de l'attribuant;idAttribuant
+Identification de l’attributaire (SIRET);idAttribuant
+N° Siret;idAttribuant
+SIRET;idAttribuant
+identifiant_attribuant;idAttribuant
+idBénéficiaire;idBeneficiaire
+ID_BENEFICIAIRE;idBeneficiaire
+identification_du_beneficiaire;idBeneficiaire
+Identification SIRET du beneficiaire;idBeneficiaire
+Identification du bénéficiaire;idBeneficiaire
+code_siren_siret;idBeneficiaire
+idBeneficiare;idBeneficiaire
+beneficiaire_code;idBeneficiaire
+code_tiers_beneficiaire;idBeneficiaire
+Identification IRAE de l'aide attribuee;idRAE
+Numéro unique de référencement au RAE;idRAE
+ montant ;montant
+montant_total_de_la_subvention;montant
+montant_reuse;montant
+Montant  total de la subvention;montant
+Montant de la subvention;montant
+montant_attribue;montant
+montantpret;montant
+montant_budgetaire_liquide;montant
+montant_subvention_vote;montant
+montant_euros;montant
+nom_de_l_attribuant;nomAttribuant
+Nom de l’attributaire;nomAttribuant
+Nom de l'association;nomAttribuant
+NOM COLLECTIVITÉ;nomAttribuant
+nom_attribuant;nomAttribuant
+nomBénéficiaire;nomBeneficiaire
+NOM_BENEFICIAIRE;nomBeneficiaire
+Nom du beneficiaire;nomBeneficiaire
+Nom du bénéficiaire;nomBeneficiaire
+beneficiaire_nom;nomBeneficiaire
+beneficiaire;nomBeneficiaire
+designation_du_beneficiaire;nomBeneficiaire
+Notification a l'Union Europeenne;notificationUE
+Aide d’Etat notifié à la Commission européenne;notificationUE
+Objet ;objet
+objet_de_la_subvention;objet
+objet_reuse;objet
+Pourcentage Subvention;pourcentageSubvention
+Pourcentage du montant de la subvention attribuée au bénéficiaire;pourcentageSubvention
