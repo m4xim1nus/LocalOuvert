@@ -18,6 +18,7 @@ add_to_sys_path(str(base_path / 'communities' / 'loaders'))
 
 from datagouv_searcher import DataGouvSearcher
 from datafiles_loader import DatafilesLoader
+from single_urls_builder import SingleUrlsBuilder
 from config import get_project_base_path
 from files_operation import save_csv
 from logger import configure_logger
@@ -33,15 +34,16 @@ if __name__ == "__main__":
     configure_logger(config)    
 
     datagouv = DataGouvSearcher(config)
-
     datagouv_files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
-    single_urls_source_file = Path(get_project_base_path()) / config["search"]["subventions"]["single_urls_file"]
-    single_urls_file_in_scope = pd.read_csv(single_urls_source_file, sep=";")
-    files_in_scope = pd.concat([datagouv_files_in_scope, single_urls_file_in_scope], ignore_index=True)
+
+    single_urls = SingleUrlsBuilder(config)
+    single_urls_files_in_scope = single_urls.get_datafiles(config["search"]["subventions"])
+    files_in_scope = pd.concat([datagouv_files_in_scope, single_urls_files_in_scope], ignore_index=True)
 
     data_folder = Path(get_project_base_path()) / "data" / "datasets"
     files_in_scope_filename = "files_in_scope.csv"
     save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
+    print("files_in_scope saved in data/datasets/files_in_scope.csv GOGOGOGGOGOGOGGOGOGOGOGOGGOOGGOGOGOGOGO")
 
     # Build new object taking files_in_scope & config as inputs in init, to load the datafiles, normalize them and save them in a new folder.
     datafiles = DatafilesLoader(files_in_scope,config)
