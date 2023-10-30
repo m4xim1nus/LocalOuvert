@@ -80,48 +80,33 @@ def detect_delimiter(text, num_lines=5, delimiters=None):
 
 def load_excel(url, dtype=None, columns_to_keep=None):
     logger = logging.getLogger(__name__)
-    response = requests.get(url)
-    content = BytesIO(response.content)
-    workbook = openpyxl.load_workbook(content)
-    sheet = workbook.active
-    skiprows = detect_skiprows(sheet)
+    df = pd.read_excel(url, header=None, dtype=dtype)
     
-    skipcolumns = detect_skipcolumns(sheet)
-    for _ in range(skipcolumns):
-        sheet.delete_cols(1)
-
-    temp_content = BytesIO()
-    workbook.save(temp_content)
-    temp_content.seek(0)
+    skiprows = detect_skiprows(df)
+    skipcols = detect_skipcolumns(df)
+    
+    df = df.iloc[skiprows:, skipcols:]
+    # Renommer les colonnes du DataFrame en utilisant la première ligne, puis supprimer cette ligne
+    df.columns = df.iloc[0]
+    df = df.drop(df.index[0])
+    df = df.reset_index(drop=True)
 
     if columns_to_keep is not None:
-        df = pd.read_excel(temp_content, dtype=dtype, skiprows=skiprows, usecols=lambda c: c in columns_to_keep)
-    else:
-        df = pd.read_excel(temp_content, dtype=dtype, skiprows=skiprows)
+        df = df.loc[:, columns_to_keep]
+    
     logger.info(f"Le fichier Excel a été téléchargé avec succès à l'URL : {url}")
     return df
 
-def detect_skiprows(sheet):
-    last_non_empty_col = max((cell.col_idx for row in sheet.iter_rows() for cell in row if cell.value is not None))
-    first_row = 1
-    for row in sheet.iter_rows(min_row=1, min_col=last_non_empty_col, max_col=last_non_empty_col):
-        if row[0].value is None:
-            continue
-        else:
-            first_row = row[0].row
-            break
-    return first_row - 1  # Retournez le nombre de lignes à ignorer
+def detect_skiprows(df):
+    # Trouvez la dernière colonne non vide
+    last_non_empty_col = len(df.dropna(how='all', axis=1).columns) -1
+    # Obtenez l'indice de la première entrée non vide dans cette colonne
+    first_row = df.iloc[:, last_non_empty_col].first_valid_index()
+    return first_row  # Retournez le nombre de lignes à ignorer
 
-def detect_skipcolumns(sheet):
-    last_non_empty_row = max((cell.row for row in sheet.iter_rows() for cell in row if cell.value is not None))
-    first_col = 1
-    for col in sheet.iter_cols(min_row=last_non_empty_row, min_col=1, max_row=last_non_empty_row):
-        if col[0].value is None:
-            continue
-        else:
-            first_col = col[0].col_idx
-            break
-    return first_col - 1  # Retournez le nombre de colonnes à ignorer
+def detect_skipcolumns(df):
+    df_transposed = df.transpose().reset_index(drop=True)
+    return detect_skiprows(df_transposed)
 
 def handle_timeout(attempt, num_retries, delay_between_retries):
     logger = logging.getLogger(__name__)
