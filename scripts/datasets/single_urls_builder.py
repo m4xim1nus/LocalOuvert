@@ -11,7 +11,7 @@ class SingleUrlsBuilder():
         self.scope = CommunitiesSelector(config["communities"])
 
     def get_datafiles(self,search_config):
-        single_urls_source_file = Path(get_project_base_path()) / search_config["single_urls_file"]
+        single_urls_source_file = Path(get_project_base_path()) / "data" / "datasets" / "subventions" / "inputs" / search_config["single_urls_file"]
         single_urls_files_in_scope = pd.read_csv(single_urls_source_file, sep=";")
         selected_data = self.scope.selected_data
         # Add 'nom' column to single_urls_files_in_scope from selected_data based on siren

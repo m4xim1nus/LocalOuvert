@@ -89,7 +89,7 @@ class DatafilesLoader():
         # Create a mapping dictionary between lower case schema names and original schema names
         schema_mapping = dict(zip(schema_lower, self.schema["name"].values))
 
-        schema_dict_file = Path(get_project_base_path()) / config["search"]["subventions"]["schema_dict_file"]
+        schema_dict_file = Path(get_project_base_path())  / "data" / "datasets" / "subventions" / "inputs" / config["search"]["subventions"]["schema_dict_file"]
         schema_dict = pd.read_csv(schema_dict_file, sep=";").set_index('original_name')['official_name'].to_dict()
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])

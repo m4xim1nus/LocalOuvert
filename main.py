@@ -40,10 +40,9 @@ if __name__ == "__main__":
     single_urls_files_in_scope = single_urls.get_datafiles(config["search"]["subventions"])
     files_in_scope = pd.concat([datagouv_files_in_scope, single_urls_files_in_scope], ignore_index=True)
 
-    data_folder = Path(get_project_base_path()) / "data" / "datasets"
+    data_folder = Path(get_project_base_path()) / "data" / "datasets" / "subventions" / "outputs"
     files_in_scope_filename = "files_in_scope.csv"
     save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
-    print("files_in_scope saved in data/datasets/files_in_scope.csv GOGOGOGGOGOGOGGOGOGOGOGOGGOOGGOGOGOGOGO")
 
     # Build new object taking files_in_scope & config as inputs in init, to load the datafiles, normalize them and save them in a new folder.
     datafiles = DatafilesLoader(files_in_scope,config)
