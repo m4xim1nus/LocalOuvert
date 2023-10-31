@@ -6,6 +6,7 @@ from pathlib import Path
 from config import get_project_base_path
 
 from files_operation import load_from_url
+from dataframe_operation import merge_duplicate_columns, safe_rename
 
 
 class DatafilesLoader():
@@ -95,7 +96,10 @@ class DatafilesLoader():
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
         for df in self.corpus:
-            df.rename(columns=schema_dict, inplace=True)
+            # Merge les colonnes avec le même nom
+            df = merge_duplicate_columns(df)
+            safe_rename(df, schema_dict)
+
             df.columns = df.columns.astype(str)
             columns_lower = [col.lower() for col in df.columns]
             # Check if the dataframe has at least 1 column in common with the schema
