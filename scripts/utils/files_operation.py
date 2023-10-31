@@ -3,11 +3,10 @@ import os
 import csv
 import gzip
 import time
-import openpyxl
 import requests
 import pandas as pd
 import re
-from io import BytesIO, StringIO
+from io import StringIO
 from requests.exceptions import Timeout
 
 # Fonction pour télécharger un fichier JSON, CSV ou Excel
@@ -48,7 +47,22 @@ def load_csv(url, dtype=None, columns_to_keep=None):
     content = response.content
     if 'gzip' in response.headers.get('content-type'):
         content = gzip.decompress(content)
-    decoded_content = content.decode('utf-8')
+
+    # Liste des encodages à tester
+    encodings_to_try = ['utf-8', 'windows-1252', 'latin1']
+    decoded_content = None
+
+    for encoding in encodings_to_try:
+        try:
+            decoded_content = content.decode(encoding)
+            break
+        except Exception:
+            pass
+    
+    if decoded_content is None:
+        logger.error(f"Impossible de décoder le contenu du fichier CSV à l'URL : {url}")
+        return None
+    
     delimiter = detect_delimiter(decoded_content)
     if columns_to_keep is not None:
         df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=dtype, usecols=lambda c: c in columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
