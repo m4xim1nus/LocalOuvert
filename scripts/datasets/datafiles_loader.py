@@ -6,7 +6,7 @@ from pathlib import Path
 from config import get_project_base_path
 
 from files_operation import load_from_url
-from dataframe_operation import merge_duplicate_columns, safe_rename
+from dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
 
 
 class DatafilesLoader():
@@ -136,5 +136,12 @@ class DatafilesLoader():
         self.logger.info("Number of files not normalized: %s", len(self.datafiles_out)-len_out)
         self.logger.info("Number of columns in datacolumns_out: %s", len(datacolumns_out))
         self.logger.info("Number of NaN values in normalized_data, per column: %s", normalized_data.isna().sum())
+
+        # Cast data to schema types
+        schema_selected = self.schema.loc[:, ['name', 'type']]        
+        normalized_data = cast_data(normalized_data, schema_selected)
+
+        self.logger.info("Data types per column after casting in normalized data: %s", normalized_data.dtypes)
+        self.logger.info("Percentage of NaN values after casting, per column: %s", (normalized_data.isna().sum() / len(normalized_data)) * 100)
 
         return normalized_data, datacolumns_out
