@@ -18,6 +18,7 @@ add_to_sys_path(str(base_path / 'communities' / 'loaders'))
 
 from datagouv_searcher import DataGouvSearcher
 from datafiles_loader import DatafilesLoader
+from single_urls_builder import SingleUrlsBuilder
 from config import get_project_base_path
 from files_operation import save_csv
 from logger import configure_logger
@@ -33,9 +34,13 @@ if __name__ == "__main__":
     configure_logger(config)    
 
     datagouv = DataGouvSearcher(config)
+    datagouv_files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
 
-    files_in_scope = datagouv.get_datafiles(config["search"]["subventions"])
-    data_folder = Path(get_project_base_path()) / "data" / "datasets"
+    single_urls = SingleUrlsBuilder(config)
+    single_urls_files_in_scope = single_urls.get_datafiles(config["search"]["subventions"])
+    files_in_scope = pd.concat([datagouv_files_in_scope, single_urls_files_in_scope], ignore_index=True)
+
+    data_folder = Path(get_project_base_path()) / "data" / "datasets" / "subventions" / "outputs"
     files_in_scope_filename = "files_in_scope.csv"
     save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
 

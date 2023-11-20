@@ -1,8 +1,12 @@
 import collections
 import logging
 import pandas as pd
+from pathlib import Path
+
+from config import get_project_base_path
 
 from files_operation import load_from_url
+from dataframe_operation import merge_duplicate_columns, safe_rename
 
 
 class DatafilesLoader():
@@ -20,7 +24,7 @@ class DatafilesLoader():
         return schema_df
 
     def keep_readable_datafiles(self):
-        preferred_formats = ["csv", "xls", "json", "zip"] # Could be put outside
+        preferred_formats = ["csv", "xls", "xlsx", "json", "zip"] # Could be put outside
 
         readable_files = self.files_in_scope[self.files_in_scope["format"].isin(preferred_formats)]
         datafiles_out = self.files_in_scope[~self.files_in_scope["format"].isin(preferred_formats)]
@@ -85,10 +89,17 @@ class DatafilesLoader():
 
         # Create a mapping dictionary between lower case schema names and original schema names
         schema_mapping = dict(zip(schema_lower, self.schema["name"].values))
+
+        schema_dict_file = Path(get_project_base_path())  / "data" / "datasets" / "subventions" / "inputs" / config["search"]["subventions"]["schema_dict_file"]
+        schema_dict = pd.read_csv(schema_dict_file, sep=";").set_index('original_name')['official_name'].to_dict()
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
         for df in self.corpus:
+            # Merge les colonnes avec le même nom
+            df = merge_duplicate_columns(df)
+            safe_rename(df, schema_dict)
+
             df.columns = df.columns.astype(str)
             columns_lower = [col.lower() for col in df.columns]
             # Check if the dataframe has at least 1 column in common with the schema
