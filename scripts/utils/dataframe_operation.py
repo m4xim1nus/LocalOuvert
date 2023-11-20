@@ -1,3 +1,6 @@
+import logging
+import pandas as pd
+
 def convert_columns_to_lowercase(df):
     df.columns = [col.lower() for col in df.columns]
     return df
@@ -23,3 +26,80 @@ def safe_rename(df, schema_dict):
         if official_name in df.columns and original_name != official_name:
             del schema_dict_copy[original_name]
     df.rename(columns=schema_dict_copy, inplace=True)
+
+def cast_data(data, schema):
+    logger = logging.getLogger(__name__)
+    # Dict between schema types and pandas types
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#basics-dtypes
+    type_dict = {
+        'string': 'string',
+        'integer': 'Int64',
+        'number': 'float64',
+        'boolean': 'boolean',
+        'date': 'datetime64[ns]'
+    }
+    
+    # create a new dataframe with the same shape and columns as data
+    casted_data = pd.DataFrame(columns=data.columns)
+    
+    # iterate over each column in data
+    for col in data.columns:
+        # if column name is not in schema['name'].values, keep the exact same column
+        if col not in schema['name'].values:
+            casted_data[col] = data[col]
+        # if column name is in schema['name'].values, cast the column with the paired schema['type'] value
+        else:
+            # get the schema type for the column
+            schema_type = schema.loc[schema['name'] == col, 'type'].values[0]
+            # translate the schema type to pandas type using type_dict
+            pandas_type = type_dict[schema_type]
+            # clean & cast the column to the pandas type, based on subfunctions
+            casted_data[col] = clean_and_cast_col(data[col], pandas_type)
+            logger.info(f"Column '{col}' has been casted to '{pandas_type}'")
+                
+    return casted_data
+
+def clean_and_cast_col(col, pandas_type):
+    logger = logging.getLogger(__name__)
+    # Make a copy of the column
+    col_original = col.copy()
+
+    if pandas_type == 'float64':
+        # Replace ',' by '.' to handle French numeric format and remove spaces (including non-breaking spaces)
+        col = col.replace({',': '.', '\\s+': '',"%":""}, regex=True)
+        col = pd.to_numeric(col, errors='coerce')  # Coerce errors will be set to NaN
+    elif pandas_type == 'datetime64[ns]':
+        # Convert to datetime, with utc=true, errors will be coerced to NaT
+        col = col.astype(str)
+        col = col.apply(parse_date)
+    elif pandas_type == 'string':
+        col = col.astype(str)
+        col = col.str.strip()
+        col = col.astype(str)
+    elif pandas_type == 'Int64':
+        # Convert to integer, note that 'Int64' can handle NaN values
+        col = pd.to_numeric(col, errors='coerce').astype('Int64')
+    elif pandas_type == 'boolean':            
+        col = col.str.replace(r"\s+","", regex=True).str.lower()
+        # Convert to boolean, True for 'oui', False for 'non', case insensitive
+        col = col.str.lower().map({'oui': True, 'non': False, 'false':False,'true':True})
+
+    # Compare the original column with the copy to identify coerced values
+    coerced_indices = col_original.index[(col_original.notnull())&(col_original != col)]
+    coerced_values = col_original.loc[coerced_indices]
+
+    if not coerced_values.empty:
+        #Log the coerced values and relevant information
+        for index, value in coerced_values.iteritems():
+            if ("nan" not in str(value))&(pd.isna(col.loc[index])):
+                logger.error(f"Value '{value}' supposed to be a '{pandas_type}' was coerced to {col[index]}")
+
+    return col.astype(pandas_type)  # Convert to specified pandas type
+
+def parse_date(date_str):
+    try:
+        # dateutil parser can handle different formats
+        return pd.to_datetime(date_str, utc=True)
+    except ValueError:
+        # Handle the error if the date format is not recognized
+        return pd.NaT  # Return 'Not a Time' for unparseable formats

@@ -158,4 +158,10 @@ class DataGouvSearcher():
             self.log_basic_info(datafiles)
         else:
             raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")
+        
+        # Add 'nom' & 'type' columns to datafiles from self.scope.selected_data based on siren
+        datafiles = datafiles.merge(self.scope.selected_data[['siren', 'nom', 'type']], on='siren', how='left')
+        # Add new 'source' column, filled with 'datagouv' value
+        datafiles['source'] = 'datagouv'
+
         return datafiles

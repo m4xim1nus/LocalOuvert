@@ -81,6 +81,9 @@ datafile_loader:
     - "title"
     - "created_at"
     - "url"
+    - "nom"
+    - "type"
+    - "source"
 
 logging:
   version: 1
