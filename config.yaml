@@ -73,6 +73,12 @@ search:
       url: "https://schema.data.gouv.fr/schemas/scdl/subventions/2.1.0/schema.json"
     single_urls_file: single_urls.csv
     schema_dict_file: dataset_dict.csv
+  marches_publics:
+    unified_dataset:
+      url: "https://www.data.gouv.fr/fr/datasets/r/16962018-5c31-4296-9454-5998585496d2"
+    schema:
+      url: "https://schema.data.gouv.fr/schemas/139bercy/format-commande-publique/1.5.0/marches.json"
+      name: "marche"
 
 datafile_loader:
   file_info_columns:
