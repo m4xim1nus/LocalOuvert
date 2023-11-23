@@ -34,14 +34,14 @@ class DatafileLoader():
     
     def clean_data(self, config):
         # Clean columns : remove columns from loaded_data whose names are not in schema
-        cleaned_column_names_for_comparison = {
-            self.clean_column_name_for_comparison(col): col for col in self.loaded_data.columns
+        original_to_cleaned_names = {
+            col: self.clean_column_name_for_comparison(col) for col in self.loaded_data.columns
         }
         # Récupérer les noms de propriétés du schéma
         schema_columns = set(self.schema['property'])
         # Trouver les colonnes à conserver en fonction du schéma
         columns_to_keep = set()
-        for cleaned_name, original_name in cleaned_column_names_for_comparison.items():
+        for original_name, cleaned_name in original_to_cleaned_names.items():
             if cleaned_name in schema_columns:
                 columns_to_keep.add(original_name)
         # Conserver uniquement les colonnes qui correspondent au schéma
