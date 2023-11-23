@@ -9,6 +9,7 @@ load_dotenv()  # Charge les variables d'environnement à partir du fichier .env
 
 class PSQLConnector:
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.dbname = os.getenv("DB_NAME")
         self.user = os.getenv("DB_USER")
         self.password = os.getenv("DB_PASSWORD")
@@ -16,16 +17,14 @@ class PSQLConnector:
         self.port = os.getenv("DB_PORT")
 
     def connect(self):
-        logger = logging.getLogger(__name__)
         try:
             self.connection = psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host,port=self.port)
             self.cursor = self.connection.cursor()
             logger.info("Connexion à la base de données réussie")
         except Exception as e:
-            logger.info(f"Erreur lors de la connexion à la base de données: {e}")
+            self.logger.info(f"Erreur lors de la connexion à la base de données: {e}")
 
     def save_communities_to_sql(self,df):
-        logger = logging.getLogger(__name__)
         # Votre DataFrame Pandas
         # dataframe = pd.read_csv('votre_fichier.csv')  # Si vous chargez depuis un fichier CSV
         # Assurez-vous que les colonnes du DataFrame correspondent à la table
@@ -37,9 +36,9 @@ class PSQLConnector:
             truncate_query = "TRUNCATE TABLE public.communities"
             self.cursor.execute(truncate_query)
             self.connection.commit()
-            logger.info("Table vidée avec succès.")
+            self.logger.info("Table vidée avec succès.")
         except (Exception, psycopg2.DatabaseError) as error:
-            logger.info("Erreur lors du vidage de la table :", error)
+            self.logger.info("Erreur lors du vidage de la table :", error)
             self.connection.rollback()
         # Sauvegarder le DataFrame dans un buffer en mémoire sous forme CSV
         output = StringIO()
@@ -59,19 +58,18 @@ class PSQLConnector:
             self.cursor.copy_expert(copy_query, output)
             self.connection.commit()
         except (Exception, psycopg2.DatabaseError) as error:
-            logger.info("Error: %s" % error)
+            self.logger.info("Error: %s" % error)
             self.connection.rollback()
             self.cursor.close()
             return 1
 
-        logger.info("Copy successful")
+        self.logger.info("Copy successful")
 
     
     def save_normalized_data_to_sql(self,df,chunk_size=1000):
         # Votre DataFrame Pandas
         # dataframe = pd.read_csv('votre_fichier.csv')  # Si vous chargez depuis un fichier CSV
         # Assurez-vous que les colonnes du DataFrame correspondent à la table
-        logger = logging.getLogger(__name__)
 
         # Reformating (to discuss if we keep it here)
         
@@ -85,9 +83,9 @@ class PSQLConnector:
             truncate_query = "TRUNCATE TABLE public.normalized_data"
             self.cursor.execute(truncate_query)
             self.connection.commit()
-            logger.info("Table vidée avec succès.")
+            self.logger.info("Table vidée avec succès.")
         except (Exception, psycopg2.DatabaseError) as error:
-            logger.info("Erreur lors du vidage de la table :", error)
+            self.logger.info("Erreur lors du vidage de la table :", error)
             self.connection.rollback()
         # Sauvegarder le DataFrame dans un buffer en mémoire sous forme CSV
         
@@ -104,17 +102,52 @@ class PSQLConnector:
                 self.cursor.copy_expert("COPY public.normalized_data FROM STDIN WITH CSV DELIMITER '\t' NULL ''", output)
                 self.connection.commit()
             except (Exception, psycopg2.DatabaseError) as error:
-                logger.info("Error: %s" % error)
+                self.logger.info("Error: %s" % error)
                 self.connection.rollback()
                 return 1
 
             print("Copy successful")
 
+    def insert_data_in_chunks(self, data, table_name, chunk_size=1000):
+    """
+    Insère les données en petits lots dans la table spécifiée.
+
+    :param data: DataFrame contenant les données à insérer.
+    :param table_name: Nom de la table où insérer les données.
+    :param chunk_size: Taille de chaque lot.
+    """
+
+    # Assurez-vous que la connexion est établie
+    if not self.connection:
+        self.connect()
+
+    for start in range(0, len(data), chunk_size):
+        end = min(start + chunk_size, len(data))
+        chunk = data.iloc[start:end]
+
+        try:
+            # Création d'un buffer pour l'insertion en masse
+            buffer = StringIO()
+            chunk.to_csv(buffer, index=False, header=False)
+            buffer.seek(0)
+
+            # Utilisation de la commande COPY pour l'insertion
+            with self.connection.cursor() as cursor:
+                cursor.copy_from(buffer, table_name, sep=",", columns=chunk.columns)
+                self.connection.commit()
+
+            self.logger.info(f"Lot de données inséré : lignes {start} à {end}")
+        except Exception as e:
+            logger.error(f"Erreur lors de l'insertion du lot : {e}")
+            self.connection.rollback()
+
+    # Fermeture de la connexion après l'insertion
+    self.close()
+
     def close_connection(self):
-        logger = logging.getLogger(__name__)
         self.cursor.close()
         self.connection.close()
-        logger.info("Connexion à la base de données fermée")
+        self.logger.info("Connexion à la base de données fermée")
 
 # Exemple d'utilisation
 # connector = PSQLConnector("dbname", "user", "password", "host", "port")
