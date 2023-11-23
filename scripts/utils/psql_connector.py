@@ -2,14 +2,18 @@ import logging
 import pandas as pd
 import psycopg2
 from io import StringIO
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Charge les variables d'environnement à partir du fichier .env
 
 class PSQLConnector:
-    def __init__(self, dbname, user, password, host,port):
-        self.dbname = dbname
-        self.user = user
-        self.password = password
-        self.host = host
-        self.port = port
+    def __init__(self):
+        self.dbname = os.getenv("DB_NAME")
+        self.user = os.getenv("DB_USER")
+        self.password = os.getenv("DB_PASSWORD")
+        self.host = os.getenv("DB_HOST")
+        self.port = os.getenv("DB_PORT")
 
     def connect(self):
         logger = logging.getLogger(__name__)
@@ -113,7 +117,7 @@ class PSQLConnector:
         logger.info("Connexion à la base de données fermée")
 
 # Exemple d'utilisation
-# connector = PSQLConnector('postgres', 'postgres.gaaokuyqioaobxxyapbt', '7kFFZ8xNa9T8Bqm', 'aws-0-eu-central-1.pooler.supabase.com',6543)
+# connector = PSQLConnector("dbname", "user", "password", "host", "port")
 # connector.connect()
 
 # connector.save_communities_to_sql(sel_com_df)
