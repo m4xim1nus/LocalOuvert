@@ -42,16 +42,16 @@ if __name__ == "__main__":
 
     data_folder = Path(get_project_base_path()) / "data" / "datasets" / "subventions" / "outputs"
     files_in_scope_filename = "files_in_scope.csv"
-    save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";")
+    save_csv(files_in_scope, data_folder, files_in_scope_filename, sep=";", index=True)
 
     # Build new object taking files_in_scope & config as inputs in init, to load the datafiles, normalize them and save them in a new folder.
     datafiles = DatafilesLoader(files_in_scope,config)
     # Save the normalized data in a csv file
     normalized_data_filename = "normalized_data.csv"
-    save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=";")
+    save_csv(datafiles.normalized_data, data_folder, normalized_data_filename, sep=";", index=True)
     # Save the list of files that are not readable in a csv file
     datafiles_out_filename = "datafiles_out.csv"
-    save_csv(datafiles.datafiles_out, data_folder, datafiles_out_filename, sep=";")
+    save_csv(datafiles.datafiles_out, data_folder, datafiles_out_filename, sep=";", index=True)
     # Save the list of files that have columns not in common with the schema in a csv file
     datacolumns_out_filename = "datacolumns_out.csv"
-    save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";")
+    save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";", index=True)

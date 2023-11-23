@@ -55,8 +55,8 @@ class CommunitiesSelector():
         data_folder = Path(get_project_base_path()) / "data" / "communities" / "processed_data"
         all_data_filename = "all_communities_data.csv"
         selected_data_filename = "selected_communities_data.csv"
-        save_csv(all_data, data_folder, all_data_filename, sep=";")
-        save_csv(selected_data, data_folder, selected_data_filename, sep=";")
+        save_csv(all_data, data_folder, all_data_filename, sep=";", index=True)
+        save_csv(selected_data, data_folder, selected_data_filename, sep=";", index=True)
      
     def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()
