@@ -8,6 +8,7 @@ import unidecode
 from communities_selector import CommunitiesSelector
 from files_operation import load_from_url, load_json
 from json_operation import flatten_json_schema, flatten_data
+from dataframe_operation import cast_data
 
 class DatafileLoader():
     def __init__(self, config):
@@ -16,14 +17,16 @@ class DatafileLoader():
         self.scope = CommunitiesSelector(config["communities"])
         self.schema = self.load_schema(config)
         self.loaded_data = self.load_data(config)
-        self.normalized_data = self.clean_data(config)
-        # self.normalized_data = self.normalize_data(config)
+        self.cleaned_data = self.clean_data(config)
+        self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
         json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"])
         schema_name = config["search"]["marches_publics"]["schema"]["name"]
         flattened_schema = flatten_json_schema(json_schema, schema_name)
         schema_df = pd.DataFrame(flattened_schema)
+        # In "type" column, replace NaN values by "string" (default value)
+        schema_df['type'].fillna('string', inplace=True)
         return schema_df
     
     def load_data(self, config):
@@ -86,3 +89,15 @@ class DatafileLoader():
             return False
         cleaned_value = self.clean_value(value)
         return cleaned_value in values
+    
+    def normalize_data(self, config):
+
+        # Drop cleaned_data duplicates
+        normalized_data = self.cleaned_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
+        normalized_data = normalized_data.drop_duplicates()
+
+        # Cast data to schema types
+        schema_selected = self.schema.loc[:, ['property', 'type']]        
+        normalized_data = cast_data(normalized_data, schema_selected, "property", clean_column_name_for_comparison=self.clean_column_name_for_comparison)
+
+        return normalized_data
