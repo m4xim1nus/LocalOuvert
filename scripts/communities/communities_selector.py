@@ -62,3 +62,9 @@ class CommunitiesSelector():
         new_instance = self.selected_data.copy()
         datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()][["siren", "id-datagouv"]]        
         return datagouv_ids # return a dataframe with siren and id-datagouv columns
+    
+    def get_selected_ids(self):
+        new_instance = self.selected_data.copy()
+        selected_data_ids = new_instance[new_instance["siren"].notnull()][["siren", "nom", "type"]]
+        selected_data_ids.drop_duplicates(subset=['siren'], keep='first', inplace=True)   # keep only the first duplicated value TODO to be improved      
+        return selected_data_ids # return a dataframe with siren and & basic info

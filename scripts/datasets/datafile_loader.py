@@ -18,6 +18,10 @@ class DatafileLoader():
         self.schema = self.load_schema(config)
         self.loaded_data = self.load_data(config)
         self.cleaned_data = self.clean_data(config)
+
+        self.communities_scope = CommunitiesSelector(config["communities"])
+        self.communities_ids = self.communities_scope.get_selected_ids()
+        self.selected_data = self.select_data(config)
         self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
@@ -90,10 +94,23 @@ class DatafileLoader():
         cleaned_value = self.clean_value(value)
         return cleaned_value in values
     
+    def select_data(self, config):
+        cleaned_data = self.cleaned_data.copy()
+        communities_data = self.communities_ids.copy()
+
+        cleaned_data['siren'] = cleaned_data['acheteur.id'].str[:9].astype(str)
+        communities_data['siren'] = communities_data['siren'].astype(str)
+
+        selected_data = pd.merge(cleaned_data, communities_data, on='siren', how='left', validate="many_to_one")
+        selected_data = selected_data.dropna(subset=['type'])
+
+        return selected_data
+
+
     def normalize_data(self, config):
 
         # Drop cleaned_data duplicates
-        normalized_data = self.cleaned_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
+        normalized_data = self.selected_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
         normalized_data = normalized_data.drop_duplicates()
 
         # Cast data to schema types
