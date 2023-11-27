@@ -20,7 +20,7 @@ class PSQLConnector:
         try:
             self.connection = psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host,port=self.port)
             self.cursor = self.connection.cursor()
-            logger.info("Connexion à la base de données réussie")
+            self.logger.info("Connexion à la base de données réussie")
         except Exception as e:
             self.logger.info(f"Erreur lors de la connexion à la base de données: {e}")
 
@@ -106,43 +106,7 @@ class PSQLConnector:
                 self.connection.rollback()
                 return 1
 
-            print("Copy successful")
-
-    def insert_data_in_chunks(self, data, table_name, chunk_size=1000):
-    """
-    Insère les données en petits lots dans la table spécifiée.
-
-    :param data: DataFrame contenant les données à insérer.
-    :param table_name: Nom de la table où insérer les données.
-    :param chunk_size: Taille de chaque lot.
-    """
-
-    # Assurez-vous que la connexion est établie
-    if not self.connection:
-        self.connect()
-
-    for start in range(0, len(data), chunk_size):
-        end = min(start + chunk_size, len(data))
-        chunk = data.iloc[start:end]
-
-        try:
-            # Création d'un buffer pour l'insertion en masse
-            buffer = StringIO()
-            chunk.to_csv(buffer, index=False, header=False)
-            buffer.seek(0)
-
-            # Utilisation de la commande COPY pour l'insertion
-            with self.connection.cursor() as cursor:
-                cursor.copy_from(buffer, table_name, sep=",", columns=chunk.columns)
-                self.connection.commit()
-
-            self.logger.info(f"Lot de données inséré : lignes {start} à {end}")
-        except Exception as e:
-            logger.error(f"Erreur lors de l'insertion du lot : {e}")
-            self.connection.rollback()
-
-    # Fermeture de la connexion après l'insertion
-    self.close()
+            self.logger("Copy successful")
 
     def close_connection(self):
         self.cursor.close()

@@ -57,8 +57,9 @@ if __name__ == "__main__":
     datacolumns_out_filename = "datacolumns_out.csv"
     save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";")
 
-    connector = PSQLConnector(config["db"]["db_name"], config["db"]["db_user"],config["db"]["db_password"], config["db"]["db_host"],config["db"]["db_port"])
+    # Saving Data
+    connector = PSQLConnector()
     connector.connect()
     connector.save_communities_to_sql(datagouv.scope.selected_data)
     # To be tested
-    # connector.save_normalized_data_to_sql(datafiles.normalized_data)
+    connector.save_normalized_data_to_sql(datafiles.normalized_data)
