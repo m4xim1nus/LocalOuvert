@@ -5,6 +5,8 @@ data/logs/
 loc_env/
 .vscode/
 
+.env
+
 # Ignore all .pyc & .ipynb files
 *.pyc
 *.ipynb

@@ -19,6 +19,7 @@ add_to_sys_path(str(base_path / 'communities' / 'loaders'))
 from datagouv_searcher import DataGouvSearcher
 from datafiles_loader import DatafilesLoader
 from single_urls_builder import SingleUrlsBuilder
+from psql_connector import PSQLConnector
 from config import get_project_base_path
 from files_operation import save_csv
 from logger import configure_logger
@@ -55,3 +56,10 @@ if __name__ == "__main__":
     # Save the list of files that have columns not in common with the schema in a csv file
     datacolumns_out_filename = "datacolumns_out.csv"
     save_csv(datafiles.datacolumns_out, data_folder, datacolumns_out_filename, sep=";")
+
+    # Saving Data
+    connector = PSQLConnector()
+    connector.connect()
+    connector.save_communities_to_sql(datagouv.scope.selected_data)
+    # To be tested
+    connector.save_normalized_data_to_sql(datafiles.normalized_data)
