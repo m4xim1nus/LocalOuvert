@@ -9,6 +9,7 @@ from sirene import SireneLoader
 
 from files_operation import save_csv
 from config import get_project_base_path
+from geolocator import GeoLocator
 
 class CommunitiesSelector():
     def __init__(self,config):
@@ -49,6 +50,11 @@ class CommunitiesSelector():
                         (self.all_data['population'] >= 3500) &
                         (self.all_data['EffectifsSup50'] == True))
                         ]
+        
+        # Ajout des coordonnées géographiques
+        geolocator = GeoLocator(config["geolocator"])
+        selected_data = geolocator.add_geocoordinates(selected_data)
+
         self.selected_data = selected_data
 
         # save all_data & selected_data to csv
