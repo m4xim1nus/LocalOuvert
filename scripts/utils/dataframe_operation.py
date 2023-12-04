@@ -114,3 +114,14 @@ def parse_date(date_str):
     except ValueError:
         # Handle the error if the date format is not recognized
         return pd.NaT  # Return 'Not a Time' for unparseable formats
+    
+def detect_skiprows(df):
+    # Trouvez la dernière colonne non vide
+    last_non_empty_col = len(df.dropna(how='all', axis=1).columns) -1
+    # Obtenez l'indice de la première entrée non vide dans cette colonne
+    first_row = df.iloc[:, last_non_empty_col].first_valid_index()
+    return first_row  # Retournez le nombre de lignes à ignorer
+
+def detect_skipcolumns(df):
+    df_transposed = df.transpose().reset_index(drop=True)
+    return detect_skiprows(df_transposed)

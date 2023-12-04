@@ -5,6 +5,9 @@ from pathlib import Path
 
 from config import get_project_base_path
 
+from loaders.csv_loader import CSVLoader
+from loaders.excel_loader import ExcelLoader
+from loaders.json_loader import JSONLoader
 from files_operation import load_from_url
 from dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
 
@@ -12,6 +15,15 @@ from dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
 class DatafilesLoader():
     def __init__(self,files_in_scope,config):
         self.logger = logging.getLogger(__name__)
+
+        self.loader_classes = {
+            'csv': CSVLoader,
+            'xls': ExcelLoader,
+            'xlsx': ExcelLoader,
+            'excel': ExcelLoader,
+            'json': JSONLoader,
+        }
+
         self.files_in_scope = files_in_scope
         self.schema = self.load_schema(config)
         readable_files, self.datafiles_out = self.keep_readable_datafiles()
@@ -19,64 +31,49 @@ class DatafilesLoader():
         self.normalized_data, self.datacolumns_out = self.normalize_data(config)
 
     def load_schema(self,config):
-        json_schema = load_from_url(config["search"]["subventions"]["schema"]["url"])
+        json_schema = load_from_url(config["search"]["subventions"]["schema"]["url"]) # Impr : "subentions" should be a variable
         schema_df = pd.DataFrame(json_schema["fields"])
         return schema_df
 
     def keep_readable_datafiles(self):
-        preferred_formats = ["csv", "xls", "xlsx", "json", "zip"] # Could be put outside
+        preferred_formats = ["csv", "xls", "xlsx", "json", "zip"] # Impr: keep outside of the class
 
         readable_files = self.files_in_scope[self.files_in_scope["format"].isin(preferred_formats)]
         datafiles_out = self.files_in_scope[~self.files_in_scope["format"].isin(preferred_formats)]
         return readable_files, datafiles_out
 
+    def load_file_data(self, file_info, config):
+        loader_class = self.loader_classes.get(file_info["format"].lower())
+        if loader_class:
+            loader = loader_class(file_info["url"])
+            try:
+                df = loader.load()
+                if not df.empty:
+                    for col in config["datafile_loader"]["file_info_columns"]:
+                        if col in file_info:
+                            df[col] = file_info[col]
+                    return df
+            except Exception as e:
+                self.logger.error(f"Failed to load data from {file_info['url']} - {e}")
+        else:
+            self.logger.warning(f"Loader not found for format {file_info['format']}")
+
+        self.datafiles_out.append(file_info)
+        return None
+
     def load_datafiles(self, readable_files, config):
         len_out = len(self.datafiles_out)
         data = []
-        file_info_columns = config["datafile_loader"]["file_info_columns"] 
 
-        for index, row in readable_files.iterrows():
-            url = row["url"]
-            df = load_from_url(url)
+        for file_info in readable_files:
+            df = self.load_file_data(file_info, config)
             if df is not None:
-                if isinstance(df, list):
-                    df = pd.DataFrame(df)
-                
-                if isinstance(df, dict):
-                    for key, value in df.items():
-                        if isinstance(value, collections.abc.Collection):
-                            self.logger.info(f"Length of array for key {key}: {len(value)}")
-                        else:
-                            self.logger.info(f"Value for key {key} is not a collection, it's a(n) {type(value).__name__}")
-                    try:
-                        df = pd.DataFrame(df)
-                    except ValueError as ve:
-                        self.logger.error(f"Error while converting dict to DataFrame: {ve}")
-                        self.logger.error(f"Failed dict: {df}")
-                        self.logger.error(f"Failed url: {url}")
-                        self.datafiles_out = self.datafiles_out.append(row)
-                        continue
-                    
-                if df.empty:
-                    self.logger.warning(f"Data from {url} is empty.")
-                    self.datafiles_out = self.datafiles_out.append(row)
-                    self.logger.warning("Unable to load file %s", url)
-                    continue
-                
-                for col in file_info_columns:
-                    if col not in row:
-                        self.logger.warning("Column %s not found in readable_files", col)
-                        continue
-                    df[col] = row[col]
                 data.append(df)
-            else:
-                # Add to self.datafiles_out
-                self.datafiles_out = self.datafiles_out.append(row)
-                self.logger.warning("Unable to load file %s", url)
 
         self.logger.info("Number of dataframes loaded: %s", len(data))
         self.logger.info("Number of elements in data that are not dataframes: %s", sum([not isinstance(df, pd.DataFrame) for df in data]))
-        self.logger.info("Number of files not loaded: %s", len(self.datafiles_out)-len_out)
+        self.logger.info("Number of files not loaded: %s", len(self.datafiles_out) - len_out)
+        
         return data
     
     def normalize_data(self, config):

@@ -25,8 +25,8 @@ class DatafileLoader():
         self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
-        json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"])
-        schema_name = config["search"]["marches_publics"]["schema"]["name"]
+        json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"]) # Impr : "marches_publics" should be a variable
+        schema_name = config["search"]["marches_publics"]["schema"]["name"] # Impr : "marches_publics" should be a variable
         flattened_schema = flatten_json_schema(json_schema, schema_name)
         schema_df = pd.DataFrame(flattened_schema)
         # In "type" column, replace NaN values by "string" (default value)
@@ -34,8 +34,8 @@ class DatafileLoader():
         return schema_df
     
     def load_data(self, config):
-        data = load_json(config["search"]["marches_publics"]["unified_dataset"]["url"])
-        df = flatten_data(data['marches'])
+        data = load_json(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
+        df = flatten_data(data['marches']) # Impr : "marches" should be a variable
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {config['search']['marches_publics']['unified_dataset']['url']}")
         return df
     
@@ -56,7 +56,8 @@ class DatafileLoader():
 
         self.logger.info(f"Nettoyage des colonnes terminé, {len(columns_to_keep)} colonnes conservées.")
 
-        # To do better: specifif marchés publics rows cleaning (mixed with concessions data in source file)
+        # Keep specific 'marchés publics' rows (mixed with concessions data in source file)
+        # To do : replace by a more generic method & use config
         procedure_values = self.get_schema_values('procedure', 'enum')
         nature_values = self.get_schema_values('nature', 'enum')
         type_pattern = self.get_schema_value('_type', 'pattern')
@@ -69,6 +70,7 @@ class DatafileLoader():
 
         return cleaned_data
 
+    # to do : move to utils
     def clean_column_name_for_comparison(self, column_name):
         # Supprimer les indices numériques et les points supplémentaires du nom de colonne
         return re.sub(r'\.\d+\.', '.', column_name)
