@@ -85,7 +85,7 @@ class GeoLocator:
 
         # 3. nom, COG -> coordonnées via les coordonnées des communes - utiliser la fonction get_commune_coordinates
         if not commune_info.empty:
-            coordinates = GeoLocator.get_commune_coordinates(commune_info['nom'], commune_info['COG'])
+            coordinates = self.get_commune_coordinates(commune_info['nom'], commune_info['COG'])
             if coordinates:
                 self.logger.info(f"Les coordonnées de l'EPCI {siren} sont celle de la commune siège {commune_siege_siren} : {coordinates[0]}, {coordinates[1]}")
                 return coordinates[0], coordinates[1]
