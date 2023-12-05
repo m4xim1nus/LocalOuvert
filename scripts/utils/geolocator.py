@@ -56,7 +56,7 @@ class GeoLocator:
             reg_dep_geoloc = reg_dep_geoloc.loc[(reg_dep_geoloc['cog'] == cog) & (reg_dep_geoloc['type'] == type)]
             if not reg_dep_geoloc.empty:
                 self.logger.info(f"Les coordonnées de {reg_dep_geoloc['nom'].values[0]} sont {reg_dep_geoloc['latitude'].values[0]}, {reg_dep_geoloc['longitude'].values[0]}")
-                return reg_dep_geoloc['latitude'].values[0], reg_dep_geoloc['longitude'].values[0]
+                return reg_dep_geoloc['longitude'].values[0], reg_dep_geoloc['latitude'].values[0]
             else:
                 self.logger.warning(f"Les coordonnées de {cog} de type {type} ne sont pas trouvées")
                 return None, None
@@ -110,11 +110,11 @@ class GeoLocator:
                     self.logger.warning(f"Le SIREN de l'EPCI {row['nom']} n'est pas trouvé")
             
             if coordinates:
-                data_frame.at[index, 'latitude'] = coordinates[0]
-                data_frame.at[index, 'longitude'] = coordinates[1]
+                data_frame.at[index, 'longitude'] = coordinates[0]
+                data_frame.at[index, 'latitude'] = coordinates[1]
             else:
                 # Gérer le cas où aucune coordonnée n'est trouvée
-                data_frame.at[index, 'latitude'] = None
                 data_frame.at[index, 'longitude'] = None
+                data_frame.at[index, 'latitude'] = None
 
         return data_frame
