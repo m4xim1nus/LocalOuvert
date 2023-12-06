@@ -23,6 +23,7 @@ class DatafileLoader():
         self.communities_ids = self.communities_scope.get_selected_ids()
         self.selected_data = self.select_data(config)
         self.normalized_data = self.normalize_data(config)
+        self.primary_data = self.remove_secondary_columns(config)
 
     def load_schema(self, config):
         json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"])
@@ -118,3 +119,9 @@ class DatafileLoader():
         normalized_data = cast_data(normalized_data, schema_selected, "property", clean_column_name_for_comparison=self.clean_column_name_for_comparison)
 
         return normalized_data
+    
+    def remove_secondary_columns(self, config):
+
+        primary_data = self.normalized_data.loc[:, ~self.normalized_data.columns.str.startswith('modifications.')]
+
+        return primary_data
