@@ -117,7 +117,6 @@ class DatafileLoader():
         # Cast data to schema types
         schema_selected = self.schema.loc[:, ['property', 'type']]        
         normalized_data = cast_data(normalized_data, schema_selected, "property", clean_column_name_for_comparison=self.clean_column_name_for_comparison)
-
         return normalized_data
     
     def remove_secondary_columns(self, config):
@@ -125,3 +124,4 @@ class DatafileLoader():
         primary_data = self.normalized_data.loc[:, ~self.normalized_data.columns.str.startswith('modifications.')]
 
         return primary_data
+
