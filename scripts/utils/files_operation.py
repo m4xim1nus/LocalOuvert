@@ -35,11 +35,19 @@ def load_from_url(url, dtype=None, columns_to_keep=None, num_retries=3, delay_be
             break
     return None 
 
-def load_json(url):
+def load_json(url, key=None, normalize=False):
     logger = logging.getLogger(__name__)
     response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+
+        if key is not None:
+            data = data.get(key, {})
+        if normalize:
+            data = pd.json_normalize(data)
+
     logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {url}")
-    return response.json()
+    return data
 
 def load_csv(url, dtype=None, columns_to_keep=None):
     logger = logging.getLogger(__name__)
