@@ -27,7 +27,7 @@ def safe_rename(df, schema_dict):
             del schema_dict_copy[original_name]
     df.rename(columns=schema_dict_copy, inplace=True)
 
-def cast_data(data, schema):
+def cast_data(data, schema, name_tag, clean_column_name_for_comparison=None):
     logger = logging.getLogger(__name__)
     # Dict between schema types and pandas types
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#basics-dtypes
@@ -38,24 +38,33 @@ def cast_data(data, schema):
         'boolean': 'boolean',
         'date': 'datetime64[ns]'
     }
+
+    # Créer un dictionnaire des noms de colonnes originaux mappés à leurs versions nettoyées pour comparaison
+    if clean_column_name_for_comparison:
+        original_to_cleaned_names = {
+            col: clean_column_name_for_comparison(col) for col in data.columns
+        }
+    else:
+        # Utiliser les noms de colonnes originaux tels quels
+        original_to_cleaned_names = {col: col for col in data.columns}
     
     # create a new dataframe with the same shape and columns as data
     casted_data = pd.DataFrame(columns=data.columns)
     
-    # iterate over each column in data
-    for col in data.columns:
+    # Parcourir les colonnes de data pour les caster
+    for original_name, cleaned_name in original_to_cleaned_names.items():
         # if column name is not in schema['name'].values, keep the exact same column
-        if col not in schema['name'].values:
-            casted_data[col] = data[col]
+        if cleaned_name not in schema[name_tag].values:
+            casted_data[original_name] = data[original_name]
         # if column name is in schema['name'].values, cast the column with the paired schema['type'] value
         else:
             # get the schema type for the column
-            schema_type = schema.loc[schema['name'] == col, 'type'].values[0]
+            schema_type = schema.loc[schema[name_tag] == cleaned_name, 'type'].values[0]
             # translate the schema type to pandas type using type_dict
             pandas_type = type_dict[schema_type]
             # clean & cast the column to the pandas type, based on subfunctions
-            casted_data[col] = clean_and_cast_col(data[col], pandas_type)
-            logger.info(f"Column '{col}' has been casted to '{pandas_type}'")
+            casted_data[original_name] = clean_and_cast_col(data[original_name], pandas_type)
+            logger.info(f"Column '{original_name}' has been casted to '{pandas_type}'")
                 
     return casted_data
 
@@ -77,8 +86,10 @@ def clean_and_cast_col(col, pandas_type):
         col = col.str.strip()
         col = col.astype(str)
     elif pandas_type == 'Int64':
+        # Arrondir les valeurs flottantes
+        col = col.apply(lambda x: round(x) if not pd.isna(x) and isinstance(x, float) else x)
         # Convert to integer, note that 'Int64' can handle NaN values
-        col = pd.to_numeric(col, errors='coerce').astype('Int64')
+        col = pd.to_numeric(col, errors='coerce').round().astype('Int64')
     elif pandas_type == 'boolean':            
         col = col.str.replace(r"\s+","", regex=True).str.lower()
         # Convert to boolean, True for 'oui', False for 'non', case insensitive

@@ -139,7 +139,7 @@ class DatafilesLoader():
 
         # Cast data to schema types
         schema_selected = self.schema.loc[:, ['name', 'type']]        
-        normalized_data = cast_data(normalized_data, schema_selected)
+        normalized_data = cast_data(normalized_data, schema_selected, 'name')
 
         self.logger.info("Data types per column after casting in normalized data: %s", normalized_data.dtypes)
         self.logger.info("Percentage of NaN values after casting, per column: %s", (normalized_data.isna().sum() / len(normalized_data)) * 100)

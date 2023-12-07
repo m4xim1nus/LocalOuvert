@@ -1,5 +1,6 @@
 data/communities/processed_data/
 data/datasets/subventions/outputs/
+data/datasets/marches_publics/outputs/
 data/logs/
 
 loc_env/
