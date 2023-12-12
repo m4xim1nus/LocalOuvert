@@ -66,8 +66,6 @@ if __name__ == "__main__":
     
     marches_publics_data_folder = Path(get_project_base_path()) / "data" / "datasets" / "marches_publics" / "outputs"
     marches_publics = DatafileLoader(config)
-    primary_data_filename = "primary_data.csv"
-    save_csv(marches_publics.primary_data, marches_publics_data_folder, primary_data_filename, sep=";")
     save_csv(marches_publics.normalized_data, marches_publics_data_folder, normalized_data_filename, sep=";")
     
     # Saving Data

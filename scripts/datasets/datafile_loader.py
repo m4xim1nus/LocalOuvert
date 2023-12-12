@@ -22,8 +22,8 @@ class DatafileLoader():
         self.communities_scope = CommunitiesSelector(config["communities"])
         self.communities_ids = self.communities_scope.get_selected_ids()
         self.selected_data = self.select_data(config)
-        self.normalized_data = self.normalize_data(config)
         self.primary_data = self.remove_secondary_columns(config)
+        self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
         json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"])
@@ -106,12 +106,27 @@ class DatafileLoader():
         selected_data = selected_data.dropna(subset=['type'])
 
         return selected_data
+    
+        
+    def remove_secondary_columns(self, config):
+        # Supprimer les colonnes qui commencent par 'modifications.' ou 'titulaires.*.id' ou 'titulaires.*.typeIdentifiant'
+        primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'(modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant)')]
 
+        # Sélectionner les colonnes qui commencent par 'titulaires.*.denominationSociale'
+        titulaires_cols = primary_data.filter(regex=r'^titulaires\.\d+\.denominationSociale')
 
+        # Concaténer les valeurs de ces colonnes en une seule colonne, en ignorant les valeurs NaN
+        primary_data['titulaires'] = titulaires_cols.apply(lambda row: ', '.join(row.dropna().astype(str).replace(r"[\[\]']", "")), axis=1)
+
+        # Supprimer les colonnes 'titulaires.*.denominationSociale' originales
+        primary_data = primary_data.drop(columns=titulaires_cols.columns)
+
+        return primary_data
+    
     def normalize_data(self, config):
 
         # Drop cleaned_data duplicates
-        normalized_data = self.selected_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
+        normalized_data = self.primary_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
         normalized_data = normalized_data.drop_duplicates()
 
         # Cast data to schema types
@@ -119,9 +134,3 @@ class DatafileLoader():
         normalized_data = cast_data(normalized_data, schema_selected, "property", clean_column_name_for_comparison=self.clean_column_name_for_comparison)
         return normalized_data
     
-    def remove_secondary_columns(self, config):
-
-        primary_data = self.normalized_data.loc[:, ~self.normalized_data.columns.str.startswith('modifications.')]
-
-        return primary_data
-
