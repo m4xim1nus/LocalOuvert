@@ -14,7 +14,6 @@ class DatafileLoader():
     def __init__(self, config):
         self.logger = logging.getLogger(__name__)
 
-        self.scope = CommunitiesSelector(config["communities"])
         self.schema = self.load_schema(config)
         self.loaded_data = self.load_data(config)
         self.cleaned_data = self.clean_data(config)

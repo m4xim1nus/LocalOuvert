@@ -12,7 +12,18 @@ from config import get_project_base_path
 from geolocator import GeoLocator
 
 class CommunitiesSelector():
+    _instance = None
+    _init_done = False
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(CommunitiesSelector, cls).__new__(cls)
+        return cls._instance
+
+    
     def __init__(self,config):
+        if self._init_done:
+            return
         self.logger = logging.getLogger(__name__)
         ofgl = OfglLoader(config["ofgl"])
         odf = OdfLoader(config["odf"])
@@ -63,6 +74,8 @@ class CommunitiesSelector():
         selected_data_filename = "selected_communities_data.csv"
         save_csv(all_data, data_folder, all_data_filename, sep=";")
         save_csv(selected_data, data_folder, selected_data_filename, sep=";")
+
+        self._init_done = True
      
     def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()
