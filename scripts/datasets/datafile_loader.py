@@ -109,7 +109,8 @@ class DatafileLoader():
         
     def remove_secondary_columns(self, config):
         # Supprimer les colonnes qui commencent par 'modifications.' ou 'titulaires.*.id' ou 'titulaires.*.typeIdentifiant'
-        primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'(modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant)')]
+        # primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'(modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant)')]
+        primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant')].copy()
 
         # Sélectionner les colonnes qui commencent par 'titulaires.*.denominationSociale'
         titulaires_cols = primary_data.filter(regex=r'^titulaires\.\d+\.denominationSociale')
