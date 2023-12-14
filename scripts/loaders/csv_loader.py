@@ -4,7 +4,7 @@ import requests
 import logging
 from io import StringIO
 
-from base_loader import BaseLoader
+from .base_loader import BaseLoader
 
 class CSVLoader(BaseLoader):
     def __init__(self, file_url, dtype=None, columns_to_keep=None, **kwargs):

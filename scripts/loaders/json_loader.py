@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-from base_loader import BaseLoader
+from .base_loader import BaseLoader
 
 class JSONLoader(BaseLoader):
     def __init__(self, file_url, normalize=False, **kwargs):

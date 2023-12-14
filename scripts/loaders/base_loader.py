@@ -3,10 +3,6 @@ import requests
 import logging
 import re
 
-from json_loader import JSONLoader
-from csv_loader import CSVLoader
-from excel_loader import ExcelLoader
-
 class BaseLoader:
     def __init__(self, file_url, num_retries=3, delay_between_retries=5):
         self.file_url = file_url
@@ -36,6 +32,10 @@ class BaseLoader:
     
     @staticmethod
     def loader_factory(file_url):
+        from .json_loader import JSONLoader
+        from .csv_loader import CSVLoader
+        from .excel_loader import ExcelLoader
+
         response = requests.head(file_url)  # Utilise une requête HEAD pour obtenir le content_type
         content_type = response.headers.get('content-type')
 
