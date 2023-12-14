@@ -44,8 +44,9 @@ class CommunitiesSelector():
 
         all_data = all_data.merge(sirene.get(), on='siren', how='left')
         
-        # Conversion de la colonne 'trancheEffectifsUniteLegale' en type numérique
+        # Conversion de la colonne 'trancheEffectifsUniteLegale' et 'population' en type numérique
         all_data['trancheEffectifsUniteLegale'] = pd.to_numeric(all_data['trancheEffectifsUniteLegale'].astype(str), errors='coerce')
+        all_data['population'] = pd.to_numeric(all_data['population'].astype(str), errors='coerce')
 
         # Ajout de la variable EffectifsSup50, filtre légale d'application de l'open data par défaut (50 ETP agents)
         all_data['EffectifsSup50'] = np.where(all_data['trancheEffectifsUniteLegale'] > 15, True, False)
