@@ -6,9 +6,9 @@ from io import StringIO
 import os
 import json 
 
-from json import JSONDecodeError
 from config import get_project_base_path
-from files_operation import save_csv, load_from_url
+from scripts.loaders.base_loader import BaseLoader
+
 
 class GeoLocator:
     def __init__(self, geo_config):
@@ -24,11 +24,11 @@ class GeoLocator:
             reg_dep_geoloc_df['cog'] = reg_dep_geoloc_df['cog'].astype(str)
             self.reg_dep_geoloc_df = reg_dep_geoloc_df
 
-        epci_coord_url = geo_config["epci_coord_url"]
-        self.epci_coord_df = load_from_url(epci_coord_url)
+        epci_coord_loader = BaseLoader.loader_factory(geo_config["epci_coord_url"])
+        self.epci_coord_df = epci_coord_loader.load()
 
-        communes_url = geo_config["communes_id_url"]
-        self.communes_df = load_from_url(communes_url)
+        communes_coord_loader = BaseLoader.loader_factory(geo_config["communes_id_url"])
+        self.communes_df = communes_coord_loader.load()
 
     
     def get_commune_coordinates(self, city_name, city_code):
