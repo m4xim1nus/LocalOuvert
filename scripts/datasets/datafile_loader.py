@@ -6,9 +6,10 @@ import logging
 import unidecode
 
 from communities_selector import CommunitiesSelector
-from files_operation import load_from_url, load_json
 from json_operation import flatten_json_schema, flatten_data
 from dataframe_operation import cast_data
+from scripts.loaders.base_loader import BaseLoader
+from scripts.loaders.json_loader import JSONLoader
 
 class DatafileLoader():
     def __init__(self, config):
@@ -25,7 +26,8 @@ class DatafileLoader():
         self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
-        json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"]) # Impr : "marches_publics" should be a variable
+        json_schema_loader = BaseLoader.loader_factory(config["search"]["marches_publics"]["schema"]["url"]) # Impr : "marches_publics" should be a variable
+        json_schema = json_schema_loader.load()
         schema_name = config["search"]["marches_publics"]["schema"]["name"] # Impr : "marches_publics" should be a variable
         flattened_schema = flatten_json_schema(json_schema, schema_name)
         schema_df = pd.DataFrame(flattened_schema)
@@ -34,7 +36,8 @@ class DatafileLoader():
         return schema_df
     
     def load_data(self, config):
-        data = load_json(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
+        data_loader = JSONLoader(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
+        data = data_loader.load()
         df = flatten_data(data['marches']) # Impr : "marches" should be a variable
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {config['search']['marches_publics']['unified_dataset']['url']}")
         return df

@@ -8,7 +8,7 @@ from config import get_project_base_path
 from scripts.loaders.csv_loader import CSVLoader
 from scripts.loaders.excel_loader import ExcelLoader
 from scripts.loaders.json_loader import JSONLoader
-from files_operation import load_from_url
+from scripts.loaders.base_loader import BaseLoader
 from dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
 
 
@@ -31,7 +31,8 @@ class DatafilesLoader():
         self.normalized_data, self.datacolumns_out = self.normalize_data(config)
 
     def load_schema(self,config):
-        json_schema = load_from_url(config["search"]["subventions"]["schema"]["url"]) # Impr : "subentions" should be a variable
+        json_schema_loader = BaseLoader.loader_factory(config["search"]["subventions"]["schema"]["url"]) # Impr : "subentions" should be a variable
+        json_schema = json_schema_loader.load()
         schema_df = pd.DataFrame(json_schema["fields"])
         self.logger.info("Schema loaded.")
         return schema_df
