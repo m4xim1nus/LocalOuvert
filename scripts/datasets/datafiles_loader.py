@@ -31,14 +31,12 @@ class DatafilesLoader():
         self.normalized_data, self.datacolumns_out = self.normalize_data(config)
 
     def load_schema(self,config):
-        self.logger.info("Loading schema...")
         json_schema = load_from_url(config["search"]["subventions"]["schema"]["url"]) # Impr : "subentions" should be a variable
         schema_df = pd.DataFrame(json_schema["fields"])
         self.logger.info("Schema loaded.")
         return schema_df
 
     def keep_readable_datafiles(self):
-        self.logger.info("Selecting readable files...")
         preferred_formats = ["csv", "xls", "xlsx", "json", "zip"] # Impr: keep outside of the class
 
         readable_files = self.files_in_scope[self.files_in_scope["format"].isin(preferred_formats)]
@@ -47,8 +45,6 @@ class DatafilesLoader():
         return readable_files, datafiles_out
 
     def load_file_data(self, file_info, config):
-        self.logger.info(f"file_info type: {type(file_info)}, value: {file_info}")
-        self.logger.info(f"Loading data from file {file_info['url']}...")
         loader_class = self.loader_classes.get(file_info["format"].lower())
         if loader_class:
             loader = loader_class(file_info["url"])
@@ -58,7 +54,7 @@ class DatafilesLoader():
                     for col in config["datafile_loader"]["file_info_columns"]:
                         if col in file_info:
                             df[col] = file_info[col]
-                    self.logger.info("Data loaded.")
+                    self.logger.info(f"Data from {file_info['url']} loaded.")
                     return df
             except Exception as e:
                 self.logger.error(f"Failed to load data from {file_info['url']} - {e}")
@@ -69,12 +65,10 @@ class DatafilesLoader():
         return None
 
     def load_datafiles(self, readable_files, config):
-        self.logger.info("Loading all datafiles...")
-        self.logger.info(f"readable_files type: {type(readable_files)}")
         len_out = len(self.datafiles_out)
         data = []
 
-        for file_info in readable_files:
+        for i, file_info in readable_files.iterrows():
             df = self.load_file_data(file_info, config)
             if df is not None:
                 data.append(df)

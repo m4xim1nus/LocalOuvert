@@ -31,7 +31,7 @@ class BaseLoader:
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @staticmethod
-    def loader_factory(file_url):
+    def loader_factory(file_url, dtype=None, columns_to_keep=None):
         from .json_loader import JSONLoader
         from .csv_loader import CSVLoader
         from .excel_loader import ExcelLoader
@@ -42,9 +42,9 @@ class BaseLoader:
         if 'json' in content_type:
             return JSONLoader(file_url)
         elif 'csv' in content_type:
-            return CSVLoader(file_url)
+            return CSVLoader(file_url, dtype, columns_to_keep)
         elif re.search(r'(excel|spreadsheet|xls|xlsx)', content_type, re.IGNORECASE) or file_url.endswith(('.xls', '.xlsx')):
-            return ExcelLoader(file_url)
+            return ExcelLoader(file_url, dtype, columns_to_keep)
         else:
             logger = logging.getLogger(__name__)
             logger.warning(f"Type de fichier non pris en charge pour l'URL : {file_url}")

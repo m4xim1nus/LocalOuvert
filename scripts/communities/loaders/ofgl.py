@@ -1,7 +1,8 @@
 from pathlib import Path
 import pandas as pd
 
-from files_operation import load_from_path, load_from_url, save_csv
+from files_operation import load_from_path, save_csv
+from scripts.loaders.base_loader import BaseLoader
 from config import get_project_base_path
 
 class OfglLoader():
@@ -17,7 +18,8 @@ class OfglLoader():
             infos_coll = pd.DataFrame()
             for key, url in config["url"].items():
                 # Téléchargement des données
-                df = load_from_url(url, dtype=config["dtype"])
+                df_loader = BaseLoader.loader_factory(url, dtype=config["dtype"])
+                df = df_loader.load()
                 # Traitement spécifique pour chaque base en utilisant la fonction process_data
                 if key == 'communes':
                     df = self.process_data(df, key, epci_communes_mapping)
