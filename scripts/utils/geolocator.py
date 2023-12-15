@@ -7,7 +7,8 @@ import os
 import json 
 
 from config import get_project_base_path
-from scripts.loaders.base_loader import BaseLoader
+from scripts.loaders.csv_loader import CSVLoader
+from scripts.loaders.excel_loader import ExcelLoader
 
 
 class GeoLocator:
@@ -24,10 +25,14 @@ class GeoLocator:
             reg_dep_geoloc_df['cog'] = reg_dep_geoloc_df['cog'].astype(str)
             self.reg_dep_geoloc_df = reg_dep_geoloc_df
 
-        epci_coord_loader = BaseLoader.loader_factory(geo_config["epci_coord_url"])
+        self.logger.info(f"Chargement des coordonnées des EPCI : url = {geo_config['epci_coord_url']}")
+        epci_coord_loader = ExcelLoader(geo_config["epci_coord_url"])
+        self.logger.info(f"Loader : {epci_coord_loader}")
         self.epci_coord_df = epci_coord_loader.load()
 
-        communes_coord_loader = BaseLoader.loader_factory(geo_config["communes_id_url"])
+        self.logger.info(f"Chargement des coordonnées des communes : url = {geo_config['communes_id_url']}")
+        communes_coord_loader = CSVLoader(geo_config["communes_id_url"])
+        self.logger.info(f"Loader : {communes_coord_loader}")
         self.communes_df = communes_coord_loader.load()
 
     

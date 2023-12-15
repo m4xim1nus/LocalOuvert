@@ -39,6 +39,8 @@ class BaseLoader:
         response = requests.head(file_url)  # Utilise une requête HEAD pour obtenir le content_type
         content_type = response.headers.get('content-type')
 
+        print("content_type: ", content_type)
+
         if 'json' in content_type:
             return JSONLoader(file_url)
         elif 'csv' in content_type:
