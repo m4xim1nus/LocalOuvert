@@ -16,7 +16,7 @@ class BaseLoader:
             try:
                 response = requests.get(self.file_url)
                 if response.status_code == 200:
-                    return self.process_data(response.content)
+                    return self.process_data(response)
                 else:
                     self.logger.error(f"Failed to load data from {self.file_url}")
                     attempt += 1
@@ -27,7 +27,7 @@ class BaseLoader:
 
         return None
 
-    def process_data(self, data):
+    def process_data(self, response):
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     @staticmethod
@@ -36,10 +36,11 @@ class BaseLoader:
         from .csv_loader import CSVLoader
         from .excel_loader import ExcelLoader
 
+        logger = logging.getLogger(__name__)
+
         response = requests.head(file_url)  # Utilise une requête HEAD pour obtenir le content_type
         content_type = response.headers.get('content-type')
-
-        print("content_type: ", content_type)
+        # logger.info(f"Content type : {content_type}")
 
         if 'json' in content_type:
             return JSONLoader(file_url)

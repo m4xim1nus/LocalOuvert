@@ -1,5 +1,6 @@
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
 from files_operation import load_from_path, save_csv
 from scripts.loaders.base_loader import BaseLoader
@@ -30,7 +31,7 @@ class OfglLoader():
                 infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
 
             # Remplir les valeurs manquantes par une chaîne vide
-            infos_coll.fillna('', inplace=True)
+            infos_coll.fillna(np.nan, inplace=True)
             self.data = infos_coll
             self.save(Path(config["processed_data"]["path"]),config["processed_data"]["filename"])
     
@@ -50,7 +51,7 @@ class OfglLoader():
         elif key == 'departements':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Nom 2022 Département', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'COG', 'nom', 'type', 'SIREN', 'population']
-            df['type'] = 'DEP'
+            df.loc[:, 'type'] = 'DEP'
             df = df.astype({'SIREN': str, 'COG': str, 'code_region': str})
             df['COG_3digits'] = df['COG'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_region', 'population']]
@@ -59,7 +60,7 @@ class OfglLoader():
         elif key == 'communes':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Code Insee 2022 Commune', 'Nom 2022 Commune', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'COG', 'nom', 'type', 'SIREN', 'population']
-            df['type'] = 'COM'
+            df.loc[:, 'type'] = 'COM'
             df = df.astype({'SIREN': str, 'COG': str, 'code_departement': str})
             df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
             df = df[['nom', 'SIREN', 'COG', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
@@ -71,7 +72,7 @@ class OfglLoader():
         elif key == 'interco':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Nature juridique 2022 abrégée', 'Code Siren 2022 EPCI', 'Nom 2022 EPCI', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
-            df['type'] = df['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
+            df.loc[:, 'type'] = df['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
             df = df.astype({'SIREN': str, 'code_departement': str})
             df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]

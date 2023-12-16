@@ -81,6 +81,9 @@ def clean_and_cast_col(col, pandas_type):
         # Convert to datetime, with utc=true, errors will be coerced to NaT
         col = col.astype(str)
         col = col.apply(parse_date)
+        # Check if the data is timezone-aware
+        if col.dt.tz is not None:
+            col = col.dt.tz_localize(None)
     elif pandas_type == 'string':
         col = col.astype(str)
         col = col.str.strip()
@@ -101,7 +104,7 @@ def clean_and_cast_col(col, pandas_type):
 
     if not coerced_values.empty:
         #Log the coerced values and relevant information
-        for index, value in coerced_values.iteritems():
+        for index, value in coerced_values.items():
             if ("nan" not in str(value))&(pd.isna(col.loc[index])):
                 logger.error(f"Value '{value}' supposed to be a '{pandas_type}' was coerced to {col[index]}")
 

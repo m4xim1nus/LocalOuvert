@@ -25,16 +25,11 @@ class GeoLocator:
             reg_dep_geoloc_df['cog'] = reg_dep_geoloc_df['cog'].astype(str)
             self.reg_dep_geoloc_df = reg_dep_geoloc_df
 
-        self.logger.info(f"Chargement des coordonnées des EPCI : url = {geo_config['epci_coord_url']}")
         epci_coord_loader = ExcelLoader(geo_config["epci_coord_url"])
-        self.logger.info(f"Loader : {epci_coord_loader}")
         self.epci_coord_df = epci_coord_loader.load()
 
-        self.logger.info(f"Chargement des coordonnées des communes : url = {geo_config['communes_id_url']}")
         communes_coord_loader = CSVLoader(geo_config["communes_id_url"])
-        self.logger.info(f"Loader : {communes_coord_loader}")
         self.communes_df = communes_coord_loader.load()
-
     
     def get_commune_coordinates(self, city_name, city_code):
         # Implémenter la logique pour récupérer les coordonnées via l'API de https://adresse.data.gouv.fr/api-doc/adresse, via le CODE INSEE (COG)

@@ -12,10 +12,11 @@ class CSVLoader(BaseLoader):
         self.dtype = dtype
         self.columns_to_keep = columns_to_keep
 
-    def process_data(self, data):
+    def process_data(self, response):
         # Gestion des différents encodages
         encodings_to_try = ['utf-8', 'windows-1252', 'latin1']
         decoded_content = None
+        data = response.content
 
         for encoding in encodings_to_try:
             try:
@@ -31,9 +32,11 @@ class CSVLoader(BaseLoader):
         # Détection du délimiteur
         delimiter = self.detect_delimiter(decoded_content)
         if self.columns_to_keep is not None:
-            df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, usecols=lambda c: c in self.columns_to_keep, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
+            df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, usecols=lambda c: c in self.columns_to_keep, on_bad_lines='skip', quoting=csv.QUOTE_MINIMAL, low_memory=False)
         else:
-            df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, error_bad_lines=False, quoting=csv.QUOTE_MINIMAL)
+            df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, on_bad_lines='skip', quoting=csv.QUOTE_MINIMAL, low_memory=False)
+        
+        self.logger.info(f"CSV Data from {self.file_url} loaded.")
         return df
 
     @staticmethod

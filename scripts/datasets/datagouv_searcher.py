@@ -4,7 +4,7 @@ import pandas as pd
 import logging
 
 from communities_selector import CommunitiesSelector
-from scripts.loaders.base_loader import BaseLoader
+from scripts.loaders.csv_loader import CSVLoader
 
 
 class DataGouvSearcher():
@@ -15,14 +15,14 @@ class DataGouvSearcher():
         self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id-datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
 
-        dataset_catalog_loader = BaseLoader.loader_factory(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
+        dataset_catalog_loader = CSVLoader(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
         self.dataset_catalog_df = dataset_catalog_loader.load()
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
         # join siren to dataset_catalog_df based on organization_id
         self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
         self.dataset_catalog_df.drop(columns=['id-datagouv'], inplace=True)
 
-        datafile_catalog_loader = BaseLoader.loader_factory(config["datagouv"]["datafiles"]["url"])
+        datafile_catalog_loader = CSVLoader(config["datagouv"]["datafiles"]["url"])
         self.datafile_catalog_df = datafile_catalog_loader.load()
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
