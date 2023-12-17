@@ -12,7 +12,18 @@ from config import get_project_base_path
 from geolocator import GeoLocator
 
 class CommunitiesSelector():
+    _instance = None
+    _init_done = False
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(CommunitiesSelector, cls).__new__(cls)
+        return cls._instance
+
+    
     def __init__(self,config):
+        if self._init_done:
+            return
         self.logger = logging.getLogger(__name__)
         ofgl = OfglLoader(config["ofgl"])
         odf = OdfLoader(config["odf"])
@@ -33,8 +44,9 @@ class CommunitiesSelector():
 
         all_data = all_data.merge(sirene.get(), on='siren', how='left')
         
-        # Conversion de la colonne 'trancheEffectifsUniteLegale' en type numérique
+        # Conversion de la colonne 'trancheEffectifsUniteLegale' et 'population' en type numérique
         all_data['trancheEffectifsUniteLegale'] = pd.to_numeric(all_data['trancheEffectifsUniteLegale'].astype(str), errors='coerce')
+        all_data['population'] = pd.to_numeric(all_data['population'].astype(str), errors='coerce')
 
         # Ajout de la variable EffectifsSup50, filtre légale d'application de l'open data par défaut (50 ETP agents)
         all_data['EffectifsSup50'] = np.where(all_data['trancheEffectifsUniteLegale'] > 15, True, False)
@@ -61,8 +73,10 @@ class CommunitiesSelector():
         data_folder = Path(get_project_base_path()) / "data" / "communities" / "processed_data"
         all_data_filename = "all_communities_data.csv"
         selected_data_filename = "selected_communities_data.csv"
-        save_csv(all_data, data_folder, all_data_filename, sep=";", index=True)
-        save_csv(selected_data, data_folder, selected_data_filename, sep=";", index=True)
+        save_csv(all_data, data_folder, all_data_filename, sep=";")
+        save_csv(selected_data, data_folder, selected_data_filename, sep=";")
+        self._init_done = True
+
      
     def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()
