@@ -36,7 +36,7 @@ class OfglLoader():
         return self.data
     
     def save(self,path,filename):
-        save_csv(self.data,path,filename)
+        save_csv(self.data,path,filename, sep=";", index=True)
 
     def process_data(self, df, key, epci_communes_mapping=None):
         if key == 'regions':
