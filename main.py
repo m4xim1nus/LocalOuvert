@@ -49,10 +49,12 @@ if __name__ == "__main__":
     files_in_scope_filename = "files_in_scope.csv"
     save_csv(subventions_files_in_scope, subventions_data_folder, files_in_scope_filename, sep=";")
 
+
     # Build new object taking files_in_scope & config as inputs in init, to load the subventions_datafiles, normalize them and save them in a new folder.
     subventions_datafiles = DatafilesLoader(subventions_files_in_scope,config)
     # Save the normalized data in a csv file
     normalized_data_filename = "normalized_data.csv"
+
     save_csv(subventions_datafiles.normalized_data, subventions_data_folder, normalized_data_filename, sep=";")
     # Save the list of files that are not readable in a csv file
     datafiles_out_filename = "datafiles_out.csv"
@@ -77,5 +79,3 @@ if __name__ == "__main__":
     # To be tested
     connector.save_normalized_data_to_sql(datafiles.normalized_data)
 
-    
-    

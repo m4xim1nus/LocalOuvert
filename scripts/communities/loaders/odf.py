@@ -19,4 +19,4 @@ class OdfLoader():
         return self.data
     
     def save(self,path,filename):
-        save_csv(self.data,path,filename)
+        save_csv(self.data,path,filename, sep=";", index=True)
