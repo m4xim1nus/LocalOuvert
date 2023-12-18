@@ -10,7 +10,7 @@ class OdfLoader():
         data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
         data_file = data_folder / config["processed_data"]["filename"]
         if data_file.exists():
-            self.data = pd.read_csv(data_file)
+            self.data = pd.read_csv(data_file, sep=";")
         else:
             odf_data_loader = BaseLoader.loader_factory(config["url"], dtype=config["dtype"])
             odf_data = odf_data_loader.load()

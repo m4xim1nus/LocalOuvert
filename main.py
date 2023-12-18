@@ -69,6 +69,7 @@ if __name__ == "__main__":
     marches_publics_data_folder = Path(get_project_base_path()) / "data" / "datasets" / "marches_publics" / "outputs"
     marches_publics = DatafileLoader(config)
     save_csv(marches_publics.normalized_data, marches_publics_data_folder, normalized_data_filename, sep=";")
+    save_csv(marches_publics.modifications_data, marches_publics_data_folder, "modifications_data.csv", sep=";")
     
     # # Saving Data
     # connector = PSQLConnector()

@@ -11,7 +11,7 @@ class OfglLoader():
         data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
         data_file = data_folder / config["processed_data"]["filename"]
         if data_file.exists():
-            self.data = pd.read_csv(data_file)
+            self.data = pd.read_csv(data_file, sep=";")
         else:
             base_path = get_project_base_path()
             epci_communes_path = base_path / config["epci"]["file"]

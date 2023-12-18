@@ -82,12 +82,14 @@ def flatten_array_of_objects(array, parent_key):
             items.setdefault(key, []).append(value)
     return items
 
-def flatten_row(row):
+def flatten_row(row, exclude_prefix=None):
     """
     Traite une ligne de données JSON et aplatit en fonction du type de données.
     """
     flattened_row = {}
     for key, value in row.items():
+        if exclude_prefix and key.startswith(exclude_prefix):
+            continue
         if isinstance(value, list) and value and isinstance(value[0], dict):
             flattened_row.update(flatten_array_of_objects(value, key))
         elif isinstance(value, dict):
@@ -101,14 +103,24 @@ def flatten_data(data):
     """
     Traite toutes les lignes de données JSON en utilisant process_row.
     """
-    rows = []
+    main_rows = []
+    modifications_rows = []
 
     for row in data:
         if row is not None:
-            flattened_row = flatten_row(row)
-            if flattened_row:
-                flattened_row = {key.replace('titulaires.titulaire', 'titulaires'): value for key, value in flattened_row.items()}
-                rows.append(flattened_row)
+             # Aplatir la ligne principale
+            main_flattened_row = flatten_row(row, exclude_prefix='modifications')
+            main_flattened_row = {key.replace('titulaires.titulaire', 'titulaires'): value for key, value in main_flattened_row.items()}
+            main_rows.append(main_flattened_row)
 
-    flattened_data = pd.DataFrame(rows)
-    return flattened_data
+            # Traiter les modifications séparément
+            if 'modifications' in row:
+                for modification in row['modifications']:
+                    mod_flattened = flatten_object(modification)
+                    # add main row index to modifications
+                    mod_flattened['modifications.index'] = len(main_rows) - 1    
+                    modifications_rows.append(mod_flattened)
+
+    main_df = pd.DataFrame(main_rows)
+    modifications_df = pd.DataFrame(modifications_rows)
+    return main_df, modifications_df

@@ -16,7 +16,7 @@ class DatafileLoader():
         self.logger = logging.getLogger(__name__)
 
         self.schema = self.load_schema(config)
-        self.loaded_data = self.load_data(config)
+        self.loaded_data, self.modifications_data = self.load_data(config)
         self.cleaned_data = self.clean_data(config)
 
         self.communities_scope = CommunitiesSelector(config["communities"])
@@ -38,9 +38,9 @@ class DatafileLoader():
     def load_data(self, config):
         data_loader = JSONLoader(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
         data = data_loader.load()
-        df = flatten_data(data['marches']) # Impr : "marches" should be a variable
+        main_df, modifications_df = flatten_data(data['marches']) # Impr : "marches" should be a variable
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {config['search']['marches_publics']['unified_dataset']['url']}")
-        return df
+        return main_df, modifications_df
     
     def clean_data(self, config):
         # Clean columns : remove columns from loaded_data whose names are not in schema
