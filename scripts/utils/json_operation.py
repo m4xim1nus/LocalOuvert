@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+from tqdm import tqdm
 
 def flatten_schema_ref(prop, details, root_definitions):
     ref_path = details['$ref'].split('/')
@@ -99,9 +100,23 @@ def flatten_row(row, exclude_prefix=None):
 
     return flattened_row
 
-def flatten_data(data):
+def flatten_data(data, chunk_size=10000):
+    chunks = []
+    for i in range(0, len(data), chunk_size):
+        chunk = data[i:i + chunk_size]
+        processed_chunk = [flatten_row(row) for row in tqdm(chunk) if row is not None]
+        df_chunk = pd.DataFrame(processed_chunk)
+        chunks.append(df_chunk)
+    print("in")
+    flattened_data = pd.concat(chunks, ignore_index=True)
+    print("out")
+    return flattened_data, pd.DataFrame()
+
+
+def flatten_data_deprecated(data):
     """
     Traite toutes les lignes de données JSON en utilisant process_row.
+    #TODO: ajuster, car ne tourne pas. 
     """
     main_rows = []
     modifications_rows = []
@@ -120,7 +135,9 @@ def flatten_data(data):
                     # add main row index to modifications
                     mod_flattened['modifications.index'] = len(main_rows) - 1    
                     modifications_rows.append(mod_flattened)
-
+    # Plus efficace de faire du pd.concat il me semble
     main_df = pd.DataFrame(main_rows)
     modifications_df = pd.DataFrame(modifications_rows)
     return main_df, modifications_df
+
+
