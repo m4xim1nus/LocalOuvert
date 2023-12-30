@@ -71,14 +71,11 @@ if __name__ == "__main__":
     save_csv(marches_publics.normalized_data, marches_publics_data_folder, normalized_data_filename, sep=";")
     save_csv(marches_publics.modifications_data, marches_publics_data_folder, "modifications_data.csv", sep=";")
     
-    
-    
-    #commus_df = pd.read_csv("./data/communities/processed_data/all_communities_data.csv",sep=";",index_col=0,low_memory=False)
-    
+        
     ## Saving Data to the DB - /!\ Does not erase Data at the moment, need to agree on a rule /!\
     connector = PSQLConnector()
     connector.connect()
-    connector.save_df_to_sql(commus_df,"communities")
+    connector.save_df_to_sql(datagouv.scope.selected_data,"communities")
     connector.save_df_to_sql(subventions_datafiles.normalized_data,"subventions_normalized")
     connector.save_df_to_sql(marches_publics.normalized_data,"marches_public_normalized")
     

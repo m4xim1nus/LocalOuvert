@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import re
 
 from odf import OdfLoader
 from ofgl import OfglLoader
@@ -32,14 +33,13 @@ class CommunitiesSelector():
         ofgl_data = ofgl.get()
         odf_data = odf.get()
         # Worth Exploring Here ! If you cast to Int, it breaks
-        ofgl_data["siren"] = pd.to_numeric(ofgl_data["SIREN"], errors="coerce")
+        ofgl_data["siren"] = pd.to_numeric(ofgl_data["siren"], errors="coerce")
         ofgl_data["siren"] = ofgl_data["siren"].fillna(0).astype(int) 
-        ofgl_data.drop(columns=['SIREN'], inplace=True)
         odf_data["siren"] = pd.to_numeric(odf_data["siren"], errors="coerce")
         odf_data["siren"] = odf_data["siren"].fillna(0).astype(int)
-        all_data = ofgl_data.merge(odf_data[['siren', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']], on='siren', how='left')
+        all_data = ofgl_data.merge(odf_data[['siren', 'url_ptf', 'url_datagouv', 'id_datagouv', 'merge', 'ptf']], on='siren', how='left')
         # TODO Manage columns outside of classes (configs ?)
-        all_data = all_data[['nom', 'siren', 'type', 'COG', 'COG_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'EPCI', 'url-ptf', 'url-datagouv', 'id-datagouv', 'merge', 'ptf']]
+        all_data = all_data[['nom', 'siren', 'type', 'cog', 'cog_3digits', 'code_departement', 'code_departement_3digits', 'code_region', 'population', 'epci', 'url_ptf', 'url_datagouv', 'id_datagouv', 'merge', 'ptf']]
         all_data['siren'] = pd.to_numeric(all_data['siren'], errors='coerce')
         all_data["siren"] = all_data["siren"].fillna(0).astype(int)
 
@@ -87,8 +87,8 @@ class CommunitiesSelector():
      
     def get_datagouv_ids(self):
         new_instance = self.selected_data.copy()
-        datagouv_ids = new_instance[new_instance["id-datagouv"].notnull()][["siren", "id-datagouv"]]        
-        return datagouv_ids # return a dataframe with siren and id-datagouv columns
+        datagouv_ids = new_instance[new_instance["id_datagouv"].notnull()][["siren", "id_datagouv"]]        
+        return datagouv_ids # return a dataframe with siren and id_datagouv columns
     
     def get_selected_ids(self):
         new_instance = self.selected_data.copy()

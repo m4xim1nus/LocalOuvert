@@ -69,21 +69,21 @@ class GeoLocator:
         # 1. siren epci -> siren de la commune du siège via https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/ (coordonnees-epci-fp-janv2023-last.xlsx)
         commune_siege_siren = self.epci_coord_df[self.epci_coord_df['N° SIREN'] == siren]['Commune siège'].str.extract('(\d+)').iloc[0, 0]
 
-        # 2. siren commune-> nom, COG commune via https://www.data.gouv.fr/en/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/ (identifiants-communes-2022.csv)
+        # 2. siren commune-> nom, cog commune via https://www.data.gouv.fr/en/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/ (identifiants-communes-2022.csv)
         # Cast commune_siege_siren and communes_df 'SIREN' to string
         communes_df = self.communes_df.copy()
         
         commune_siege_siren = str(commune_siege_siren)
         communes_df['SIREN'] = communes_df['SIREN'].astype(str)
 
-        # extract nom, COG commune safely
+        # extract nom, cog commune safely
         commune_info_df = communes_df[communes_df['SIREN'] == commune_siege_siren][['nom', 'COG']]
         if commune_info_df.empty:
             self.logger.warning(f"Les coordonnées pour l'EPCI {siren} de la commune siège {commune_siege_siren} ne sont pas trouvées")
             return None, None
         commune_info = communes_df[communes_df['SIREN'] == commune_siege_siren][['nom', 'COG']].iloc[0]
 
-        # 3. nom, COG -> coordonnées via les coordonnées des communes - utiliser la fonction get_commune_coordinates
+        # 3. nom, cog -> coordonnées via les coordonnées des communes - utiliser la fonction get_commune_coordinates
         if not commune_info.empty:
             coordinates = self.get_commune_coordinates(commune_info['nom'], commune_info['COG'])
             if coordinates:
@@ -99,9 +99,9 @@ class GeoLocator:
         # Logique à revoir : toutes regions et départements, puis toutes les communes, puis les EPCI (car copies des coordonnées des communes) 
         for index, row in data_frame.iterrows():
             if row['type'] in ['COM']:
-                coordinates = self.get_commune_coordinates(row['nom'], row['COG'])
+                coordinates = self.get_commune_coordinates(row['nom'], row['cog'])
             elif row['type'] in ['REG', 'DEP', 'CTU']:
-                coordinates = self.get_region_department_coordinates(row['COG'], row['type'])
+                coordinates = self.get_region_department_coordinates(row['cog'], row['type'])
             else:
                 if row['siren']:
                     coordinates = self.get_epci_coordinates(row['siren'])
