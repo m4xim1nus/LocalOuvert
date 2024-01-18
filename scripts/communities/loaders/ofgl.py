@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from files_operation import load_from_path, save_csv
+from files_operation import save_csv
 from scripts.loaders.base_loader import BaseLoader
 from config import get_project_base_path
 
@@ -15,7 +15,7 @@ class OfglLoader():
         else:
             base_path = get_project_base_path()
             epci_communes_path = base_path / config["epci"]["file"]
-            epci_communes_mapping = load_from_path(epci_communes_path, dtype=config["epci"]["dtype"])
+            epci_communes_mapping = pd.read_excel(epci_communes_path, dtype=config["epci"]["dtype"])
             infos_coll = pd.DataFrame()
             for key, url in config["url"].items():
                 # Téléchargement des données

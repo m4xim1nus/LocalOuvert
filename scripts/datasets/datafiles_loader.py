@@ -129,6 +129,13 @@ class DatafilesLoader():
                 self.datafiles_out = pd.concat([self.datafiles_out, out_df], ignore_index=True)
                 self.logger.warning("No column in common with schema for file %s", df["url"].iloc[0])
         
+        # Cast data to schema types
+        schema_selected = self.schema.loc[:, ['name', 'type']]        
+        normalized_data = cast_data(normalized_data, schema_selected, 'name')
+
+        self.logger.info("Data types per column after casting in normalized data: %s", normalized_data.dtypes)
+        self.logger.info("Percentage of NaN values after casting, per column: %s", (normalized_data.isna().sum() / len(normalized_data)) * 100)
+
         # Drop potential duplicates (same values for schema & siren columns)
         subset_columns = list(self.schema["name"].values)
         subset_columns.append("siren")
@@ -139,12 +146,5 @@ class DatafilesLoader():
         self.logger.info("Number of files not normalized: %s", len(self.datafiles_out)-len_out)
         self.logger.info("Number of columns in datacolumns_out: %s", len(datacolumns_out))
         self.logger.info("Number of NaN values in normalized_data, per column: %s", normalized_data.isna().sum())
-
-        # Cast data to schema types
-        schema_selected = self.schema.loc[:, ['name', 'type']]        
-        normalized_data = cast_data(normalized_data, schema_selected, 'name')
-
-        self.logger.info("Data types per column after casting in normalized data: %s", normalized_data.dtypes)
-        self.logger.info("Percentage of NaN values after casting, per column: %s", (normalized_data.isna().sum() / len(normalized_data)) * 100)
 
         return normalized_data, datacolumns_out
