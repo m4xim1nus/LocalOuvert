@@ -2,6 +2,7 @@ import logging
 import requests
 from pathlib import Path
 import pandas as pd
+import numpy as np
 from io import StringIO
 import os
 import json 
@@ -41,7 +42,7 @@ class GeoLocator:
             if data['features']:
                 coordinates = data['features'][0]['geometry']['coordinates']
                 self.logger.info(f"Les coordonnées de {city_name} sont {coordinates[0]}, {coordinates[1]}")
-                return coordinates[0], coordinates[1]  # longitude, latitude
+                return coordinates[0], coordinates[1] # longitude, latitude
         self.logger.warning(f"Les coordonnées de {city_name} ne sont pas trouvées")
         return None, None
 
@@ -88,7 +89,7 @@ class GeoLocator:
             coordinates = self.get_commune_coordinates(commune_info['nom'], commune_info['COG'])
             if coordinates:
                 self.logger.info(f"Les coordonnées de l'EPCI {siren} sont celle de la commune siège {commune_siege_siren} : {coordinates[0]}, {coordinates[1]}")
-                return coordinates[0], coordinates[1]
+                return coordinates[0], coordinates[1] # longitude, latitude
             else:
                 self.logger.warning(f"Les coordonnées de l'EPCI {siren} de la commune siège {commune_siege_siren} ne sont pas trouvées")
                 return None, None
@@ -110,11 +111,13 @@ class GeoLocator:
                     self.logger.warning(f"Le SIREN de l'EPCI {row['nom']} n'est pas trouvé")
             
             if coordinates:
-                data_frame.at[index, 'longitude'] = coordinates[0]
-                data_frame.at[index, 'latitude'] = coordinates[1]
+                data_frame.at[index, 'longitude'] = float(str(coordinates[0]).replace(',', '.').replace('None', '')) if coordinates[0] not in [None, 'None'] else None
+                data_frame.at[index, 'latitude'] = float(str(coordinates[1]).replace(',', '.').replace('None', '')) if coordinates[1] not in [None, 'None'] else None
             else:
                 # Gérer le cas où aucune coordonnée n'est trouvée
                 data_frame.at[index, 'longitude'] = None
                 data_frame.at[index, 'latitude'] = None
 
+        #data_frame['longitude'] = data_frame['longitude'].replace('None', np.nan).str.replace(',', '.').astype(float)
+        #data_frame['latitude'] = data_frame['latitude'].replace('None', np.nan).str.replace(',', '.').astype(float)
         return data_frame
