@@ -1,7 +1,9 @@
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
-from files_operation import load_from_path, load_from_url, save_csv
+from files_operation import save_csv
+from scripts.loaders.base_loader import BaseLoader
 from config import get_project_base_path
 
 class OfglLoader():
@@ -9,15 +11,16 @@ class OfglLoader():
         data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
         data_file = data_folder / config["processed_data"]["filename"]
         if data_file.exists():
-            self.data = pd.read_csv(data_file)
+            self.data = pd.read_csv(data_file, sep=";")
         else:
             base_path = get_project_base_path()
             epci_communes_path = base_path / config["epci"]["file"]
-            epci_communes_mapping = load_from_path(epci_communes_path, dtype=config["epci"]["dtype"])
+            epci_communes_mapping = pd.read_excel(epci_communes_path, dtype=config["epci"]["dtype"])
             infos_coll = pd.DataFrame()
             for key, url in config["url"].items():
                 # Téléchargement des données
-                df = load_from_url(url, dtype=config["dtype"])
+                df_loader = BaseLoader.loader_factory(url, dtype=config["dtype"])
+                df = df_loader.load()
                 # Traitement spécifique pour chaque base en utilisant la fonction process_data
                 if key == 'communes':
                     df = self.process_data(df, key, epci_communes_mapping)
@@ -28,7 +31,7 @@ class OfglLoader():
                 infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
 
             # Remplir les valeurs manquantes par une chaîne vide
-            infos_coll.fillna('', inplace=True)
+            infos_coll.fillna(np.nan, inplace=True)
             self.data = infos_coll
             self.save(Path(config["processed_data"]["path"]),config["processed_data"]["filename"])
     
@@ -48,7 +51,7 @@ class OfglLoader():
         elif key == 'departements':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Nom 2022 Département', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'COG', 'nom', 'type', 'SIREN', 'population']
-            df['type'] = 'DEP'
+            df.loc[:, 'type'] = 'DEP'
             df = df.astype({'SIREN': str, 'COG': str, 'code_region': str})
             df['COG_3digits'] = df['COG'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_region', 'population']]
@@ -57,7 +60,7 @@ class OfglLoader():
         elif key == 'communes':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Code Insee 2022 Commune', 'Nom 2022 Commune', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'COG', 'nom', 'type', 'SIREN', 'population']
-            df['type'] = 'COM'
+            df.loc[:, 'type'] = 'COM'
             df = df.astype({'SIREN': str, 'COG': str, 'code_departement': str})
             df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
             df = df[['nom', 'SIREN', 'COG', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
@@ -69,7 +72,7 @@ class OfglLoader():
         elif key == 'interco':
             df = df[['Code Insee 2022 Région', 'Code Insee 2022 Département', 'Nature juridique 2022 abrégée', 'Code Siren 2022 EPCI', 'Nom 2022 EPCI', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
-            df['type'] = df['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
+            df.loc[:, 'type'] = df['type'].replace({'MET69': 'MET', 'MET75': 'MET', 'M': 'MET'})
             df = df.astype({'SIREN': str, 'code_departement': str})
             df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]

@@ -4,7 +4,7 @@ import pandas as pd
 import logging
 
 from communities_selector import CommunitiesSelector
-from files_operation import load_from_url
+from scripts.loaders.csv_loader import CSVLoader
 
 
 class DataGouvSearcher():
@@ -12,19 +12,23 @@ class DataGouvSearcher():
         self.logger = logging.getLogger(__name__)
 
         self.scope = CommunitiesSelector(config["communities"])
-        self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id-datagouv columns
-        self.datagouv_ids_list = self.datagouv_ids["id-datagouv"].to_list()
-        self.dataset_catalog_df = load_from_url(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
+        self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id_datagouv columns
+        self.datagouv_ids_list = self.datagouv_ids["id_datagouv"].to_list()
+
+        dataset_catalog_loader = CSVLoader(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
+        self.dataset_catalog_df = dataset_catalog_loader.load()
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
         # join siren to dataset_catalog_df based on organization_id
-        self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
-        self.dataset_catalog_df.drop(columns=['id-datagouv'], inplace=True)
-        self.datafile_catalog_df = load_from_url(config["datagouv"]["datafiles"]["url"])
+        self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id_datagouv", how="left")
+        self.dataset_catalog_df.drop(columns=['id_datagouv'], inplace=True)
+
+        datafile_catalog_loader = CSVLoader(config["datagouv"]["datafiles"]["url"])
+        self.datafile_catalog_df = datafile_catalog_loader.load()
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)
         # join siren to datafile_catalog_df based on organization_id
-        self.datafile_catalog_df = self.datafile_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id-datagouv", how="left")
-        self.datafile_catalog_df.drop(columns=['id-datagouv'], inplace=True)
+        self.datafile_catalog_df = self.datafile_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id_datagouv", how="left")
+        self.datafile_catalog_df.drop(columns=['id_datagouv'], inplace=True)
         
     def filter_by(self, df, column, value, return_mask=False):
 
@@ -104,7 +108,7 @@ class DataGouvSearcher():
                     else:
                         montant_col = False
 
-                    files.append({"organization-id":result["organization"]["id"], "organization":result["organization"]["name"],"title":result["title"],"description":result["description"],"id":result["id"],"frequency":result["frequency"],"format":resource["format"],"url":resource["url"],"created_at":resource["created_at"],'montant_col':montant_col,"keyword_in_description":keyword_in_description,"keyword_in_title":keyword_in_title})
+                    files.append({"organization_id":result["organization"]["id"], "organization":result["organization"]["name"],"title":result["title"],"description":result["description"],"id":result["id"],"frequency":result["frequency"],"format":resource["format"],"url":resource["url"],"created_at":resource["created_at"],'montant_col':montant_col,"keyword_in_description":keyword_in_description,"keyword_in_title":keyword_in_title})
                 if (keyword_in_description or keyword_in_title or montant_col) and len(files)>0:
                     scoped_files.append(self.get_preferred_format(files))
             if data["next_page"]:
@@ -123,9 +127,9 @@ class DataGouvSearcher():
 
         bottom_up_files_df = pd.DataFrame(all_files)
         # Join with siren based on organization
-        bottom_up_files_df = bottom_up_files_df.merge(self.datagouv_ids, left_on="organization-id", right_on="id-datagouv", how="left")
-        bottom_up_files_df.drop(columns=['id-datagouv'], inplace=True)
-        bottom_up_files_df.drop(columns=['organization-id'], inplace=True)
+        bottom_up_files_df = bottom_up_files_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id_datagouv", how="left")
+        bottom_up_files_df.drop(columns=['id_datagouv'], inplace=True)
+        bottom_up_files_df.drop(columns=['organization_id'], inplace=True)
         return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
     
     def log_basic_info(self,df):

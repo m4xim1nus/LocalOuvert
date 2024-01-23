@@ -2,13 +2,15 @@ import logging
 import requests
 from pathlib import Path
 import pandas as pd
+import numpy as np
 from io import StringIO
 import os
 import json 
 
-from json import JSONDecodeError
 from config import get_project_base_path
-from files_operation import save_csv, load_from_url
+from scripts.loaders.csv_loader import CSVLoader
+from scripts.loaders.excel_loader import ExcelLoader
+
 
 class GeoLocator:
     def __init__(self, geo_config):
@@ -24,12 +26,11 @@ class GeoLocator:
             reg_dep_geoloc_df['cog'] = reg_dep_geoloc_df['cog'].astype(str)
             self.reg_dep_geoloc_df = reg_dep_geoloc_df
 
-        epci_coord_url = geo_config["epci_coord_url"]
-        self.epci_coord_df = load_from_url(epci_coord_url)
+        epci_coord_loader = ExcelLoader(geo_config["epci_coord_url"])
+        self.epci_coord_df = epci_coord_loader.load()
 
-        communes_url = geo_config["communes_id_url"]
-        self.communes_df = load_from_url(communes_url)
-
+        communes_coord_loader = CSVLoader(geo_config["communes_id_url"])
+        self.communes_df = communes_coord_loader.load()
     
     def get_commune_coordinates(self, city_name, city_code):
         # Implémenter la logique pour récupérer les coordonnées via l'API de https://adresse.data.gouv.fr/api-doc/adresse, via le CODE INSEE (COG)
@@ -41,7 +42,7 @@ class GeoLocator:
             if data['features']:
                 coordinates = data['features'][0]['geometry']['coordinates']
                 self.logger.info(f"Les coordonnées de {city_name} sont {coordinates[0]}, {coordinates[1]}")
-                return coordinates[0], coordinates[1]  # longitude, latitude
+                return coordinates[0], coordinates[1] # longitude, latitude
         self.logger.warning(f"Les coordonnées de {city_name} ne sont pas trouvées")
         return None, None
 
@@ -69,26 +70,26 @@ class GeoLocator:
         # 1. siren epci -> siren de la commune du siège via https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/ (coordonnees-epci-fp-janv2023-last.xlsx)
         commune_siege_siren = self.epci_coord_df[self.epci_coord_df['N° SIREN'] == siren]['Commune siège'].str.extract('(\d+)').iloc[0, 0]
 
-        # 2. siren commune-> nom, COG commune via https://www.data.gouv.fr/en/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/ (identifiants-communes-2022.csv)
+        # 2. siren commune-> nom, cog commune via https://www.data.gouv.fr/en/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/ (identifiants-communes-2022.csv)
         # Cast commune_siege_siren and communes_df 'SIREN' to string
         communes_df = self.communes_df.copy()
         
         commune_siege_siren = str(commune_siege_siren)
         communes_df['SIREN'] = communes_df['SIREN'].astype(str)
 
-        # extract nom, COG commune safely
+        # extract nom, cog commune safely
         commune_info_df = communes_df[communes_df['SIREN'] == commune_siege_siren][['nom', 'COG']]
         if commune_info_df.empty:
             self.logger.warning(f"Les coordonnées pour l'EPCI {siren} de la commune siège {commune_siege_siren} ne sont pas trouvées")
             return None, None
         commune_info = communes_df[communes_df['SIREN'] == commune_siege_siren][['nom', 'COG']].iloc[0]
 
-        # 3. nom, COG -> coordonnées via les coordonnées des communes - utiliser la fonction get_commune_coordinates
+        # 3. nom, cog -> coordonnées via les coordonnées des communes - utiliser la fonction get_commune_coordinates
         if not commune_info.empty:
             coordinates = self.get_commune_coordinates(commune_info['nom'], commune_info['COG'])
             if coordinates:
                 self.logger.info(f"Les coordonnées de l'EPCI {siren} sont celle de la commune siège {commune_siege_siren} : {coordinates[0]}, {coordinates[1]}")
-                return coordinates[0], coordinates[1]
+                return coordinates[0], coordinates[1] # longitude, latitude
             else:
                 self.logger.warning(f"Les coordonnées de l'EPCI {siren} de la commune siège {commune_siege_siren} ne sont pas trouvées")
                 return None, None
@@ -99,9 +100,9 @@ class GeoLocator:
         # Logique à revoir : toutes regions et départements, puis toutes les communes, puis les EPCI (car copies des coordonnées des communes) 
         for index, row in data_frame.iterrows():
             if row['type'] in ['COM']:
-                coordinates = self.get_commune_coordinates(row['nom'], row['COG'])
+                coordinates = self.get_commune_coordinates(row['nom'], row['cog'])
             elif row['type'] in ['REG', 'DEP', 'CTU']:
-                coordinates = self.get_region_department_coordinates(row['COG'], row['type'])
+                coordinates = self.get_region_department_coordinates(row['cog'], row['type'])
             else:
                 if row['siren']:
                     coordinates = self.get_epci_coordinates(row['siren'])
@@ -110,11 +111,13 @@ class GeoLocator:
                     self.logger.warning(f"Le SIREN de l'EPCI {row['nom']} n'est pas trouvé")
             
             if coordinates:
-                data_frame.at[index, 'longitude'] = coordinates[0]
-                data_frame.at[index, 'latitude'] = coordinates[1]
+                data_frame.at[index, 'longitude'] = float(str(coordinates[0]).replace(',', '.').replace('None', '')) if coordinates[0] not in [None, 'None'] else None
+                data_frame.at[index, 'latitude'] = float(str(coordinates[1]).replace(',', '.').replace('None', '')) if coordinates[1] not in [None, 'None'] else None
             else:
                 # Gérer le cas où aucune coordonnée n'est trouvée
                 data_frame.at[index, 'longitude'] = None
                 data_frame.at[index, 'latitude'] = None
 
+        #data_frame['longitude'] = data_frame['longitude'].replace('None', np.nan).str.replace(',', '.').astype(float)
+        #data_frame['latitude'] = data_frame['latitude'].replace('None', np.nan).str.replace(',', '.').astype(float)
         return data_frame

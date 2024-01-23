@@ -6,16 +6,17 @@ import logging
 import unidecode
 
 from communities_selector import CommunitiesSelector
-from files_operation import load_from_url, load_json
 from json_operation import flatten_json_schema, flatten_data
 from dataframe_operation import cast_data
+from scripts.loaders.base_loader import BaseLoader
+from scripts.loaders.json_loader import JSONLoader
 
 class DatafileLoader():
     def __init__(self, config):
         self.logger = logging.getLogger(__name__)
 
         self.schema = self.load_schema(config)
-        self.loaded_data = self.load_data(config)
+        self.loaded_data, self.modifications_data = self.load_data(config)
         self.cleaned_data = self.clean_data(config)
 
         self.communities_scope = CommunitiesSelector(config["communities"])
@@ -25,8 +26,9 @@ class DatafileLoader():
         self.normalized_data = self.normalize_data(config)
 
     def load_schema(self, config):
-        json_schema = load_from_url(config["search"]["marches_publics"]["schema"]["url"])
-        schema_name = config["search"]["marches_publics"]["schema"]["name"]
+        json_schema_loader = BaseLoader.loader_factory(config["search"]["marches_publics"]["schema"]["url"]) # Impr : "marches_publics" should be a variable
+        json_schema = json_schema_loader.load()
+        schema_name = config["search"]["marches_publics"]["schema"]["name"] # Impr : "marches_publics" should be a variable
         flattened_schema = flatten_json_schema(json_schema, schema_name)
         schema_df = pd.DataFrame(flattened_schema)
         # In "type" column, replace NaN values by "string" (default value)
@@ -34,10 +36,11 @@ class DatafileLoader():
         return schema_df
     
     def load_data(self, config):
-        data = load_json(config["search"]["marches_publics"]["unified_dataset"]["url"])
-        df = flatten_data(data['marches'])
+        data_loader = JSONLoader(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
+        data = data_loader.load()
+        main_df, modifications_df = flatten_data(data['marches']) # Impr : "marches" should be a variable
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {config['search']['marches_publics']['unified_dataset']['url']}")
-        return df
+        return main_df, modifications_df
     
     def clean_data(self, config):
         # Clean columns : remove columns from loaded_data whose names are not in schema
@@ -56,7 +59,8 @@ class DatafileLoader():
 
         self.logger.info(f"Nettoyage des colonnes terminé, {len(columns_to_keep)} colonnes conservées.")
 
-        # To do better: specifif marchés publics rows cleaning (mixed with concessions data in source file)
+        # Keep specific 'marchés publics' rows (mixed with concessions data in source file)
+        # To do : replace by a more generic method & use config
         procedure_values = self.get_schema_values('procedure', 'enum')
         nature_values = self.get_schema_values('nature', 'enum')
         type_pattern = self.get_schema_value('_type', 'pattern')
@@ -69,6 +73,7 @@ class DatafileLoader():
 
         return cleaned_data
 
+    # to do : move to utils
     def clean_column_name_for_comparison(self, column_name):
         # Supprimer les indices numériques et les points supplémentaires du nom de colonne
         return re.sub(r'\.\d+\.', '.', column_name)

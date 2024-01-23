@@ -69,11 +69,15 @@ if __name__ == "__main__":
     marches_publics_data_folder = Path(get_project_base_path()) / "data" / "datasets" / "marches_publics" / "outputs"
     marches_publics = DatafileLoader(config)
     save_csv(marches_publics.normalized_data, marches_publics_data_folder, normalized_data_filename, sep=";")
+    save_csv(marches_publics.modifications_data, marches_publics_data_folder, "modifications_data.csv", sep=";")
     
-    # # Saving Data
-    # connector = PSQLConnector()
-    # connector.connect()
-    # connector.save_communities_to_sql(datagouv.scope.selected_data)
-    # # To be tested
-    # connector.save_normalized_data_to_sql(subventions_datafiles.normalized_data)
+        
+    ## Saving Data to the DB - /!\ Does not erase Data at the moment, need to agree on a rule /!\
+    connector = PSQLConnector()
+    connector.connect()
+    connector.save_df_to_sql(datagouv.scope.selected_data,"communities")
+    connector.save_df_to_sql(subventions_datafiles.normalized_data,"subventions_normalized")
+    connector.save_df_to_sql(marches_publics.normalized_data,"marches_public_normalized")
+    
+
 

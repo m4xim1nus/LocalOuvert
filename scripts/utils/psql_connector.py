@@ -1,7 +1,6 @@
 import logging
 import pandas as pd
-import psycopg2
-from io import StringIO
+from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
@@ -17,106 +16,20 @@ class PSQLConnector:
         self.port = os.getenv("DB_PORT")
 
     def connect(self):
+        self.engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}')
+
+    def drop_table_if_exists(self, table_name):
         try:
-            self.connection = psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host,port=self.port)
-            self.cursor = self.connection.cursor()
-            self.logger.info("Connexion à la base de données réussie")
+            with self.engine.connect() as conn:
+                conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+                self.logger.info(f"Table {table_name} dropped successfully.")
         except Exception as e:
-            self.logger.info(f"Erreur lors de la connexion à la base de données: {e}")
+            self.logger.error(f"An error occurred while dropping the table: {e}")
 
-    def save_communities_to_sql(self,df):
-        # Votre DataFrame Pandas
-        # dataframe = pd.read_csv('votre_fichier.csv')  # Si vous chargez depuis un fichier CSV
-        # Assurez-vous que les colonnes du DataFrame correspondent à la table
-
-        # Just in Case
-        df["trancheEffectifsUniteLegale"] = df["trancheEffectifsUniteLegale"].astype('Int64')
-        
+    def save_df_to_sql(self, df, table_name, chunksize=1000, if_exists='append', index=False):
         try:
-            truncate_query = "TRUNCATE TABLE public.communities"
-            self.cursor.execute(truncate_query)
-            self.connection.commit()
-            self.logger.info("Table vidée avec succès.")
-        except (Exception, psycopg2.DatabaseError) as error:
-            self.logger.info("Erreur lors du vidage de la table :", error)
-            self.connection.rollback()
-        # Sauvegarder le DataFrame dans un buffer en mémoire sous forme CSV
-        output = StringIO()
-        df.to_csv(output, sep='\t', header=False, index=False)
-        output.seek(0)
-
-        # Préparer la requête COPY
-        copy_query = """
-            COPY public.communities(nom, siren, type, "COG", "COG_3digits", code_departement, 
-            code_departement_3digits, code_region, population, "EPCI", url_ptf, url_datagouv, 
-            id_datagouv, merge, ptf, "trancheEffectifsUniteLegale", "EffectifsSup50")
-            FROM STDIN WITH CSV DELIMITER '\t' NULL ''
-        """
-
-        # Copier les données du buffer dans la table
-        try:
-            self.cursor.copy_expert(copy_query, output)
-            self.connection.commit()
-        except (Exception, psycopg2.DatabaseError) as error:
-            self.logger.info("Error: %s" % error)
-            self.connection.rollback()
-            self.cursor.close()
-            return 1
-
-        self.logger.info("Copy successful")
-
-    
-    def save_normalized_data_to_sql(self,df,chunk_size=1000):
-        # Votre DataFrame Pandas
-        # dataframe = pd.read_csv('votre_fichier.csv')  # Si vous chargez depuis un fichier CSV
-        # Assurez-vous que les colonnes du DataFrame correspondent à la table
-
-        # Reformating (to discuss if we keep it here)
-        
-        df['record_id'] = df.index
-        df["export_date"] = pd.Timestamp.now().strftime('%Y-%m-%d')
-        col_order = ['record_id', 'export_date'] + [col for col in df.columns if col not in ['record_id', 'export_date']]
-        df = df[col_order]
-        df = df.drop(columns=["nom","type","source"])
-
-        try:
-            truncate_query = "TRUNCATE TABLE public.normalized_data"
-            self.cursor.execute(truncate_query)
-            self.connection.commit()
-            self.logger.info("Table vidée avec succès.")
-        except (Exception, psycopg2.DatabaseError) as error:
-            self.logger.info("Erreur lors du vidage de la table :", error)
-            self.connection.rollback()
-        # Sauvegarder le DataFrame dans un buffer en mémoire sous forme CSV
-        
-        for k in range(0,df.index.size,chunk_size):
-            output = StringIO()
-            df[k:k+chunk_size].to_csv(output, sep='\t', header=False, index=False)
-            output.seek(0)
-
-            # Préparer la requête COPY
-
-
-            # Copier les données du buffer dans la table
-            try:
-                self.cursor.copy_expert("COPY public.normalized_data FROM STDIN WITH CSV DELIMITER '\t' NULL ''", output)
-                self.connection.commit()
-            except (Exception, psycopg2.DatabaseError) as error:
-                self.logger.info("Error: %s" % error)
-                self.connection.rollback()
-                return 1
-
-            self.logger("Copy successful")
-
-    def close_connection(self):
-        self.cursor.close()
-        self.connection.close()
-        self.logger.info("Connexion à la base de données fermée")
-
-# Exemple d'utilisation
-# connector = PSQLConnector("dbname", "user", "password", "host", "port")
-# connector.connect()
-
-# connector.save_communities_to_sql(sel_com_df)
-
-# connector.save_normalized_data_to_sql(normalized_df)
+            self.drop_table_if_exists(table_name)
+            df.to_sql(table_name, self.engine, if_exists=if_exists, index=index, chunksize=chunksize)
+            self.logger.info("Dataframe saved successfully to the database "+table_name+'.')
+        except Exception as e:
+            self.logger.error(f"An error occurred: {e}")
