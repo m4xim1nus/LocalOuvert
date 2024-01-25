@@ -8,21 +8,21 @@ from scripts.loaders.csv_loader import CSVLoader
 
 
 class DataGouvSearcher():
-    def __init__(self,config):
+    def __init__(self, communities_config, datagouv_config):
         self.logger = logging.getLogger(__name__)
 
-        self.scope = CommunitiesSelector(config["communities"])
+        self.scope = CommunitiesSelector(communities_config)
         self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id_datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id_datagouv"].to_list()
 
-        dataset_catalog_loader = CSVLoader(config["datagouv"]["datasets"]["url"], columns_to_keep=config["datagouv"]["datasets"]["columns"])
+        dataset_catalog_loader = CSVLoader(datagouv_config["datasets"]["url"], columns_to_keep=datagouv_config["datasets"]["columns"])
         self.dataset_catalog_df = dataset_catalog_loader.load()
         self.dataset_catalog_df = self.filter_by(self.dataset_catalog_df, "organization_id", self.datagouv_ids_list)
         # join siren to dataset_catalog_df based on organization_id
         self.dataset_catalog_df = self.dataset_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id_datagouv", how="left")
         self.dataset_catalog_df.drop(columns=['id_datagouv'], inplace=True)
 
-        datafile_catalog_loader = CSVLoader(config["datagouv"]["datafiles"]["url"])
+        datafile_catalog_loader = CSVLoader(datagouv_config["datafiles"]["url"])
         self.datafile_catalog_df = datafile_catalog_loader.load()
         self.datafile_catalog_df.columns=list(map(lambda x: x.replace("dataset.organization_id","organization_id"), self.datafile_catalog_df.columns.to_list()))
         self.datafile_catalog_df = self.filter_by(self.datafile_catalog_df, "organization_id", self.datagouv_ids_list)

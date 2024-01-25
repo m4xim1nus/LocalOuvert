@@ -12,37 +12,38 @@ from scripts.loaders.base_loader import BaseLoader
 from scripts.loaders.json_loader import JSONLoader
 
 class DatafileLoader():
-    def __init__(self, config):
+    def __init__(self, communities_config, topic_config):
         self.logger = logging.getLogger(__name__)
 
-        self.schema = self.load_schema(config)
-        self.loaded_data, self.modifications_data = self.load_data(config)
-        self.cleaned_data = self.clean_data(config)
+        self.schema = self.load_schema(topic_config["schema"])
+        self.loaded_data, self.modifications_data = self.load_data(topic_config)
+        self.cleaned_data = self.clean_data()
 
-        self.communities_scope = CommunitiesSelector(config["communities"])
+        self.communities_scope = CommunitiesSelector(communities_config)
         self.communities_ids = self.communities_scope.get_selected_ids()
-        self.selected_data = self.select_data(config)
-        self.primary_data = self.remove_secondary_columns(config)
-        self.normalized_data = self.normalize_data(config)
+        self.selected_data = self.select_data()
+        self.primary_data = self.remove_secondary_columns()
+        self.normalized_data = self.normalize_data()
 
-    def load_schema(self, config):
-        json_schema_loader = BaseLoader.loader_factory(config["search"]["marches_publics"]["schema"]["url"]) # Impr : "marches_publics" should be a variable
+    def load_schema(self, schema_topic_config):
+        json_schema_loader = BaseLoader.loader_factory(schema_topic_config["url"])
         json_schema = json_schema_loader.load()
-        schema_name = config["search"]["marches_publics"]["schema"]["name"] # Impr : "marches_publics" should be a variable
+        schema_name = schema_topic_config["name"]
         flattened_schema = flatten_json_schema(json_schema, schema_name)
         schema_df = pd.DataFrame(flattened_schema)
         # In "type" column, replace NaN values by "string" (default value)
         schema_df['type'].fillna('string', inplace=True)
         return schema_df
     
-    def load_data(self, config):
-        data_loader = JSONLoader(config["search"]["marches_publics"]["unified_dataset"]["url"]) # Impr : "marches_publics" should be a variable
+    def load_data(self, topic_config):
+        data_loader = JSONLoader(topic_config["unified_dataset"]["url"])
         data = data_loader.load()
-        main_df, modifications_df = flatten_data(data['marches']) # Impr : "marches" should be a variable
-        self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {config['search']['marches_publics']['unified_dataset']['url']}")
+        root = topic_config["unified_dataset"]["root"]
+        main_df, modifications_df = flatten_data(data[root])
+        self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {topic_config['unified_dataset']['url']}")
         return main_df, modifications_df
     
-    def clean_data(self, config):
+    def clean_data(self):
         # Clean columns : remove columns from loaded_data whose names are not in schema
         original_to_cleaned_names = {
             col: self.clean_column_name_for_comparison(col) for col in self.loaded_data.columns
@@ -99,7 +100,7 @@ class DatafileLoader():
         cleaned_value = self.clean_value(value)
         return cleaned_value in values
     
-    def select_data(self, config):
+    def select_data(self):
         cleaned_data = self.cleaned_data.copy()
         communities_data = self.communities_ids.copy()
 
@@ -112,7 +113,7 @@ class DatafileLoader():
         return selected_data
     
         
-    def remove_secondary_columns(self, config):
+    def remove_secondary_columns(self):
         # Supprimer les colonnes qui commencent par 'modifications.' ou 'titulaires.*.id' ou 'titulaires.*.typeIdentifiant'
         # primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'(modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant)')]
         primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant')].copy()
@@ -128,7 +129,7 @@ class DatafileLoader():
 
         return primary_data
     
-    def normalize_data(self, config):
+    def normalize_data(self):
 
         # Drop cleaned_data duplicates
         normalized_data = self.primary_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)

@@ -6,9 +6,9 @@ from scripts.communities.communities_selector import CommunitiesSelector
 from scripts.utils.config import get_project_base_path
 
 class SingleUrlsBuilder():
-    def __init__(self,config):
+    def __init__(self, communities_config):
         self.logger = logging.getLogger(__name__)
-        self.scope = CommunitiesSelector(config["communities"])
+        self.scope = CommunitiesSelector(communities_config)
 
     def get_datafiles(self,search_config):
         single_urls_source_file = Path(get_project_base_path()) / "data" / "datasets" / "subventions" / "inputs" / search_config["single_urls_file"]

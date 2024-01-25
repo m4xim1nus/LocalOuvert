@@ -12,7 +12,7 @@ from scripts.utils.dataframe_operation import merge_duplicate_columns, safe_rena
 
 
 class DatafilesLoader():
-    def __init__(self,files_in_scope,config):
+    def __init__(self,files_in_scope, topic, topic_config, datafile_loader_config):
         self.logger = logging.getLogger(__name__)
 
         self.loader_classes = {
@@ -24,14 +24,14 @@ class DatafilesLoader():
         }
 
         self.files_in_scope = files_in_scope
-        self.schema = self.load_schema(config)
+        self.schema = self.load_schema(topic_config["schema"])
         self.datafiles_out = pd.DataFrame()
         readable_files, self.datafiles_out = self.keep_readable_datafiles()
-        self.corpus = self.load_datafiles(readable_files, config)
-        self.normalized_data, self.datacolumns_out = self.normalize_data(config)
+        self.corpus = self.load_datafiles(readable_files, datafile_loader_config)
+        self.normalized_data, self.datacolumns_out = self.normalize_data(topic, topic_config, datafile_loader_config)
 
-    def load_schema(self,config):
-        json_schema_loader = JSONLoader(config["search"]["subventions"]["schema"]["url"], key="fields") # Impr : "subentions" & "fields" should be variables
+    def load_schema(self, schema_topic_config):
+        json_schema_loader = JSONLoader(schema_topic_config["url"], key="fields") # Impr : "subentions" & "fields" should be variables
         schema_df = json_schema_loader.load()
         self.logger.info("Schema loaded.")
         return schema_df
@@ -44,14 +44,14 @@ class DatafilesLoader():
         self.logger.info(f"{len(readable_files)} readable files selected.")
         return readable_files, datafiles_out
 
-    def load_file_data(self, file_info, config):
+    def load_file_data(self, file_info, datafile_loader_config):
         loader_class = self.loader_classes.get(file_info["format"].lower())
         if loader_class:
             loader = loader_class(file_info["url"])
             try:
                 df = loader.load()
                 if not df.empty:
-                    for col in config["datafile_loader"]["file_info_columns"]:
+                    for col in datafile_loader_config["file_info_columns"]:
                         if col in file_info:
                             df[col] = file_info[col]
                     self.logger.info(f"Data from {file_info['url']} loaded.")
@@ -65,12 +65,12 @@ class DatafilesLoader():
         self.datafiles_out = pd.concat([self.datafiles_out, file_info_df], ignore_index=True)
         return None
 
-    def load_datafiles(self, readable_files, config):
+    def load_datafiles(self, readable_files, datafile_loader_config):
         len_out = len(self.datafiles_out)
         data = []
 
         for i, file_info in readable_files.iterrows():
-            df = self.load_file_data(file_info, config)
+            df = self.load_file_data(file_info, datafile_loader_config)
             if df is not None:
                 data.append(df)
 
@@ -80,9 +80,9 @@ class DatafilesLoader():
         
         return data
     
-    def normalize_data(self, config):
+    def normalize_data(self, topic, topic_config, datafile_loader_config):
         len_out = len(self.datafiles_out)
-        file_info_columns = config["datafile_loader"]["file_info_columns"]
+        file_info_columns = datafile_loader_config["file_info_columns"]
         normalized_data = pd.DataFrame(columns=self.schema["name"])
         for col in file_info_columns:
             normalized_data[col] = ""
@@ -91,7 +91,7 @@ class DatafilesLoader():
         # Create a mapping dictionary between lower case schema names and original schema names
         schema_mapping = dict(zip(schema_lower, self.schema["name"].values))
 
-        schema_dict_file = Path(get_project_base_path())  / "data" / "datasets" / "subventions" / "inputs" / config["search"]["subventions"]["schema_dict_file"]
+        schema_dict_file = Path(get_project_base_path())  / "data" / "datasets" / topic / "inputs" / topic_config["schema_dict_file"]
         schema_dict = pd.read_csv(schema_dict_file, sep=";").set_index('original_name')['official_name'].to_dict()
         
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
