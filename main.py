@@ -1,9 +1,9 @@
-import logging
-import yaml
-import argparse
-import sys
 from pathlib import Path
 import pandas as pd
+
+from scripts.utils.argument_parser import ArgumentParser
+from scripts.utils.config_manager import ConfigManager
+from scripts.utils.logger_manager import LoggerManager
 
 from scripts.datasets.datagouv_searcher import DataGouvSearcher
 from scripts.datasets.single_urls_builder import SingleUrlsBuilder
@@ -12,17 +12,14 @@ from scripts.datasets.datafile_loader import DatafileLoader
 from scripts.utils.psql_connector import PSQLConnector
 from scripts.utils.config import get_project_base_path
 from scripts.utils.files_operation import save_csv
-from scripts.utils.logger import configure_logger
 
-if __name__ == "__main__":  
-    parser = argparse.ArgumentParser(description="Gestionnaire du projet LocalOuvert")
-    parser.add_argument('filename')   
-    args = parser.parse_args()
-    with open(args.filename) as f:
-        # use safe_load instead load
-        config = yaml.safe_load(f)
+if __name__ == "__main__":
+    # Parse arguments, load config and configure logger
+    args = ArgumentParser.parse_args("Gestionnaire du projet LocalOuvert")
+    config = ConfigManager.load_config(args.filename)        
+    LoggerManager.configure_logger(config)
 
-    configure_logger(config)    
+
 
     datagouv = DataGouvSearcher(config)
     single_urls = SingleUrlsBuilder(config)
