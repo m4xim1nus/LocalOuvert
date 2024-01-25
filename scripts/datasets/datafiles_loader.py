@@ -3,12 +3,12 @@ import logging
 import pandas as pd
 from pathlib import Path
 
-from config import get_project_base_path
+from scripts.utils.config import get_project_base_path
 
 from scripts.loaders.csv_loader import CSVLoader
 from scripts.loaders.excel_loader import ExcelLoader
 from scripts.loaders.json_loader import JSONLoader
-from dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
+from scripts.utils.dataframe_operation import merge_duplicate_columns, safe_rename, cast_data
 
 
 class DatafilesLoader():

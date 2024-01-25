@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import logging
 
-from communities_selector import CommunitiesSelector
+from scripts.communities.communities_selector import CommunitiesSelector
 from scripts.loaders.csv_loader import CSVLoader
 
 

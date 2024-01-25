@@ -5,27 +5,14 @@ import sys
 from pathlib import Path
 import pandas as pd
 
-# Pré-nettoyage des ajouts à sys_path : à sortir dans config & utils (?)
-def add_to_sys_path(path: str):
-    if path not in sys.path:
-        sys.path.insert(0, path)
-
-base_path = Path(__file__).resolve().parents[0] / 'scripts'
-add_to_sys_path(str(base_path / 'datasets'))
-add_to_sys_path(str(base_path / 'utils'))
-add_to_sys_path(str(base_path / 'communities'))
-add_to_sys_path(str(base_path / 'communities' / 'loaders'))
-
-from datagouv_searcher import DataGouvSearcher
-from single_urls_builder import SingleUrlsBuilder
-from datafiles_loader import DatafilesLoader
-from datafile_loader import DatafileLoader
-from psql_connector import PSQLConnector
-from datafiles_loader import DatafilesLoader
-from datafile_loader import DatafileLoader
-from config import get_project_base_path
-from files_operation import save_csv
-from logger import configure_logger
+from scripts.datasets.datagouv_searcher import DataGouvSearcher
+from scripts.datasets.single_urls_builder import SingleUrlsBuilder
+from scripts.datasets.datafiles_loader import DatafilesLoader
+from scripts.datasets.datafile_loader import DatafileLoader
+from scripts.utils.psql_connector import PSQLConnector
+from scripts.utils.config import get_project_base_path
+from scripts.utils.files_operation import save_csv
+from scripts.utils.logger import configure_logger
 
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description="Gestionnaire du projet LocalOuvert")

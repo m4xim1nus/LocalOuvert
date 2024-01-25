@@ -5,9 +5,9 @@ import pandas as pd
 import logging
 import unidecode
 
-from communities_selector import CommunitiesSelector
-from json_operation import flatten_json_schema, flatten_data
-from dataframe_operation import cast_data
+from scripts.communities.communities_selector import CommunitiesSelector
+from scripts.utils.json_operation import flatten_json_schema, flatten_data
+from scripts.utils.dataframe_operation import cast_data
 from scripts.loaders.base_loader import BaseLoader
 from scripts.loaders.json_loader import JSONLoader
 
