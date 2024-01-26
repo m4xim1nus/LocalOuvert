@@ -43,7 +43,7 @@ class WorkflowManager:
             df_to_save_to_db[topic+"_normalized"] = topic_datafiles.normalized_data
             
         ## Saving Data to the DB - /!\ Does not erase Data at the moment, need to agree on a rule /!\
-        if self.config["save_to_db"]:
+        if self.config["workflow"]["save_to_db"]:
             self.save_data_to_db(df_to_save_to_db)
         
         self.logger.info("Workflow completed.")
