@@ -7,7 +7,7 @@ from io import StringIO
 import os
 import json 
 
-from config import get_project_base_path
+from scripts.utils.config import get_project_base_path
 from scripts.loaders.csv_loader import CSVLoader
 from scripts.loaders.excel_loader import ExcelLoader
 

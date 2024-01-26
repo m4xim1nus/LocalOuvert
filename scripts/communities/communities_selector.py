@@ -4,14 +4,14 @@ import pandas as pd
 import numpy as np
 import re
 
-from odf import OdfLoader
-from ofgl import OfglLoader
-from sirene import SireneLoader
+from scripts.communities.loaders.odf import OdfLoader
+from scripts.communities.loaders.ofgl import OfglLoader
+from scripts.communities.loaders.sirene import SireneLoader
 
-from files_operation import save_csv
-from config import get_project_base_path
-from geolocator import GeoLocator
-from psql_connector import PSQLConnector
+from scripts.utils.files_operation import save_csv
+from scripts.utils.config import get_project_base_path
+from scripts.utils.geolocator import GeoLocator
+from scripts.utils.psql_connector import PSQLConnector
 
 class CommunitiesSelector():
     _instance = None
@@ -77,11 +77,6 @@ class CommunitiesSelector():
         save_csv(all_data, data_folder, all_data_filename, sep=";")
         save_csv(selected_data, data_folder, selected_data_filename, sep=";")
 
-        #Saving to DB (WARNING : does not erase at the moment)
-
-        connector = PSQLConnector()
-        connector.connect()
-        connector.save_df_to_sql(selected_data,"communities")
         self._init_done = True
 
      

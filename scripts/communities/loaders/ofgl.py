@@ -2,9 +2,9 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from files_operation import save_csv
+from scripts.utils.files_operation import save_csv
 from scripts.loaders.base_loader import BaseLoader
-from config import get_project_base_path
+from scripts.utils.config import get_project_base_path
 
 class OfglLoader():
     def __init__(self,config):

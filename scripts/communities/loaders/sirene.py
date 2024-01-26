@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-from config import get_project_base_path
+from scripts.utils.config import get_project_base_path
 
 class SireneLoader():
     def __init__(self,config):
