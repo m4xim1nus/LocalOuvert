@@ -31,7 +31,14 @@ class WorkflowManager:
             topic_files_in_scope, topic_datafiles = self.process_topic(communities_selector, topic, topic_config)
                 
             # Save the topics outputs to csv
-            self.save_output_to_csv(topic, topic_datafiles.normalized_data, topic_files_in_scope, topic_datafiles.datacolumns_out, topic_datafiles.datafiles_out, topic_datafiles.modifications_data)
+            self.save_output_to_csv(
+                topic, 
+                topic_datafiles.normalized_data, 
+                topic_files_in_scope, 
+                getattr(topic_datafiles, 'datacolumns_out', None),
+                getattr(topic_datafiles, 'datafiles_out', None),
+                getattr(topic_datafiles, 'modifications_data', None)
+            )
             # Add topic_datafiles.normalized_data to df_to_save
             df_to_save_to_db[topic+"_normalized"] = topic_datafiles.normalized_data
             
@@ -50,6 +57,8 @@ class WorkflowManager:
     
     def process_topic(self, communities_selector, topic, topic_config):
         self.logger.info(f"Processing topic {topic}.")
+        topic_files_in_scope = None
+        
         if topic_config['source'] == 'multiple':
             # Find multiple datafiles from datagouv
             datagouv_searcher = DataGouvSearcher(communities_selector, self.config["datagouv"])
