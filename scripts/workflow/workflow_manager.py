@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 import pandas as pd
 
+from scripts.communities.communities_selector import CommunitiesSelector
 from scripts.datasets.datagouv_searcher import DataGouvSearcher
 from scripts.datasets.single_urls_builder import SingleUrlsBuilder
 from scripts.datasets.datafiles_loader import DatafilesLoader
@@ -18,42 +19,56 @@ class WorkflowManager:
         self.logger = logging.getLogger(__name__)
 
     def run_workflow(self):
-        # Accéder à la clé "search"
-        search_config = self.config['search']
+        self.logger.info("Workflow started.")
         # Create blank dict to store dataframes that will be saved to the DB
         df_to_save_to_db = {}
-        
-        for topic, topic_config in search_config.items():
 
-            if topic_config['source'] == 'multiple':
-                datagouv_searcher = DataGouvSearcher(self.config["communities"], self.config["datagouv"])
-                datagouv_topic_files_in_scope = datagouv_searcher.get_datafiles(topic_config)
+        # Build communities scope, and add selected communities to df_to_save
+        communities_selector = self.initialize_communities_scope(df_to_save_to_db)
 
-                # Add communities to df_to_save
-                df_to_save_to_db["communities"] = datagouv_searcher.scope.selected_data
-        
-                single_urls_builder = SingleUrlsBuilder(self.config["communities"])
-                single_urls_topic_files_in_scope = single_urls_builder.get_datafiles(topic_config)
-                topic_files_in_scope = pd.concat([datagouv_topic_files_in_scope, single_urls_topic_files_in_scope], ignore_index=True)
-
-                # Build new object taking files_in_scope & self.config as inputs in init, to load the subventions_datafiles, normalize them and save them in a new folder.
-                topic_datafiles = DatafilesLoader(topic_files_in_scope, topic, topic_config, self.config["datafile_loader"])
-            
-            elif topic_config['source'] == 'single':
-                # Build new object taking files_in_scope & self.config as inputs in init, to load the subventions_datafiles, normalize them and save them in a new folder.
-                topic_datafiles = DatafileLoader(self.config["communities"], topic_config)
+        # Loop through the topics
+        for topic, topic_config in self.config['search'].items():
+            topic_files_in_scope, topic_datafiles = self.process_topic(communities_selector, topic, topic_config)
                 
             # Save the topics outputs to csv
             self.save_output_to_csv(topic, topic_datafiles.normalized_data, topic_files_in_scope, topic_datafiles.datacolumns_out, topic_datafiles.datafiles_out, topic_datafiles.modifications_data)
-            
             # Add topic_datafiles.normalized_data to df_to_save
             df_to_save_to_db[topic+"_normalized"] = topic_datafiles.normalized_data
             
         ## Saving Data to the DB - /!\ Does not erase Data at the moment, need to agree on a rule /!\
-        connector = PSQLConnector()
-        connector.connect()
-        for df_name, df in df_to_save_to_db.items():
-            connector.save_df_to_sql(df, df_name)
+        self.save_data_to_db(df_to_save_to_db)
+        self.logger.info("Workflow completed.")
+
+    def initialize_communities_scope(self, df_to_save_to_db):
+        self.logger.info("Initializing communities scope.")
+        communities_selector = CommunitiesSelector(self.config["communities"])
+        df_to_save_to_db["communities"] = communities_selector.selected_data
+        self.logger.info("Communities scope initialized.")
+        return communities_selector
+    
+    def process_topic(self, communities_selector, topic, topic_config):
+        self.logger.info(f"Processing topic {topic}.")
+        if topic_config['source'] == 'multiple':
+            # Find multiple datafiles from datagouv
+            datagouv_searcher = DataGouvSearcher(communities_selector, self.config["datagouv"])
+            datagouv_topic_files_in_scope = datagouv_searcher.get_datafiles(topic_config)
+    
+            # Find single datafiles from single urls
+            single_urls_builder = SingleUrlsBuilder(communities_selector)
+            single_urls_topic_files_in_scope = single_urls_builder.get_datafiles(topic_config)
+            
+            # Concatenate both datafiles lists into one
+            topic_files_in_scope = pd.concat([datagouv_topic_files_in_scope, single_urls_topic_files_in_scope], ignore_index=True)
+
+            # Process the datafiles list: download & normalize
+            topic_datafiles = DatafilesLoader(topic_files_in_scope, topic, topic_config, self.config["datafile_loader"])
+        
+        elif topic_config['source'] == 'single':
+            # Process the single datafile: download & normalize
+            topic_datafiles = DatafileLoader(communities_selector, topic_config)
+
+        self.logger.info(f"Topic {topic} processed.")
+        return topic_files_in_scope, topic_datafiles
 
     def save_output_to_csv(self, topic, normalized_data, topic_files_in_scope=None, datacolumns_out=None, datafiles_out=None, modifications_data=None):
         output_folder = Path(get_project_base_path()) / "data" / "datasets" / topic / "outputs"
@@ -69,3 +84,10 @@ class WorkflowManager:
             save_csv(datafiles_out, output_folder, DATAFILES_OUT_FILENAME, sep=";")
         if modifications_data is not None:
             save_csv(modifications_data, output_folder, MODIFICATIONS_DATA_FILENAME, sep=";")
+    
+    def save_data_to_db(self, df_to_save_to_db):
+        self.logger.info("Saving data to the database.")
+        connector = PSQLConnector()
+        connector.connect()
+        for df_name, df in df_to_save_to_db.items():
+            connector.save_df_to_sql(df, df_name)

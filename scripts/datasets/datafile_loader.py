@@ -12,14 +12,14 @@ from scripts.loaders.base_loader import BaseLoader
 from scripts.loaders.json_loader import JSONLoader
 
 class DatafileLoader():
-    def __init__(self, communities_config, topic_config):
+    def __init__(self, communities_selector, topic_config):
         self.logger = logging.getLogger(__name__)
 
         self.schema = self.load_schema(topic_config["schema"])
         self.loaded_data, self.modifications_data = self.load_data(topic_config)
         self.cleaned_data = self.clean_data()
 
-        self.communities_scope = CommunitiesSelector(communities_config)
+        self.communities_scope = communities_selector
         self.communities_ids = self.communities_scope.get_selected_ids()
         self.selected_data = self.select_data()
         self.primary_data = self.remove_secondary_columns()

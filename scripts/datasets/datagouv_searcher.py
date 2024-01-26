@@ -8,10 +8,10 @@ from scripts.loaders.csv_loader import CSVLoader
 
 
 class DataGouvSearcher():
-    def __init__(self, communities_config, datagouv_config):
+    def __init__(self, communities_selector, datagouv_config):
         self.logger = logging.getLogger(__name__)
 
-        self.scope = CommunitiesSelector(communities_config)
+        self.scope = communities_selector
         self.datagouv_ids = self.scope.get_datagouv_ids() # dataframe with siren and id_datagouv columns
         self.datagouv_ids_list = self.datagouv_ids["id_datagouv"].to_list()
 
