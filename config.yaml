@@ -1,3 +1,6 @@
+workflow:
+  save_to_db: False
+
 communities:
   ofgl:
     url:

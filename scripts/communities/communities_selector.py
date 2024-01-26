@@ -77,11 +77,6 @@ class CommunitiesSelector():
         save_csv(all_data, data_folder, all_data_filename, sep=";")
         save_csv(selected_data, data_folder, selected_data_filename, sep=";")
 
-        #Saving to DB (WARNING : does not erase at the moment)
-
-        connector = PSQLConnector()
-        connector.connect()
-        connector.save_df_to_sql(selected_data,"communities")
         self._init_done = True
 
      
