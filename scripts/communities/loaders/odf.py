@@ -15,7 +15,7 @@ class OdfLoader:
         data_file: Path = data_folder / config["processed_data"]["filename"]
         
         if data_file.exists():
-            odf_data = pd.read_csv(data_file, sep=";")
+            odf_data: pd.DataFrame = pd.read_csv(data_file, sep=";")
         else:
             odf_data_loader: BaseLoader = BaseLoader.loader_factory(config["url"], dtype=config["dtype"])
             odf_data: pd.DataFrame = odf_data_loader.load()
@@ -23,7 +23,7 @@ class OdfLoader:
         # Making sure we trim everything in the SIREN column
         odf_data[OdfDF.siren] = odf_data[OdfDF.siren].str.replace('[^0-9]', '', regex=True)
         
-        validated_odf_data = OdfSchema.validate(odf_data)
+        validated_odf_data: pd.DataFrame = OdfSchema.validate(odf_data)
         self.data = validated_odf_data
         
         if not data_file.exists():
