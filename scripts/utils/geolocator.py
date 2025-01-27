@@ -26,7 +26,7 @@ class GeoLocator:
             reg_dep_geoloc_df['cog'] = reg_dep_geoloc_df['cog'].astype(str)
             self.reg_dep_geoloc_df = reg_dep_geoloc_df
 
-        epci_coord_loader = ExcelLoader(geo_config["epci_coord_url"])
+        epci_coord_loader = CSVLoader(geo_config["epci_coord_url"])
         self.epci_coord_df = epci_coord_loader.load()
 
         communes_coord_loader = CSVLoader(geo_config["communes_id_url"])
