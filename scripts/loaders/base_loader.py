@@ -4,7 +4,14 @@ import logging
 import re
 
 class BaseLoader:
+    '''
+    Base class for data loaders.
+    '''
+
     def __init__(self, file_url, num_retries=3, delay_between_retries=5):
+        # file_url : URL of the file to load
+        # num_retries : Number of retries in case of failure
+        # delay_between_retries : Delay between retries in seconds
         self.file_url = file_url
         self.num_retries = num_retries
         self.delay_between_retries = delay_between_retries
@@ -32,16 +39,19 @@ class BaseLoader:
     
     @staticmethod
     def loader_factory(file_url, dtype=None, columns_to_keep=None):
+        # Factory method to create the appropriate loader based on the file URL
         from .json_loader import JSONLoader
         from .csv_loader import CSVLoader
         from .excel_loader import ExcelLoader
 
         logger = logging.getLogger(__name__)
 
-        response = requests.head(file_url)  # Utilise une requête HEAD pour obtenir le content_type
+        # Get the content type of the file from the headers
+        response = requests.head(file_url)
         content_type = response.headers.get('content-type')
         # logger.info(f"Content type : {content_type}")
 
+        # Determine the loader based on the content type
         if 'json' in content_type:
             return JSONLoader(file_url)
         elif 'csv' in content_type:

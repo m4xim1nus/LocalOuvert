@@ -26,8 +26,9 @@ class WorkflowManager:
         # Build communities scope, and add selected communities to df_to_save
         communities_selector = self.initialize_communities_scope(df_to_save_to_db)
 
-        # Loop through the topics
+        # Loop through the topics defined in the config
         for topic, topic_config in self.config['search'].items():
+            # Process each topic to get files in scope and datafiles
             topic_files_in_scope, topic_datafiles = self.process_topic(communities_selector, topic, topic_config)
                 
             # Save the topics outputs to csv
@@ -39,10 +40,10 @@ class WorkflowManager:
                 getattr(topic_datafiles, 'datafiles_out', None),
                 getattr(topic_datafiles, 'modifications_data', None)
             )
-            # Add topic_datafiles.normalized_data to df_to_save
+            # Add normalized data of the topic to df_to_save
             df_to_save_to_db[topic+"_normalized"] = topic_datafiles.normalized_data
             
-        ## Saving Data to the DB - /!\ Does not erase Data at the moment, need to agree on a rule /!\
+        # Save data to the database if the config allows it
         if self.config["workflow"]["save_to_db"]:
             self.save_data_to_db(df_to_save_to_db)
         
@@ -50,7 +51,9 @@ class WorkflowManager:
 
     def initialize_communities_scope(self, df_to_save_to_db):
         self.logger.info("Initializing communities scope.")
+        # Initialize CommunitiesSelector with the config and select communities
         communities_selector = CommunitiesSelector(self.config["communities"])
+        # Add selected communities data to df_to_save
         df_to_save_to_db["communities"] = communities_selector.selected_data
         self.logger.info("Communities scope initialized.")
         return communities_selector
@@ -82,6 +85,7 @@ class WorkflowManager:
         return topic_files_in_scope, topic_datafiles
 
     def save_output_to_csv(self, topic, normalized_data, topic_files_in_scope=None, datacolumns_out=None, datafiles_out=None, modifications_data=None):
+        # Define the output folder path
         output_folder = Path(get_project_base_path()) / "data" / "datasets" / topic / "outputs"
 
         # Loop through the dataframes (if not None) to save them to the output folder
@@ -98,7 +102,9 @@ class WorkflowManager:
     
     def save_data_to_db(self, df_to_save_to_db):
         self.logger.info("Saving data to the database.")
+        # Initialize the database connector
         connector = PSQLConnector()
         connector.connect()
+        # Save each dataframe to the database
         for df_name, df in df_to_save_to_db.items():
             connector.save_df_to_sql(df, df_name)

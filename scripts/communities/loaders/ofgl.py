@@ -8,30 +8,36 @@ from scripts.utils.config import get_project_base_path
 
 class OfglLoader():
     def __init__(self,config):
+        # Load data from OFGL dataset if it was already processed
         data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
         data_file = data_folder / config["processed_data"]["filename"]
         if data_file.exists():
             self.data = pd.read_csv(data_file, sep=";")
         else:
             base_path = get_project_base_path()
+
+            # Load the mapping between EPCI and communes, downloaded from the OFGL website
             epci_communes_path = base_path / config["epci"]["file"]
             epci_communes_mapping = pd.read_excel(epci_communes_path, dtype=config["epci"]["dtype"])
             infos_coll = pd.DataFrame()
+
+            # Loop over the different collectivities type (regions, departements, communes, interco)
             for key, url in config["url"].items():
-                # Téléchargement des données
+                # Download the data from the OFGL website
                 df_loader = BaseLoader.loader_factory(url, dtype=config["dtype"])
                 df = df_loader.load()
-                # Traitement spécifique pour chaque base en utilisant la fonction process_data
+                # Process the data: keep only the relevant columns and rename them
                 if key == 'communes':
                     df = self.process_data(df, key, epci_communes_mapping)
                 else:
                     df = self.process_data(df, key)
 
-                # Concaténation des DataFrames traités dans infos_coll
+                # Concatenate the dataframes
                 infos_coll = pd.concat([infos_coll, df], axis=0, ignore_index=True)
 
-            # Remplir les valeurs manquantes par une chaîne vide
+            # Fill NaN values with np.nan
             infos_coll.fillna(np.nan, inplace=True)
+            # Save the processed data to the instance & a CSV file
             self.data = infos_coll
             self.save(Path(config["processed_data"]["path"]),config["processed_data"]["filename"])
     
@@ -42,6 +48,7 @@ class OfglLoader():
         save_csv(self.data,path,filename, sep=";", index=True)
 
     def process_data(self, df, key, epci_communes_mapping=None):
+        # Process the data: keep only the relevant columns and rename them
         if key == 'regions':
             df = df[['Code Insee 2022 Région', 'Nom 2022 Région', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['COG', 'nom', 'type', 'SIREN', 'population']

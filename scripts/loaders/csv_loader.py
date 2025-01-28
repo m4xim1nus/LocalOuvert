@@ -13,7 +13,7 @@ class CSVLoader(BaseLoader):
         self.columns_to_keep = columns_to_keep
 
     def process_data(self, response):
-        # Gestion des différents encodages
+        # Manage the encoding of the CSV file
         encodings_to_try = ['utf-8', 'windows-1252', 'latin1']
         decoded_content = None
         data = response.content
@@ -29,8 +29,9 @@ class CSVLoader(BaseLoader):
             self.logger.error(f"Impossible de décoder le contenu du fichier CSV à l'URL : {self.file_url}")
             return None
 
-        # Détection du délimiteur
+        # Detect the delimiter used in the CSV file
         delimiter = self.detect_delimiter(decoded_content)
+        # Load only the columns specified in columns_to_keep, and skip bad lines
         if self.columns_to_keep is not None:
             df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, usecols=lambda c: c in self.columns_to_keep, on_bad_lines='skip', quoting=csv.QUOTE_MINIMAL, low_memory=False)
         else:
@@ -41,7 +42,8 @@ class CSVLoader(BaseLoader):
 
     @staticmethod
     def detect_delimiter(text, num_lines=5, delimiters=[',', ';', '\t', '|']):
-        # Implémentation de la détection de délimiteur
+        # This function detects the delimiter used in a CSV file
+        # It reads the first num_lines of the file and counts the occurrences of each delimiter
         counts = {delimiter: 0 for delimiter in delimiters}
         line_counts = {delimiter: 0 for delimiter in delimiters}
 

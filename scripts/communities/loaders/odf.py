@@ -6,6 +6,14 @@ from scripts.loaders.base_loader import BaseLoader
 from scripts.utils.config import get_project_base_path
 
 class OdfLoader():
+    """
+    OdfLoader loads data from the ODF dataset and saves it to a CSV file.
+    Data from OpenDataFrance, data.gouv.fr, 2022. 
+    This dataset lists the platforms and organizations that contribute to the development of open data in the territories, identified during the 2022 edition (as of December 31).
+
+    TODO : Refactor using loaders_factory 
+    """
+
     def __init__(self,config):
         data_folder = Path(get_project_base_path()) / config["processed_data"]["path"]
         data_file = data_folder / config["processed_data"]["filename"]
