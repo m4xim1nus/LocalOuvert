@@ -115,6 +115,7 @@ class CommunitiesSelector():
         datagouv_ids = new_instance[new_instance["id_datagouv"].notnull()][["siren", "id_datagouv"]]        
         return datagouv_ids # return a dataframe with siren and id_datagouv columns
     
+    # Function to retrieve rows with non-null 'siren', returning a DataFrame with 'siren', 'nom', and 'type' columns.
     def get_selected_ids(self):
         new_instance = self.selected_data.copy()
         selected_data_ids = new_instance[new_instance["siren"].notnull()][["siren", "nom", "type"]]

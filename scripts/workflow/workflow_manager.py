@@ -67,7 +67,7 @@ class WorkflowManager:
             datagouv_searcher = DataGouvSearcher(communities_selector, self.config["datagouv"])
             datagouv_topic_files_in_scope = datagouv_searcher.get_datafiles(topic_config)
     
-            # Find single datafiles from single urls
+            # Find single datafiles from single urls (standalone datasources outside of datagouv)
             single_urls_builder = SingleUrlsBuilder(communities_selector)
             single_urls_topic_files_in_scope = single_urls_builder.get_datafiles(topic_config)
             

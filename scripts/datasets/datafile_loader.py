@@ -12,125 +12,142 @@ from scripts.loaders.base_loader import BaseLoader
 from scripts.loaders.json_loader import JSONLoader
 
 class DatafileLoader():
+    '''
+    DatafileLoader is responsible for loading, cleaning, selecting, and normalizing data from a JSON file.
+    It uses a JSON schema to flatten the data and cast it to the correct types.
+    It also uses a CommunitiesSelector to filter the data based on the selected communities.
+    TODO: Everything is done in the __init__ method, it should be refactored to be more readable and maintainable (or using external libraries).
+    '''
+    
     def __init__(self, communities_selector, topic_config):
         self.logger = logging.getLogger(__name__)
 
-        self.schema = self.load_schema(topic_config["schema"])
-        self.loaded_data, self.modifications_data = self.load_data(topic_config)
-        self.cleaned_data = self.clean_data()
-
+        # Load topic schema from URL
+        self.schema = self._load_schema(topic_config["schema"])
+        # Load data from URL
+        self.loaded_data, self.modifications_data = self._load_data(topic_config) # TODO : modifications_data seems empty & useless
+        # Clean data by keeping only columns present in the schema
+        self.cleaned_data = self._clean_data()
+        # Select data based on communities IDs
         self.communities_scope = communities_selector
         self.communities_ids = self.communities_scope.get_selected_ids()
-        self.selected_data = self.select_data()
-        self.primary_data = self.remove_secondary_columns()
-        self.normalized_data = self.normalize_data()
+        self.selected_data = self._select_data()
+        # Remove secondary columns from the selected data (modifications columns, titulaires2+ columns, too many columns for POC)
+        self.primary_data = self._remove_secondary_columns()
+        # Drop duplicates and cast data to schema types
+        self.normalized_data = self._normalize_data()
 
-    def load_schema(self, schema_topic_config):
+    # Internal function to load JSON schema from URL
+    def _load_schema(self, schema_topic_config):
+        # Load JSON schema from URL
         json_schema_loader = BaseLoader.loader_factory(schema_topic_config["url"])
         json_schema = json_schema_loader.load()
+        # Flatten JSON schema to DataFrame
         schema_name = schema_topic_config["name"]
         flattened_schema = flatten_json_schema(json_schema, schema_name)
+        # Convert flattened schema to DataFrame
         schema_df = pd.DataFrame(flattened_schema)
         # In "type" column, replace NaN values by "string" (default value)
         schema_df['type'].fillna('string', inplace=True)
         return schema_df
     
-    def load_data(self, topic_config):
+    # Load data from URL and flatten it to DataFrame
+    def _load_data(self, topic_config):
+        # Load data from URL
         data_loader = JSONLoader(topic_config["unified_dataset"]["url"])
         data = data_loader.load()
+        # Flatten JSON data to DataFrame, with main and modifications data (potentially empty)
         root = topic_config["unified_dataset"]["root"]
         main_df, modifications_df = flatten_data(data[root])
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {topic_config['unified_dataset']['url']}")
         return main_df, modifications_df
     
-    def clean_data(self):
-        # Clean columns : remove columns from loaded_data whose names are not in schema
+    def _clean_data(self):
+        # Build a mapping of original column names to cleaned column names
         original_to_cleaned_names = {
             col: self.clean_column_name_for_comparison(col) for col in self.loaded_data.columns
         }
-        # Récupérer les noms de propriétés du schéma
+        # Get the set of cleaned column names from the schema
         schema_columns = set(self.schema['property'])
-        # Trouver les colonnes à conserver en fonction du schéma
+        # Find columns to keep depending on the schema
         columns_to_keep = set()
         for original_name, cleaned_name in original_to_cleaned_names.items():
             if cleaned_name in schema_columns:
                 columns_to_keep.add(original_name)
-        # Conserver uniquement les colonnes qui correspondent au schéma
+        # Keep only the columns that are in the schema
         cleaned_data = self.loaded_data.filter(columns_to_keep)
 
         self.logger.info(f"Nettoyage des colonnes terminé, {len(columns_to_keep)} colonnes conservées.")
 
-        # Keep specific 'marchés publics' rows (mixed with concessions data in source file)
-        # To do : replace by a more generic method & use config
-        procedure_values = self.get_schema_values('procedure', 'enum')
-        nature_values = self.get_schema_values('nature', 'enum')
-        type_pattern = self.get_schema_value('_type', 'pattern')
+        # Keep specific 'marchés publics' rows (vs. concessions rows) using schema values differentiation
+        # TODO : replace by a more generic method & use config... Or keep it here?
+        procedure_values = self._get_schema_values('procedure', 'enum')
+        nature_values = self._get_schema_values('nature', 'enum')
+        type_pattern = self._get_schema_value('_type', 'pattern')
         
         cleaned_data = cleaned_data[
-            cleaned_data['procedure'].apply(self.matches_values, args=(procedure_values,)) |
-            cleaned_data['nature'].apply(self.matches_values, args=(nature_values,)) |
+            cleaned_data['procedure'].apply(self._matches_values, args=(procedure_values,)) |
+            cleaned_data['nature'].apply(self._matches_values, args=(nature_values,)) |
             cleaned_data['_type'].str.match(type_pattern)
         ]
 
         return cleaned_data
 
-    # to do : move to utils
+    # Internal function to remove some characters from column names, for comparison
     def clean_column_name_for_comparison(self, column_name):
-        # Supprimer les indices numériques et les points supplémentaires du nom de colonne
         return re.sub(r'\.\d+\.', '.', column_name)
     
-    def get_schema_values(self, property_name, column_name):
-        # Récupérer les valeurs ou le pattern du schéma pour une propriété donnée
+    # Internal function to get schema values for a given property
+    def _get_schema_values(self, property_name, column_name):
         values = self.schema.loc[self.schema['property'] == property_name, column_name].iloc[0]
-        return [self.clean_value(value) for value in values] if isinstance(values, list) else self.clean_value(values)
+        return [self._clean_value(value) for value in values] if isinstance(values, list) else self._clean_value(values)
 
-    def get_schema_value(self, property_name, column_name):
-        # Récupérer une valeur unique du schéma pour une propriété donnée
+    # Internal function to get a unique schema value for a given property
+    def _get_schema_value(self, property_name, column_name):
         return self.schema.loc[self.schema['property'] == property_name, column_name].iloc[0]
 
-    def clean_value(self, value):
-        # Nettoyer une valeur en retirant les accents, en mettant en minuscule et en supprimant certains caractères
+    # Internal function to clean a value by removing accents, lowercasing and removing some characters
+    def _clean_value(self, value):
         value = unidecode.unidecode(value).lower()
         return re.sub(r"[,']", "", value)
 
-    def matches_values(self, value, values):
-        # Vérifier si la valeur nettoyée correspond à l'une des valeurs nettoyées du schéma
+    # Internal function to check if a value matches a list of values
+    def _matches_values(self, value, values):
         if pd.isna(value):
             return False
-        cleaned_value = self.clean_value(value)
+        cleaned_value = self._clean_value(value)
         return cleaned_value in values
     
-    def select_data(self):
+    # Internal function to select data based on communities IDs
+    def _select_data(self):
         cleaned_data = self.cleaned_data.copy()
         communities_data = self.communities_ids.copy()
-
+        # Add 'siren' column to cleaned_data
         cleaned_data['siren'] = cleaned_data['acheteur.id'].str[:9].astype(str)
         communities_data['siren'] = communities_data['siren'].astype(str)
-
+        # Merge cleaned_data with communities_data on 'siren' column, filtering out rows with NaN values
         selected_data = pd.merge(cleaned_data, communities_data, on='siren', how='left', validate="many_to_one")
         selected_data = selected_data.dropna(subset=['type'])
 
         return selected_data
     
         
-    def remove_secondary_columns(self):
-        # Supprimer les colonnes qui commencent par 'modifications.' ou 'titulaires.*.id' ou 'titulaires.*.typeIdentifiant'
-        # primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'(modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant)')]
+    # Internal function to remove secondary columns from the selected data (modifications columns, titulaires2+ columns)
+    # TODO: Needed only because potentially way too many columns to handle
+    def _remove_secondary_columns(self):
+        # Drop columns with 'modifications.' or 'titulaires.' in their names
         primary_data = self.selected_data.loc[:, ~self.selected_data.columns.str.contains(r'modifications\.|titulaires\.\d+\.id|titulaires\.\d+\.typeIdentifiant')].copy()
-
-        # Sélectionner les colonnes qui commencent par 'titulaires.*.denominationSociale'
+        # Select columns with 'titulaires.' and 'denominationSociale' in their names
         titulaires_cols = primary_data.filter(regex=r'^titulaires\.\d+\.denominationSociale')
-
-        # Concaténer les valeurs de ces colonnes en une seule colonne, en ignorant les valeurs NaN
+        # Concatenate 'titulaires.*.denominationSociale' columns into a single 'titulaires' column
         primary_data['titulaires'] = titulaires_cols.apply(lambda row: ', '.join(row.dropna().astype(str).replace(r"[\[\]']", "")), axis=1)
-
-        # Supprimer les colonnes 'titulaires.*.denominationSociale' originales
+        # Drop 'titulaires.*.denominationSociale' columns
         primary_data = primary_data.drop(columns=titulaires_cols.columns)
 
         return primary_data
     
-    def normalize_data(self):
-
+    # Internal function to normalize data
+    def _normalize_data(self):
         # Drop cleaned_data duplicates
         normalized_data = self.primary_data.applymap(lambda x: ','.join(map(str, x)) if isinstance(x, list) else x)
         normalized_data = normalized_data.drop_duplicates()
