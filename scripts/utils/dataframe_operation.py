@@ -1,16 +1,16 @@
 import logging
 import pandas as pd
 
-def convert_columns_to_lowercase(df):
-    df.columns = [col.lower() for col in df.columns]
-    return df
+'''
+This script contains functions to manipulate DataFrames.
+1 - Merging duplicate columns
+2 - Renaming columns
+3 - Casting data based on a schema
+4 - Detecting the first row index where the data starts
+5 - Detecting the first column index where the data starts
+'''
 
-def create_columns(df, desired_columns):
-    for col in desired_columns:
-        if col not in df.columns:
-            df[col] = ''
-    return df
-    
+# Function to merge duplicate columns in a DataFrame
 def merge_duplicate_columns(df):
     df.columns = df.columns.astype(str)
     duplicate_columns = df.columns[df.columns.duplicated(keep=False)]
@@ -20,6 +20,7 @@ def merge_duplicate_columns(df):
         df.drop(cols_to_merge.columns[1:], axis=1, inplace=True)
     return df
 
+# Function to rename columns in a DataFrame
 def safe_rename(df, schema_dict):
     schema_dict_copy = schema_dict.copy()    
     for original_name, official_name in schema_dict.items():
@@ -27,6 +28,7 @@ def safe_rename(df, schema_dict):
             del schema_dict_copy[original_name]
     df.rename(columns=schema_dict_copy, inplace=True)
 
+# Function to cast the data in a DataFrame based on a schema (a DataFrame with two columns: 'name' and 'type')
 def cast_data(data, schema, name_tag, clean_column_name_for_comparison=None):
     logger = logging.getLogger(__name__)
     # Dict between schema types and pandas types
@@ -39,19 +41,19 @@ def cast_data(data, schema, name_tag, clean_column_name_for_comparison=None):
         'date': 'datetime64[ns]'
     }
 
-    # Créer un dictionnaire des noms de colonnes originaux mappés à leurs versions nettoyées pour comparaison
+    # Create a dictionary of original column names mapped to their cleaned versions for comparison
     if clean_column_name_for_comparison:
         original_to_cleaned_names = {
             col: clean_column_name_for_comparison(col) for col in data.columns
         }
     else:
-        # Utiliser les noms de colonnes originaux tels quels
+        # If no cleaning function is provided, use the exact same column names
         original_to_cleaned_names = {col: col for col in data.columns}
     
-    # create a new dataframe with the same shape and columns as data
+    # Create a new dataframe with the same shape and columns as data
     casted_data = pd.DataFrame(columns=data.columns)
     
-    # Parcourir les colonnes de data pour les caster
+    # Go through each column in the data to cast it
     for original_name, cleaned_name in original_to_cleaned_names.items():
         # if column name is not in schema['name'].values, keep the exact same column
         if cleaned_name not in schema[name_tag].values:
@@ -62,15 +64,15 @@ def cast_data(data, schema, name_tag, clean_column_name_for_comparison=None):
             schema_type = schema.loc[schema[name_tag] == cleaned_name, 'type'].values[0]
             # translate the schema type to pandas type using type_dict
             pandas_type = type_dict[schema_type]
-            # clean & cast the column to the pandas type, based on subfunctions
-            casted_data[original_name] = clean_and_cast_col(data[original_name], pandas_type)
+            # clean & cast the column to the pandas type, based on internal function
+            casted_data[original_name] = _clean_and_cast_col(data[original_name], pandas_type)
             logger.info(f"Column '{original_name}' has been casted to '{pandas_type}'")
-                
     return casted_data
 
-def clean_and_cast_col(col, pandas_type):
+# Internal function to clean and cast a column based on its schema type
+def _clean_and_cast_col(col, pandas_type):
     logger = logging.getLogger(__name__)
-    # Make a copy of the column
+    # Make a copy of the orginal column
     col_original = col.copy()
 
     if pandas_type == 'float64':
@@ -80,7 +82,7 @@ def clean_and_cast_col(col, pandas_type):
     elif pandas_type == 'datetime64[ns]':
         # Convert to datetime, with utc=true, errors will be coerced to NaT
         col = col.astype(str)
-        col = col.apply(parse_date)
+        col = col.apply(_parse_date)
         # Check if the data is timezone-aware
         if col.dt.tz is not None:
             col = col.dt.tz_localize(None)
@@ -110,7 +112,8 @@ def clean_and_cast_col(col, pandas_type):
 
     return col.astype(pandas_type)  # Convert to specified pandas type
 
-def parse_date(date_str):
+# Internal function to parse a date string
+def _parse_date(date_str):
     try:
         # dateutil parser can handle different formats
         return pd.to_datetime(date_str, utc=True)
@@ -118,13 +121,15 @@ def parse_date(date_str):
         # Handle the error if the date format is not recognized
         return pd.NaT  # Return 'Not a Time' for unparseable formats
     
+# Function to detect the first row index in a DataFrame where the data starts
 def detect_skiprows(df):
-    # Trouvez la dernière colonne non vide
+    # Find the last non-empty column
     last_non_empty_col = len(df.dropna(how='all', axis=1).columns) -1
-    # Obtenez l'indice de la première entrée non vide dans cette colonne
+    # Get the first row index in this column
     first_row = df.iloc[:, last_non_empty_col].first_valid_index()
-    return first_row  # Retournez le nombre de lignes à ignorer
+    return first_row
 
+# Function to detect the first column index in a DataFrame where the data starts
 def detect_skipcolumns(df):
     df_transposed = df.transpose().reset_index(drop=True)
     return detect_skiprows(df_transposed)

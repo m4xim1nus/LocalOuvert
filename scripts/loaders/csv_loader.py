@@ -7,6 +7,10 @@ from io import StringIO
 from .base_loader import BaseLoader
 
 class CSVLoader(BaseLoader):
+    '''
+    Loader for CSV files.
+    '''
+    
     def __init__(self, file_url, dtype=None, columns_to_keep=None, **kwargs):
         super().__init__(file_url, **kwargs)
         self.dtype = dtype

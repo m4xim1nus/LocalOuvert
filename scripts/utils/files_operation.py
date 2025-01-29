@@ -2,10 +2,10 @@ import logging
 import os
 import re
 
-# TODO: encapsuler dans une classe
+# Function to save a DataFrame to a CSV file
 def save_csv(df, file_folder, file_name, sep=",", index=False):
     logger = logging.getLogger(__name__)
-    # Vérifie si le répertoire existe, le crée si nécessaire
+    # Check if the folder exists, if not, create it
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)
 
