@@ -2,15 +2,15 @@
 
 Ce projet vise à analyser la transparence des collectivités locales concernées par la loi "République Numérique" en cartographiant de manière ponctuelle la publication de certaines données jugées critiques en matière d'intérêt économique ou de probité politique (publication ou non, qualité des publications).
 
-## Objectifs
+CE POC EST MAINTENANT ACHEVÉ : PLACE Á ÉCLAIREUR PUBLIC ET DATA FOR GOOD !
 
-1. Identifier les collectivités locales concernées par la loi “République Numérique” et rassembler des informations complémentaires sur ces collectivités.
-2. Effectuer un scrapping différencié des données en fonction des sources disponibles (APIs, open data, sites web des collectivités) pour recueillir des informations essentielles.
-3. Préparer et analyser les données récupérées pour évaluer la transparence des collectivités locales et contribuer au projet "République Numérique" d'Anticor.
+## Objectif
+
+QUE VIVE ET PROSPÈRE ÉCLAIREUR PUBLIC !!!
 
 ## Plan d'attaque & Avancement
 
-* Voir le Trello
+Contacter Data for Good
 
 ## Structure du projet
 
@@ -19,10 +19,12 @@ Ce projet vise à analyser la transparence des collectivités locales concernée
     - `datasets/`: données récupérées et filtrées
     - `processed_data/`: données traitées et prêtes pour l'analyse
 - `scripts/`: dossier pour les scripts Python du projet, organisés en sous-dossiers
+    - `workflow/` : script gérant le workflow général
     - `communities/`: scripts pour la gestion des collectivités
     - `datasets/`: scripts pour le scrapping et le filtrage des données
-    - `data_processing/`: scripts pour le traitement des données (vide à date)
+    - `data_processing/`: scripts pour le traitement des données
     - `analysis/`: scripts pour l'analyse des données (vide à date)
+    - `loaders/`: scripts de téléchargement de fichiers 
     - `utils/`: scripts utilitaires et helpers
 - `main.py`: script principal pour exécuter les scripts du projet
 - `config.yaml`: fichier de configuration pour faire tourner `main.py`.
