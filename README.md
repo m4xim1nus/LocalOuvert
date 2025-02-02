@@ -35,11 +35,29 @@ Contacter Data for Good
 
 ## Comment utiliser à date
 
-1. Clonez ce dépôt : `git clone https://github.com/m4xim1nus/LocalOuvert.git`
+1. Clonez ce dépôt : 
+```
+git clone https://github.com/m4xim1nus/LocalOuvert.git
+cd LocalOuvert
+```
 
-2. Installez les dépendances à l'aide de `pip install -r requirements.txt`.
+2. (Recommandé) Créez un environnement virtuel pour éviter les conflits de dépendances :
+```
+python -m venv venv
+# Activation de l’environnement virtuel
+source venv/bin/activate  # Sur macOS/Linux
+venv\Scripts\activate     # Sur Windows
+```
 
-3. Pour exécuter les scripts pour télécharger et traiter les données, executez ` python main.py config.yaml `
+3. Installez les dépendances à l'aide de 
+```
+pip install -r requirements.txt
+```
+
+4. Pour exécuter les scripts pour télécharger et traiter les données, executez 
+```
+python main.py config.yaml 
+```
 
 
 ## License
