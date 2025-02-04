@@ -40,10 +40,10 @@ class OfglLoader():
             # Save the processed data to the instance & a CSV file
             self.data = infos_coll
             self.save(Path(config["processed_data"]["path"]),config["processed_data"]["filename"])
-    
+
     def get(self):
         return self.data
-    
+
     def save(self,path,filename):
         save_csv(self.data,path,filename, sep=";", index=True)
 
@@ -54,7 +54,7 @@ class OfglLoader():
             df.columns = ['COG', 'nom', 'type', 'SIREN', 'population']
             df = df.astype({'SIREN': str, 'COG': str})
             df = df.sort_values('COG')
-            
+
         elif key == 'departements':
             df = df[['Code Insee 2023 Région', 'Code Insee 2023 Département', 'Nom 2023 Département', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'COG', 'nom', 'type', 'SIREN', 'population']
@@ -63,7 +63,7 @@ class OfglLoader():
             df['COG_3digits'] = df['COG'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'COG', 'COG_3digits', 'code_region', 'population']]
             df = df.sort_values('COG')
-            
+
         elif key == 'communes':
             df = df[['Code Insee 2023 Région', 'Code Insee 2023 Département', 'Code Insee 2023 Commune', 'Nom 2023 Commune', 'Catégorie', 'Code Siren Collectivité', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'COG', 'nom', 'type', 'SIREN', 'population']
@@ -75,7 +75,7 @@ class OfglLoader():
             df = df.merge(epci_communes_mapping[['siren', 'siren_membre']], left_on='SIREN', right_on='siren_membre', how='left')
             df = df.drop(columns=['siren_membre'])
             df.rename(columns={'siren': 'EPCI'}, inplace=True)
-            
+
         elif key == 'interco':
             df = df[['Code Insee 2023 Région', 'Code Insee 2023 Département', 'Nature juridique 2023 abrégée', 'Code Siren 2023 EPCI', 'Nom 2023 EPCI', 'Population totale']]
             df.columns = ['code_region', 'code_departement', 'type', 'SIREN', 'nom', 'population']
@@ -84,5 +84,5 @@ class OfglLoader():
             df['code_departement_3digits'] = df['code_departement'].str.zfill(3)
             df = df[['nom', 'SIREN', 'type', 'code_departement', 'code_departement_3digits', 'code_region', 'population']]
             df = df.sort_values('SIREN')
-        
+
         return df

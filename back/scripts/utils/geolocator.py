@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from io import StringIO
 import os
-import json 
+import json
 
 from scripts.utils.config import get_project_base_path
 from scripts.loaders.csv_loader import CSVLoader
@@ -36,7 +36,7 @@ class GeoLocator:
 
         communes_coord_loader = CSVLoader(geo_config["communes_id_url"])
         self.communes_df = communes_coord_loader.load()
-    
+
     # Internal function to get the coordinates of a commune based on its name and COG
     # TODO: Refactor using loader
     def _get_commune_coordinates(self, city_name, city_code):
@@ -59,7 +59,7 @@ class GeoLocator:
             reg_dep_geoloc = self.reg_dep_geoloc_df.copy()
             # Convert cog to string
             cog = str(cog)
-            
+
             # Get latitude and longitude based on cog & type
             reg_dep_geoloc = reg_dep_geoloc.loc[(reg_dep_geoloc['cog'] == cog) & (reg_dep_geoloc['type'] == type)]
             if not reg_dep_geoloc.empty:
@@ -75,12 +75,12 @@ class GeoLocator:
     # Internal function to get the coordinates of an EPCI based on its SIREN
     def _get_epci_coordinates(self, siren):
         # Coordinates are retrieved in 3 steps:
-        # 1. siren epci -> siren commune siège via https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/ (coordonnees-epci-fp-janv2023-last.xlsx) 
+        # 1. siren epci -> siren commune siège via https://www.data.gouv.fr/fr/datasets/base-nationale-sur-les-intercommunalites/ (coordonnees-epci-fp-janv2023-last.xlsx)
         commune_siege_siren = self.epci_coord_df[self.epci_coord_df['N° SIREN'] == siren]['Commune siège'].str.extract('(\d+)').iloc[0, 0]
 
         # 2. siren commune-> nom, cog commune via https://www.data.gouv.fr/en/datasets/identifiants-des-collectivites-territoriales-et-leurs-etablissements/ (identifiants-communes-2022.csv)
         communes_df = self.communes_df.copy()
-        
+
         # Cast commune_siege_siren and communes_df 'SIREN' to string
         commune_siege_siren = str(commune_siege_siren)
         communes_df['SIREN'] = communes_df['SIREN'].astype(str)
@@ -101,7 +101,7 @@ class GeoLocator:
             else:
                 self.logger.warning(f"Les coordonnées de l'EPCI {siren} de la commune siège {commune_siege_siren} ne sont pas trouvées")
                 return None, None
-    
+
     # Function to add geocoordinates to a DataFrame containing regions, departments, EPCI, and communes
     def add_geocoordinates(self, data_frame):
         # Loop through the DataFrame and enrich it with coordinates
@@ -117,7 +117,7 @@ class GeoLocator:
                 else:
                     coordinates = None, None
                     self.logger.warning(f"Le SIREN de l'EPCI {row['nom']} n'est pas trouvé")
-            
+
             # Set the coordinates in the DataFrame
             if coordinates:
                 data_frame.at[index, 'longitude'] = float(str(coordinates[0]).replace(',', '.').replace('None', '')) if coordinates[0] not in [None, 'None'] else None

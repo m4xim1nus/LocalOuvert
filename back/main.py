@@ -6,7 +6,7 @@ from scripts.workflow.workflow_manager import WorkflowManager
 if __name__ == "__main__":
     # Parse arguments, load config and configure logger
     args = ArgumentParser.parse_args("Gestionnaire du projet LocalOuvert")
-    config = ConfigManager.load_config(args.filename)        
+    config = ConfigManager.load_config(args.filename)
     LoggerManager.configure_logger(config)
 
     # Run workflow

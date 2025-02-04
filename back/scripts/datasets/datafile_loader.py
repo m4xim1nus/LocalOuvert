@@ -18,7 +18,7 @@ class DatafileLoader():
     It also uses a CommunitiesSelector to filter the data based on the selected communities.
     TODO: Everything is done in the __init__ method, it should be refactored to be more readable and maintainable (or using external libraries).
     '''
-    
+
     def __init__(self, communities_selector, topic_config):
         self.logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class DatafileLoader():
         # In "type" column, replace NaN values by "string" (default value)
         schema_df['type'].fillna('string', inplace=True)
         return schema_df
-    
+
     # Load data from URL and flatten it to DataFrame
     def _load_data(self, topic_config):
         # Load data from URL
@@ -61,7 +61,7 @@ class DatafileLoader():
         main_df, modifications_df = flatten_data(data[root])
         self.logger.info(f"Le fichier au format JSON a été téléchargé avec succès à l'URL : {topic_config['unified_dataset']['url']}")
         return main_df, modifications_df
-    
+
     def _clean_data(self):
         # Build a mapping of original column names to cleaned column names
         original_to_cleaned_names = {
@@ -84,7 +84,7 @@ class DatafileLoader():
         procedure_values = self._get_schema_values('procedure', 'enum')
         nature_values = self._get_schema_values('nature', 'enum')
         type_pattern = self._get_schema_value('_type', 'pattern')
-        
+
         cleaned_data = cleaned_data[
             cleaned_data['procedure'].apply(self._matches_values, args=(procedure_values,)) |
             cleaned_data['nature'].apply(self._matches_values, args=(nature_values,)) |
@@ -96,7 +96,7 @@ class DatafileLoader():
     # Internal function to remove some characters from column names, for comparison
     def clean_column_name_for_comparison(self, column_name):
         return re.sub(r'\.\d+\.', '.', column_name)
-    
+
     # Internal function to get schema values for a given property
     def _get_schema_values(self, property_name, column_name):
         values = self.schema.loc[self.schema['property'] == property_name, column_name].iloc[0]
@@ -117,7 +117,7 @@ class DatafileLoader():
             return False
         cleaned_value = self._clean_value(value)
         return cleaned_value in values
-    
+
     # Internal function to select data based on communities IDs
     def _select_data(self):
         cleaned_data = self.cleaned_data.copy()
@@ -130,8 +130,8 @@ class DatafileLoader():
         selected_data = selected_data.dropna(subset=['type'])
 
         return selected_data
-    
-        
+
+
     # Internal function to remove secondary columns from the selected data (modifications columns, titulaires2+ columns)
     # TODO: Needed only because potentially way too many columns to handle
     def _remove_secondary_columns(self):
@@ -145,7 +145,7 @@ class DatafileLoader():
         primary_data = primary_data.drop(columns=titulaires_cols.columns)
 
         return primary_data
-    
+
     # Internal function to normalize data
     def _normalize_data(self):
         # Drop cleaned_data duplicates
@@ -153,7 +153,7 @@ class DatafileLoader():
         normalized_data = normalized_data.drop_duplicates()
 
         # Cast data to schema types
-        schema_selected = self.schema.loc[:, ['property', 'type']]        
+        schema_selected = self.schema.loc[:, ['property', 'type']]
         normalized_data = cast_data(normalized_data, schema_selected, "property", clean_column_name_for_comparison=self.clean_column_name_for_comparison)
         return normalized_data
-    
+

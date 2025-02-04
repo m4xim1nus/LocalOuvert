@@ -22,7 +22,7 @@ def merge_duplicate_columns(df):
 
 # Function to rename columns in a DataFrame
 def safe_rename(df, schema_dict):
-    schema_dict_copy = schema_dict.copy()    
+    schema_dict_copy = schema_dict.copy()
     for original_name, official_name in schema_dict.items():
         if official_name in df.columns and original_name != official_name:
             del schema_dict_copy[original_name]
@@ -49,10 +49,10 @@ def cast_data(data, schema, name_tag, clean_column_name_for_comparison=None):
     else:
         # If no cleaning function is provided, use the exact same column names
         original_to_cleaned_names = {col: col for col in data.columns}
-    
+
     # Create a new dataframe with the same shape and columns as data
     casted_data = pd.DataFrame(columns=data.columns)
-    
+
     # Go through each column in the data to cast it
     for original_name, cleaned_name in original_to_cleaned_names.items():
         # if column name is not in schema['name'].values, keep the exact same column
@@ -95,7 +95,7 @@ def _clean_and_cast_col(col, pandas_type):
         col = col.apply(lambda x: round(x) if not pd.isna(x) and isinstance(x, float) else x)
         # Convert to integer, note that 'Int64' can handle NaN values
         col = pd.to_numeric(col, errors='coerce').round().astype('Int64')
-    elif pandas_type == 'boolean':            
+    elif pandas_type == 'boolean':
         col = col.str.replace(r"\s+","", regex=True).str.lower()
         # Convert to boolean, True for 'oui', False for 'non', case insensitive
         col = col.str.lower().map({'oui': True, 'non': False, 'false':False,'true':True})
@@ -120,7 +120,7 @@ def _parse_date(date_str):
     except ValueError:
         # Handle the error if the date format is not recognized
         return pd.NaT  # Return 'Not a Time' for unparseable formats
-    
+
 # Function to detect the first row index in a DataFrame where the data starts
 def detect_skiprows(df):
     # Find the last non-empty column
