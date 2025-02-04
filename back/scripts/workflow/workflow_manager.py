@@ -30,23 +30,23 @@ class WorkflowManager:
         for topic, topic_config in self.config['search'].items():
             # Process each topic to get files in scope and datafiles
             topic_files_in_scope, topic_datafiles = self.process_topic(communities_selector, topic, topic_config)
-                
+
             # Save the topics outputs to csv
             self.save_output_to_csv(
-                topic, 
-                topic_datafiles.normalized_data, 
-                topic_files_in_scope, 
+                topic,
+                topic_datafiles.normalized_data,
+                topic_files_in_scope,
                 getattr(topic_datafiles, 'datacolumns_out', None),
                 getattr(topic_datafiles, 'datafiles_out', None),
                 getattr(topic_datafiles, 'modifications_data', None)
             )
             # Add normalized data of the topic to df_to_save
             df_to_save_to_db[topic+"_normalized"] = topic_datafiles.normalized_data
-            
+
         # Save data to the database if the config allows it
         if self.config["workflow"]["save_to_db"]:
             self.save_data_to_db(df_to_save_to_db)
-        
+
         self.logger.info("Workflow completed.")
 
     def initialize_communities_scope(self, df_to_save_to_db):
@@ -57,26 +57,26 @@ class WorkflowManager:
         df_to_save_to_db["communities"] = communities_selector.selected_data
         self.logger.info("Communities scope initialized.")
         return communities_selector
-    
+
     def process_topic(self, communities_selector, topic, topic_config):
         self.logger.info(f"Processing topic {topic}.")
         topic_files_in_scope = None
-        
+
         if topic_config['source'] == 'multiple':
             # Find multiple datafiles from datagouv
             datagouv_searcher = DataGouvSearcher(communities_selector, self.config["datagouv"])
             datagouv_topic_files_in_scope = datagouv_searcher.get_datafiles(topic_config)
-    
+
             # Find single datafiles from single urls (standalone datasources outside of datagouv)
             single_urls_builder = SingleUrlsBuilder(communities_selector)
             single_urls_topic_files_in_scope = single_urls_builder.get_datafiles(topic_config)
-            
+
             # Concatenate both datafiles lists into one
             topic_files_in_scope = pd.concat([datagouv_topic_files_in_scope, single_urls_topic_files_in_scope], ignore_index=True)
 
             # Process the datafiles list: download & normalize
             topic_datafiles = DatafilesLoader(topic_files_in_scope, topic, topic_config, self.config["datafile_loader"])
-        
+
         elif topic_config['source'] == 'single':
             # Process the single datafile: download & normalize
             topic_datafiles = DatafileLoader(communities_selector, topic_config)
@@ -99,7 +99,7 @@ class WorkflowManager:
             save_csv(datafiles_out, output_folder, DATAFILES_OUT_FILENAME, sep=";")
         if modifications_data is not None:
             save_csv(modifications_data, output_folder, MODIFICATIONS_DATA_FILENAME, sep=";")
-    
+
     def save_data_to_db(self, df_to_save_to_db):
         self.logger.info("Saving data to the database.")
         # Initialize the database connector

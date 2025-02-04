@@ -58,7 +58,7 @@ def _flatten_schema_property(prop, details, root_definitions):
         return _flatten_schema_object(prop, details, root_definitions)
     else:
         return [{'property': prop, **details}]
-    
+
 # Function to flatten a JSON schema
 def flatten_json_schema(schema, schema_name):
     definitions = schema['definitions'][schema_name]['definitions']
@@ -67,7 +67,7 @@ def flatten_json_schema(schema, schema_name):
 
     for prop, details in properties.items():
         flattened_schema.extend(_flatten_schema_property(prop, details, definitions))
-    
+
     return flattened_schema
 
 # Internal function used to flatten an object, prefixing the keys with parent_key

@@ -28,7 +28,7 @@ class DatafilesLoader():
             'json': JSONLoader,
         }
 
-        # Load filtered datafiles list to explore 
+        # Load filtered datafiles list to explore
         self.files_in_scope = files_in_scope
         # Load normalized data output schema
         self.schema = self._load_schema(topic_config["schema"])
@@ -73,7 +73,7 @@ class DatafilesLoader():
                 self.logger.error(f"Failed to load data from {file_info['url']} - {e}")
         else:
             self.logger.warning(f"Loader not found for format {file_info['format']}")
-        
+
         # Add the file to the list of files that could not be loaded
         file_info_df = pd.DataFrame(file_info).transpose()
         self.datafiles_out = pd.concat([self.datafiles_out, file_info_df], ignore_index=True)
@@ -92,9 +92,9 @@ class DatafilesLoader():
         self.logger.info("Number of dataframes loaded: %s", len(data))
         self.logger.info("Number of elements in data that are not dataframes: %s", sum([not isinstance(df, pd.DataFrame) for df in data]))
         self.logger.info("Number of files not loaded: %s", len(self.datafiles_out) - len_out)
-        
+
         return data
-    
+
     # Internal function to normalize the loaded data according to the defined schema
     # TODO: This function should be refactored to be more readable and maintainable (or using external libraries)
     def _normalize_data(self, topic, topic_config, datafile_loader_config):
@@ -113,7 +113,7 @@ class DatafilesLoader():
         # Load the schema dictionary to rename the columns
         schema_dict_file = Path(get_project_base_path())  / "data" / "datasets" / topic / "inputs" / topic_config["schema_dict_file"]
         schema_dict = pd.read_csv(schema_dict_file, sep=";").set_index('original_name')['official_name'].to_dict()
-        
+
         # Initialize the output dataframe for columns not in the schema
         datacolumns_out = pd.DataFrame(columns=["filename", "column_name", "column_type", "nb_non_null_values"])
 
@@ -135,7 +135,7 @@ class DatafilesLoader():
                         # Add the column to the output dataframe for columns not in the schema
                         out_col_df = pd.DataFrame({"filename":df["url"].iloc[0], "column_name":col, "column_type":df[col].dtype, "nb_non_null_values":df[col].count()}, index=[0])
                         datacolumns_out = pd.concat([datacolumns_out, out_col_df], ignore_index=True)
-                
+
                 # Filter the dataframe to keep only the common columns with the schema
                 df_filtered = df[common_columns]
                 # Rename the columns in df_filtered using the schema_mapping
@@ -152,9 +152,9 @@ class DatafilesLoader():
                 out_df = pd.DataFrame(df.iloc[0]).transpose()
                 self.datafiles_out = pd.concat([self.datafiles_out, out_df], ignore_index=True)
                 self.logger.warning("No column in common with schema for file %s", df["url"].iloc[0])
-        
+
         # Cast data to schema types
-        schema_selected = self.schema.loc[:, ['name', 'type']]        
+        schema_selected = self.schema.loc[:, ['name', 'type']]
         normalized_data = cast_data(normalized_data, schema_selected, 'name')
 
         self.logger.info("Data types per column after casting in normalized data: %s", normalized_data.dtypes)

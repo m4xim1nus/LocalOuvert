@@ -36,7 +36,7 @@ class DataGouvSearcher():
         # join siren to datafile_catalog_df based on organization_id
         self.datafile_catalog_df = self.datafile_catalog_df.merge(self.datagouv_ids, left_on="organization_id", right_on="id_datagouv", how="left")
         self.datafile_catalog_df.drop(columns=['id_datagouv'], inplace=True)
-        
+
     # Internal function to filter a dataframe by a column and one or multiple values
     def _filter_by(self, df, column, value, return_mask=False):
         # value can be a list of values or a string
@@ -45,7 +45,7 @@ class DataGouvSearcher():
         else:
             mask = df[column].isin(value)
         return mask if return_mask else df[mask]
-    
+
     # Internal function to filter a dataframe by a column and one or multiple values
     def _get_datafiles_by_title_and_desc(self,title_filter,description_filter):
         # Get the datasets that match the title and description filters
@@ -58,11 +58,11 @@ class DataGouvSearcher():
         # Merge the two masks and get the filtered datasets catalog
         filtered_catalog_df = self.dataset_catalog_df[(mask_titles | mask_desc)]
 
-        # Merge with catalog files to get the filtered files list 
+        # Merge with catalog files to get the filtered files list
         filtered_files = filtered_catalog_df[["siren","id","title","description","organization","frequency"]].merge(self.datafile_catalog_df[["dataset.id","format","created_at","url"]],left_on="id",right_on="dataset.id",how="left")
         filtered_files.drop(columns=['dataset.id'], inplace=True)
         return filtered_files
-    
+
     # Internal function to get the preferred format of a list of records
     def _get_preferred_format(self,records):
         preferred_formats = ["csv", "xls", "json", "zip"] # Could be put outside
@@ -148,7 +148,7 @@ class DataGouvSearcher():
         bottom_up_files_df.drop(columns=['id_datagouv'], inplace=True)
         bottom_up_files_df.drop(columns=['organization_id'], inplace=True)
         return bottom_up_files_df[(bottom_up_files_df.keyword_in_title|bottom_up_files_df.keyword_in_description)&bottom_up_files_df.montant_col]
-    
+
     # Internal function to log basic info about a search result dataframe
     def _log_basic_info(self,df):
         self.logger.info(f"Nombre de datasets correspondant au filtre de titre ou de description : {df.id.nunique()}")
@@ -156,7 +156,7 @@ class DataGouvSearcher():
         self.logger.info(f"Nombre de fichiers uniques : {df.url.nunique()}")
         self.logger.info(f"Nombre de fichiers par format : {df.groupby('format').size().to_dict()}")
         self.logger.info(f"Nombre de fichiers par fréquence : {df.groupby('frequency').size().to_dict()}")
-    
+
     # Function to get datafiles list selected by title and description filters and column names filters
     def get_datafiles(self, search_config, method="all"):
         # Only using topdown method: look for datafiles based on title and description filters
@@ -170,7 +170,7 @@ class DataGouvSearcher():
             bottomup_datafiles = self._get_datafiles_by_content(search_config["api"]["url"],search_config["api"]["title"],search_config["api"]["description"],search_config["api"]["columns"])
             self.logger.info("Bottomup datafiles basic info :")
             self._log_basic_info(bottomup_datafiles)
-            
+
         if method == "td_only":
             datafiles = topdown_datafiles
         elif method == "bu_only":
@@ -183,7 +183,7 @@ class DataGouvSearcher():
             self._log_basic_info(datafiles)
         else:
             raise ValueError(f"Unknown Datafiles Searcher method {method} : should be one of ['td_only', 'bu_only', 'all']")
-        
+
         # Add 'nom' & 'type' columns to datafiles from self.scope.selected_data based on siren
         datafiles = datafiles.merge(self.scope.selected_data[['siren', 'nom', 'type']], on='siren', how='left')
         # Add new 'source' column, filled with 'datagouv' value

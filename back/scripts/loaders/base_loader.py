@@ -36,7 +36,7 @@ class BaseLoader:
 
     def process_data(self, response):
         raise NotImplementedError("This method should be implemented by subclasses.")
-    
+
     @staticmethod
     def loader_factory(file_url, dtype=None, columns_to_keep=None):
         # Factory method to create the appropriate loader based on the file URL

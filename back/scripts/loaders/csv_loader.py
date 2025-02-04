@@ -10,7 +10,7 @@ class CSVLoader(BaseLoader):
     '''
     Loader for CSV files.
     '''
-    
+
     def __init__(self, file_url, dtype=None, columns_to_keep=None, **kwargs):
         super().__init__(file_url, **kwargs)
         self.dtype = dtype
@@ -40,7 +40,7 @@ class CSVLoader(BaseLoader):
             df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, usecols=lambda c: c in self.columns_to_keep, on_bad_lines='skip', quoting=csv.QUOTE_MINIMAL, low_memory=False)
         else:
             df = pd.read_csv(StringIO(decoded_content), delimiter=delimiter, dtype=self.dtype, on_bad_lines='skip', quoting=csv.QUOTE_MINIMAL, low_memory=False)
-        
+
         self.logger.info(f"CSV Data from {self.file_url} loaded.")
         return df
 

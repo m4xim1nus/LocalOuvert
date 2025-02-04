@@ -8,10 +8,10 @@ from scripts.utils.config import get_project_base_path
 class OdfLoader():
     """
     OdfLoader loads data from the ODF dataset and saves it to a CSV file.
-    Data from OpenDataFrance, data.gouv.fr, 2022. 
+    Data from OpenDataFrance, data.gouv.fr, 2022.
     This dataset lists the platforms and organizations that contribute to the development of open data in the territories, identified during the 2022 edition (as of December 31).
 
-    TODO : Refactor using loaders_factory 
+    TODO : Refactor using loaders_factory
     """
 
     def __init__(self,config):
@@ -27,6 +27,6 @@ class OdfLoader():
 
     def get(self):
         return self.data
-    
+
     def save(self,path,filename):
         save_csv(self.data,path,filename, sep=";", index=True)
